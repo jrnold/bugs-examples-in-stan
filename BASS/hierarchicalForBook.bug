@@ -1,0 +1,30 @@
+model{
+	for(i in 1:N){  ## loop over observations
+	      ## form the linear predictor
+	      mu[i] <- x[i,1]*beta[1] + x[i,2]*beta[2] + x[i,3]*beta[3] +
+		       x[i,4]*beta[4] + x[i,5]*beta[5] + x[i,6]*beta[6] + eta[id[i]]
+		       
+	      ## cumulative logistic probabilities
+	      logit(Q[i,1]) <- tau[1]-mu[i]
+	      p[i,1] <- Q[i,1]
+	      for(j in 2:4){
+                logit(Q[i,j]) <- tau[j]-mu[i]
+                p[i,j] <- Q[i,j] - Q[i,j-1]   
+	      }
+	      p[i,5] <- 1 - Q[i,4]
+	      y[i] ~ dcat(p[i,1:5])  ## p[i,] sums to 1 for each i
+	}
+	## priors over betas
+	beta[1:6] ~ dmnorm(b0[],B0[,])
+	## hierarchical model over etas, note zero mean restriction
+	for(k in 1:NID){
+	      eta[k] ~ dnorm(0.0,eta.tau)
+        }
+	eta.tau <- 1/pow(sigma,2)  ## convert stddev to precision
+	sigma ~ dunif(0,2)
+	## priors over thresholds
+	for(j in 1:4){
+	      tau0[j] ~ dnorm(0,.01)
+	}
+	tau[1:4] <- sort(tau0)   ## JAGS only, not in WinBUGS!	
+}

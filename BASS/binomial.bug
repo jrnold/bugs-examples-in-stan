@@ -1,0 +1,27 @@
+model{
+	for(i in 1:85){  ## loop over cable systems
+              logit(theta[i]) <- v[i]
+	      v[i] <- alpha[strata[i]] + delta[treatedIndex[i]]*treated[i]
+	      r[i] ~ dbin(theta[i],n[i])
+	}
+
+	for(j in 1:40){  ## loop over baseline effects
+	      alpha[j] ~ dnorm(mu[1],tau[1])
+	}
+
+	for(j in 1:42){  ## loop over treatment effects
+	      delta[j] ~ dnorm(mu[2],tau[2])
+	}
+
+	for(k in 1:2){   ## hyper-parameters
+	      mu[k] ~ dnorm(0,.25)
+	      tau[k] <- 1/pow(sigma[k],2)
+	      sigma[k] ~ dunif(0,2)
+	}
+
+	## out of sample prediction for avg system and hypothetical system
+	delta.new ~ dnorm(mu[2],tau[2])
+	logit(p.new) <- delta.new
+	pvalue[1] <- step(mu[2])       ## Pr(mu[2] > 0)
+	pvalue[2] <- step(delta.new)   ## Pr(delta.new > 0)
+}

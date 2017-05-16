@@ -1,0 +1,13 @@
+model{
+	 ## model for the data
+     	 for(i in 1:2){
+	    r[i] ~ dbin(theta[i],n[i])
+         }
+
+	 ## priors
+	 for(i in 1:2){
+            theta[i] ~ dbeta(1,1)
+         }
+	 ## quantity of interest
+	 q <- theta[2] - theta[1]	    
+}
