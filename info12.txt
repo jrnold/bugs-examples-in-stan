@@ -1,0 +1,29 @@
+Political Information in France: 2-parameter item-response model
+
+As part of a recent study of public opinion in France, Paul Sniderman, myself, and our French partners came up with a list of twelve political information items. We administered these items to our respondents as ``true'' or ``false'' propositions, towards the end of the interview.  This is one of the first times that ``objective'' or "factual" measurements of political information have been administered in France, and we faced considerable uncertainty as to how our test items would fare.  Were our items too hard or too easy?  Do some items tap political information more so than others?  What are the properties of any resulting scale measure?  
+
+Two pre-tests of 26 and 25 interviews respectively were conducted in April 2000. Each respondent was administered ten items, out of the set of 12 items.  The items and the results of this analysis are described in Simon Jackman, "Estimation and Inference are `Missing Data' Problems: Unifying Social Science Statistics via Bayesian Simulation", Political Analysis, 8(4):307-322 (Fall 2000). 
+Interesting features of this particular implementation in WinBUGS are the N(0,1) prior for the unobserved latent traits (political information); the use of the "double-subscript" trick to match respondents to item parameters (via the variable asked); the use of truncated Normal sampling to operationalize a probit model for these data (the observed binary responses are represented to the model as truncation limits).
+
+model{
+	for (i in 1:51){          ## loop over 51 survey respondents
+	
+		x[i] ~ dnorm(0,1);      ## prior for ideal points
+	
+		for (j in 1:10){        ## loop over the 10 items asked of each R
+		                        ## note use of double-subscript trick
+		  mu[i,j] <- x[i]*beta[asked[i,j],1] - beta[asked[i,j],2];
+
+		  ## truncated Normal sampling
+		  ystar[i,j] ~ dnorm(mu[i,j],1)I(lower[i,j],upper[i,j]);
+		}	
+	}
+	
+	for(j in 1:12){
+		beta[j,1:2] ~ dmnorm(b0[],B0[ , ]);   ## vague Normal priors
+	}
+
+  b0[1] <- 0.0; b0[2] <- 0.0;       ## mean zero
+	B0[1,1] <- 0.04; B0[1,2] <- 0;    ## variances 25 (sd = 5)
+	B0[2,2] <- 0.04; B0[2,1] <- 0;    ## covariances 0
+}

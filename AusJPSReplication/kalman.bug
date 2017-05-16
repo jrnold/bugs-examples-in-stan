@@ -1,0 +1,24 @@
+model{
+ ## measurement model
+ for(i in 1:NPOLLS){
+       mu[i] <- house[org[i]] + alpha[date[i]]
+       y[i] ~ dnorm(mu[i],prec[i])
+ }
+
+ ## transition model (aka random walk prior)
+ for(i in 2:NPERIODS){
+        mu.alpha[i] <- alpha[i-1]
+        alpha[i] ~ dnorm(mu.alpha[i],tau)
+ }
+
+ ## priors
+ tau <- 1/pow(sigma,2)   ## deterministic transform to precision
+ sigma ~ dunif(0,.01)    ## uniform prior on standard deviation
+
+ alpha[1] ~ dunif(.4,.6) ## initialization of daily track
+
+ for(i in 1:5){          ## vague normal priors for house effects
+       house[i] ~ dnorm(0,.01)
+ }
+
+}

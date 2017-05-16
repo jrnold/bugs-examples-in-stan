@@ -1,0 +1,49 @@
+Undervoting for President, by Race: difference in two binomial proportions.
+
+In exit polls for the 1992 election, the Voter News Service asked black and white voters if they did not vote for president (a phenomenon known as "intentional undervoting").  Of 6,537 black voters, 26 said they did not vote for president; of 44,531 white voters, 91 said they did not vote for president.  
+In the American National Election Studies (1964-2000), of 1,101 black voters, 10 report not voting for president, while 57 of 9,827 white voters report not voting for president.  Substantive interest centers on whether this rate of intentional undervoting differs by race.  
+
+These data appear in Tomz and Van Houweling (2003), "How Does Voting Equipment Affect the Racial Gap in Voided Ballots?", American Journal of Political Science.   
+ 
+model{
+	for (i in 1:4){
+		r[i] ~ dbin(p[i],n[i])
+	}
+	
+	delta[1] <- p[2] - p[1]    ## difference
+	good[1] <- step(delta[1])  ## sign of the difference
+
+	delta[2] <- p[4] - p[3]    ## difference
+	good[2] <- step(delta[2])  ## sign of the difference	
+
+	## priors
+	for(i in 1:4){
+		p[i] ~ dunif(0,1)
+	}
+}
+
+Data:
+list(r=c(26,91,10,57),n=c(6537,44531,1101,9827))
+
+Since the data set is tiny and the computation trivial, we can generate a large number of samples from the posterior densities:
+
+Results:
+	 node	 mean	 sd	 MC error	2.5%	median	97.5%	start	sample
+	delta[1]	-0.002063	8.219E-4	8.192E-7	-0.003805	-0.002016	-5.876E-4	3000001	1000000
+	delta[2]	-0.004073	0.00309	3.09E-6	-0.01088	-0.0038	0.001177	3000001	1000000
+	good[1]	0.001802	0.04241	4.217E-5	0.0	0.0	0.0	3000001	1000000
+	good[2]	0.07692	0.2665	2.722E-4	0.0	0.0	1.0	3000001	1000000
+
+The Bayesian p-values in the vector good can be contrasted with those arising from a classical analysis (e.g., using the functions in the ctest library in R); the differences between the classical analysis and the Bayesian simulation-based analysis are more pronounced for proportions in the smaller NES data set.
+
+					VNS		NES
+Classical two-sample test,
+one-sided, without continuity 
+correction:					.0011		.0929
+
+Classical two-sample test,
+one-sided, with continuity
+correction:					.0018		.1315
+
+Fisher's exact test, 
+one-sided:					.0033		.1330
