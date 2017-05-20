@@ -1,0 +1,127 @@
+---
+title: "Cancer: difference in two binomial proportions"
+author: Simon Jackman and Jeffrey Arnold
+---
+
+The following simple model is drawn from an example in Johnson and Albert 's Ordinal Data Modeling (p35), using data collected in a study by H.F. Dorn ("The Relationship of Cancer of the Lung and the Use of Tobacco", The American Statistician, 1954, V8:7-13).  A sample of 86 lung-cancer partients and a sample of 86 controls were questioned about their smoking habits.  The two groups were chosen to represent random samples from a subpopulation of lung-cancer patients and an otherwise similar population of cancer-free individuals.  Of the cancer patients, 83 out of 86 were smokers; among the control group 72 out of 86 were smokers.  The scientific question of interest was to assess the difference between the smoking habits in the two groups.
+
+In implementing this model, we have just two data points (cancer patients and control group) and a binomial sampling model, in which the population proportions of smokers in each group appear as parameters.  Quantities of interest such as the difference in the population proportions and the log of the odds ratio are computed in the generated quantities section. Uniform priors on the population proportions are used in this example.
+
+## Seperate Parameterization
+
+$$
+\begin{aligned}[t]
+r_i &\sim \mathsf{Binomial}(n_i, \pi_i)
+\end{aligned}
+$$
+Additionally the difference,
+$$
+\delta = \pi_1 - \pi_2 ,
+$$
+and the log-odds ratio,
+$$
+\lambda = \log\left(\frac{\pi_1}{1 - \pi_1}\right) - \log \left( \frac{\pi_2}{1 - \pi_2} \right) ,
+$$
+
+It places uniform priors (Beta priors) are placed on $\pi$,
+$$
+\begin{aligned}
+\pi_i &\sim \mathsf{Beta}(1, 1)
+\end{aligned}
+$$
+
+The original BUGS model. 
+```
+model{
+ ## sampling model for the data
+	for(i in 1:2){            ## loop over observations
+	 r[i] ~ dbin(p[i],n[i])	 ## p is unknown parameter
+	}
+
+	## priors
+	p[1] ~ dunif(0,1)         ## uniform distributions
+	p[2] ~ dunif(0,1)
+
+	## compute quantities of interest
+	delta <- p[1] - p[2]      ## difference in probs
+	delta.up <- step(delta)   ## is delta > 0???
+
+	## log of the odds ratio
+	lambda <- log( (p[1]/(1-p[1])) / (p[2]/(1-p[2])) );
+	lambda.up <- step(lambda)   ## is lambda > 0???
+}
+```
+
+The Stan model is similar. The difference and log odds ratio are defined in the `generated quantities` block.
+
+```{r}
+cancer_data <- list(
+  r = c(83, 72),
+  n = c(86, 86),
+  # beta prior on pi
+  p_a = rep(1, 2),
+  p_b = rep(1, 2)
+)
+```
+
+
+```{r}
+cancer_mod1 <- stan_model("stan/cancer1.stan")
+```
+
+```{r}
+sampling(cancer_mod1, cancer_data)
+```
+
+
+An alternative parameterization appears below, in which the difference in the population proportions of probabilities is modeled directly, instead of appearing as an auxilary quantity.
+
+BUGS model:
+```
+model{
+ ## sampling model for the data
+	for(i in 1:2){            ## loop over observations
+	 r[i] ~ dbin(p[i],n[i])	 ## p is unknown parameter
+	}
+
+	## compute quantities of interest
+	## log of the odds ratio
+	delta <- p[1] - p[2]
+	lambda <- log( (p[1]/(1-p[1])) / (p[2]/(1-p[2])) );
+	lambda.up <- step(lambda) ## is lambda > 0???
+
+	## priors
+	v[2] ~ dnorm(0,.01);      ## vague prior, logits
+	logit(p[2]) <- v[2];      ## convert to probability
+	v[1] <- v[2] + vdelta;    ## difference in logits
+	vdelta ~ dnorm(0,.01);    ## vague prior on difference
+	logit(p[1]) <- v[1];      ## convert to probability
+}
+```
+
+Stan Model: Some of the notation was changed to make it more like a regression model.
+
+$$
+\begin{aligned}[t]
+r_i &\sim \mathsf{Binomial}(n_i, \pi_i) \\
+pi_1 &= \frac{1}{1 + \exp(-(\alpha + \beta)} \\
+pi_2 &= \frac{1}{1 + \exp(-(\alpha)}\\
+\alpha &\sim N(0, 10)\\
+\beta &\sim N(0, 2.5)
+\end{aligned}
+$$
+
+```{r}
+cancer_mod2 <- stan_model("stan/cancer2.stan")
+```
+
+```{r}
+cancer_data2 <- within(cancer_data, {
+  p_a <- p_b <- NULL
+  a_loc <- b_loc <- 0
+  a_scale <- 10
+  b_scale <- 2.5
+})
+sampling(cancer_mod2, cancer_data2)
+```
+

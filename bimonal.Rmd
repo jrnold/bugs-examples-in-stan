@@ -1,0 +1,22 @@
+---
+title: "Bimodal: Extreme missingness in bivariate normal data"
+author: "Simon Jackman and Jeffrey Arnold"
+date: "5/20/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Original example by Simon Jackman.
+Converted to Stan and edited by Jeffrey Arnold.
+
+Simple methods for dealing with missing data can run into trouble given pernicious patterns of missingness.  A famous artificial data set designed to highlight this point was created by Gordon Murray, to show how an EM algorithm can run into problems (see the Journal of the Royal Statistical Society Series B, 39:27, 1977; this example appears in the discussion to Dempster, Laird and Rubin's much-cited EM paper):
+
+```
+x1:	1	1	-1	-1	2	2	-2 -2	*	*	*	*
+x2:	1	-1	1	-1	*	*	*	*	2	2	-2	-2
+```
+
+Assume bivariate normality, and that the means of the two variables are both zero, but the variances and covariance are unknown.  Inference about the correlation coefficient  r  between these two variables is not trivial in this instance.  The marginal complete-data likelihood for r  is not unimodal, and has a saddle-point at zero, and two local maxima close to -1 and 1.  A Bayesian analysis (with uninformative priors) similarly recovers a bimodal posterior density for the correlation coefficient; e.g., see Tanner, Tools for Statistical Inference, 3rd edition, pp95-96 or Congdon, Bayesian Statistical Modelling, p46.

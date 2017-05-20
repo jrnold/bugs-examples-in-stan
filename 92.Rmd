@@ -1,0 +1,69 @@
+---
+title: "House of Commons elections: modeling with the multivariate t density"
+author: "Simon Jackman and Jeffrey Arnold"
+date: "5/20/2017"
+output: html_document
+---
+
+Original example from Simon Jackman. Translated to Stan by Jeffrey Arnold.
+
+
+The following analysis comes from a data set on United Kingdom House of Commons elections, used by Katz and King, "A Statistical Model for Multiparty Electoral Data", American Political Science Review (1999), and re-analyzed by Tomz, Tucker and Wittenberg, Political Analysis (2002).  The data for this example consist of vote proportions from 1992 for 521 constituencies, for the Labor party, the Conservative Party, and the Liberal-Alliance, transformed to a 521 by 2 matrix of log-odds ratios (with the Liberal-Alliance in the denominator), as is common in the analysis of multinomial or "compositional" data (e.g., Aitchison 1986, The Statistical Analysis of Compositional Data).  Katz and King noted that the distribution of the log-odds ratios appear to be heavy-tailed relative to the normal, and model the data with a multivariate t-distribution with unknown degrees of freedom.
+
+This specification includes covariates for the conditional means of the two log odds ratios.  Six covariates are used: (1) a constant; (2) and (3) the lagged values (from the previous election) of the two log odds ratios; (4) an indicator for whether the Conservative candidate is the incumbent; (5) the incumbency status of the Labor candidate; (6) the incumbency status of the Liberal/Alliance candidate.  
+
+$$
+\begin{aligned}[t]
+y_i &\sim t_{\nu}(\alpha + x' \beta, \Sigma) .
+\end{aligned}
+$$
+where $\Sigma$ is a correlation matrix.
+$y_i$ are log-odds.
+
+
+For identifiction, as in a logit regression, either the intercept or scale must be fixed.
+In this case, $\Sigma$ is a correlation matrix.
+
+Weakly informative priors are used for the regression parameters. 
+The degrees of freedom of the multivariate Student t distribution is a parameter, and given a weakly informative Gamma distribution that puts most of the prior density between 3 and 40.
+$$
+\begin{aligned}[t]
+\alpha &\sim  \mathsf{Normal}(0, 10) \\
+\beta_p &\sim \mathsf{Normal}(0, 2.5) & \text{for $p \in 1, \dots, P$.} \\
+\Sigma \sim \mathsf{LkjCorr}(\eta) \\
+\nu \sim \mathsf{Gamma}(2, 0.1) 
+\end{aligned}
+$$
+
+```{r}
+data_92 <- within(dget("data/92.R"), {
+  X <- scale(x)
+  x <- NULL
+  N <- nrow(y)
+  K <- ncol(y)
+  P <- ncol(X)
+  a_location <- rep(0, K)
+  a_scale <- rep(10, K)
+  b_location <- matrix(0, K, P)
+  b_scale <- matrix(2.5, K, P)
+  Sigma_shape <- 1
+})
+```
+
+```{r}
+mod_92 <- stan_model("stan/92.stan")
+```
+
+```{r}
+fit_92 <- sampling(mod_92, data = data_92)
+```
+
+
+```{r}
+summary(fit_92, par = c("nu", "a", "b", "Sigma"))$summary
+```
+
+
+This differs slightly from the original Jackman model.
+The Jackman model omitted an intercept, but did not fix the scale of the Sigma distribution.
+It also used several prior distributions better suited for WinBUGS.

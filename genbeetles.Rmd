@@ -1,0 +1,91 @@
+---
+title: "Generalized Beetles: generalizing link functions for binomial GLMs"
+author: "Simon Jackman and Jeffrey Arnold"
+date: "5/20/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("rstan")
+```
+
+
+Original example by Simon Jackman; Stan translation by Jeffrey ARnold.
+
+GLMs rely on link functions, linking the linear predictors and the response probability, $\pi$. Logit and probit are perhaps the most familiar link functions,
+mapping from the unit probability interval to the real line using the inverse CDFs of the logistic and standard Normal distributions, respectively. The logit and probit link functions have the interesting property that they are symmetric
+about $\pi = 0.5$, and guarantee the effects of $x_i$ on $\pi$ to be greatest when $\pi  = 0.5$. To see this, recall that in GLMs for binomial data the effects of $x_i$ on $\pi$ are not constant, but vary over $\pi$.  For logit and probit, with link functions symmetric around zero, the effect of $x_i$  on $\pi$  is at its greatest when $f(x_i \beta)$ is its maximum, which for logit and probit occurs at $x_i \beta = 0$. In dose-response studies, this means that responsiveness to dose is at its greatest when subjects are on the cusp of a response, at, that is, when $E(\pi) = 0.5$.  In a study of voter turnout, ordinary logit or probit is estimated subject to the constraint that the effects of the covariates are at their greatest for citizens who are indifferent between turning out and abstaining (e.g., Nagler, 1994). Furthermore, for logit/probit, these marginal effects diminish in magnitude symmetrically as we move away from $E(\pi) = 0.5$; this symmetry follows from the symmetry of the logistic and normal PDFs/CDFs.
+
+One can easily envisage situations where the researcher would not want to impose these features of the logit/probit link functions on their data. In many settings, knowledge of exactly where the marginal impact of the covariates is maximized is of tremendous practical importance, with implications for targeting policy interventions, resource allocation, and so on. For example, how to distribute resources for educational or health improvements? Given that the effects of interventions are not constant across a set of baseline probabilities,
+knowing where proposed interventions are likely to have bigger or smaller effects is valuable information for policy-makers. As we have seen, logit/probit constrain these effects to be at their greatest at $E(\pi) = .5$, via their symmetric S-shaped link functions. Ceteris paribus we would prefer to estimate the shape of the link function from the data.
+
+A relatively straightforward way to let the data be informative as to the shape of the link function is via a simple one-parameter transformation of the logit link (Prentice, 1976): 
+$$
+\pi = \frac{1}{(1 + \exp(-x_i \beta))^m}
+$$
+where $m > 0$ is a parameter that skews the logit link. The standard logit model is a special case, where $m = 1$.
+
+Estimating $m$ and $b$ by maximum likelihood is relatively straightforward, although there is little reason to believe the frequentist sampling distribution for $m$ is likely to be well approximated by the normal in a finite sample. Notice that $m$ enters the model in a highly non-linear fashion, and that different ranges of $m$ imply quite different relationships between the linear predictors and $\pi$.  In Bayesian terms, we can reasonably expect the posterior density of $m$ to be non-normal, and probably log-normal. Likewise, the posterior densities of related quantities of interest such as the LD50 could well be non-normal. Inferences for these quantities could well be misleading if we were to rely only on point estimates and asymptotic normal approximations; instead, a Bayesian approach via MCMC offers a way for us to obtain arbitrarily precise approximations to the posterior densities of these quantities.
+
+To demonstrate the use of MCMC methods in this context, I use the famous beetles data of Bliss (1935); these data have been extensively used by statisticians in studies generalized link functions (e.g., Prentice, 1976; Stukel, 1988), and are used by Spiegelhalter et al. (1996) to demonstrate how BUGS handles GLMs for binomial data. Carlin and Louis (1996) use these data in an MCMC implementation of the one-parameter generalization used here; they
+made use of re-parameterizations and problem-specific computer programming to handle the non-conjugacies introduced via the skew parameter m. Here I show how WinBUGS can handle this problem relatively simply.
+
+$$
+\begin{aligned}[t]
+r_i &\sim \mathsf{Binomial}(n_i, \pi_i) \\
+\pi_i &= 1 - \frac{1}{(1 + e^{(\alpha + x_i' \beta_i)})^\nu}
+\end{aligned}
+$$
+
+I give $\mu$ a Gamma prior with a of 1.0 (corresponding to the standard logit model), and a standard deviation of 2,
+$$
+\nu \sim \mathsf{Gamma}(0.25, 0.25)
+$$
+The regression coefficients are given weakly informative priors,
+$$
+\begin{aligned}[t]
+\alpha &\sim N(0, 10) \\
+\beta &\sim N(0, 2.5)
+\end{aligned}
+$$
+
+```{r}
+genbeetles_data <- dget("data/genbeetles.R") %>%
+  within({
+    x <- as.numeric(scale(x))
+  })
+```
+
+```{r}
+genbeetles_mod <- stan_model("stan/genbeetles.stan")
+```
+
+```{r}
+genbeetles_fit <- sampling(genbeetles_mod, data = genbeetles_data)
+```
+
+
+
+## References:
+
+Bliss, C. I. 1935. "The calculation of the dosage-mortality curve." Annals of Applied Biology
+22:134--167.
+
+Carlin, Bradley P. and Thomas A. Louis. 1996. Bayes and Empirical Bayes Methods for Data
+Analysis. London: Champman and Hall.
+
+Nagler, Jonathan. 1994. "Scobit: an alternative estimator to logit and probit." American
+Journal of Political Science 38:230--55.
+
+Prentice, Ross L. 1976. "A Generalization of the Probit and Logit Methods for Dose Response
+Curves." Biometrics 32:761--768.
+
+Spiegelhalter, D. J., A. Thomas, N. Best and W. R. Gilks. 1996. BUGS: Bayesian Inference
+Using Gibbs Sampling, Version 0.5 (version ii). Cambridge, UK: MRC Biostatistics Unit.
+
+Stukel, Th?r?se A. 1988. "Generalized Logistic Models." Journal of the American Statistical
+Association 83:426--431.
