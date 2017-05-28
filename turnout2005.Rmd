@@ -1,0 +1,72 @@
+---
+title "Turnout: logit/probit models for binary data"
+author: Simon Jackman and Jeffrey Arnold
+---
+
+Original BUGS model and text by Simon Jackman. Stan model and revisions by 
+Jeffrey Arnold.
+
+Voter turnout is coded as a binary indicator (y =1 if voted, 0 otherwise) and related to covariates via a logit model.  The data comprise a random 3,000 observation subset of a much larger data set analyzed by Jonathan Nagler.
+
+Original BUGS model
+```
+model{
+  for (i in 1:N){                 ## loop over observations
+    y[i] ~ dbern(p[i]);           ## binary outcome, Bernoulli trial
+    logit(p[i]) <- mu[i];         ## logit link
+    mu[i] <- beta[1]              ## regression structure for covariates
+             + beta[2]*educ[i]
+             + beta[3]*(educ[i]*educ[i])
+             + beta[4]*age[i]
+             + beta[5]*(age[i]*age[i])
+             + beta[6]*south[i]
+             + beta[7]*govelec[i]
+             + beta[8]*closing[i]
+             + beta[9]*(closing[i]*educ[i])
+             + beta[10]*(educ[i]*educ[i]*closing[i]);
+
+		## extra quantity, not necc for model fitting
+    llh[i] <- y[i]*log(p[i]) + (1-y[i])*log(1-p[i]);  ## llh contribution
+  }
+
+  sumllh <- sum(llh[]);    ## sum of log-likelihood contributions
+
+  ## priors, hyper-parameters b0 and B given at end of data file
+  beta[1:10] ~ dmnorm(b0[ ] , B[ , ]) ;  ## multivariate Normal prior
+}
+```
+
+The Stan model for a logit link:
+```{r}
+mod_logit <- stan_model("stan/logit.stan")
+```
+
+The Stan model for a probit link:
+```{r}
+mod_probit <- stan_model("stan/probit.stan")
+```
+
+```{r}
+load("data/turnout2005.rda")
+data_turnout2005 <- within(list(), {
+  N <- nrow(turnout2005)
+  X <- scale(model.matrix(~ 0 + closing * poly(educ, 2) + poly(age, 2) + 
+                          south + govelec, data = turnout2005))
+  K <- ncol(X)
+  y <- turnout2005$y
+  alpha_mean <- 0
+  alpha_scale <- 10
+  beta_mean <- rep(0, K)
+  beta_scale <- rep(2.5, K)
+})
+```
+
+```{r}
+fit_turnout2005_logit <- sampling(mod_logit, data = data_turnout2005)
+```
+
+```{r}
+fit_turnout2005_probit <- sampling(mod_probit, data = data_turnout2005)
+```
+
+TODO: compare fits of the logit and probit.

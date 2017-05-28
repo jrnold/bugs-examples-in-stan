@@ -1,0 +1,51 @@
+---
+title: "Resistant: Outlier-resistant regression via the t distribution"
+author: Simon Jackman and Jeffrey Arnold
+---
+
+Original BUGS model and text by Simon Jackman; Stan model and revisions by 
+Jeffrey Arnold.
+
+Outlying data points can distort estimates of location, such as means or regression coefficients.  Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers). A popular alternative to normal errors in regression analyses is the student-t density, with an unknown degrees of freedom parameter.  For low degrees of freedom, the t has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases.  Treating the degrees of freedom parameter as an unknown parameter to be estimaetd thus provides a check on the appropriateness of the normal.  By embedding a model with location parameters in the t density, we obtain outlier-resistant estimates of location parameters.
+
+To illustrate these ideas, I use data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994.   The dependent variable is the proportion of the two-party vote won by the Democratic candidate in district i at election t (uncontested districts are dropped from the analysis).  Indicators for Democratic and Republican incumbency are the critical explanatory variables in the analysis; coefficients on these indicators are regarded as estimates of incumbency advantage.  A series of year-specific indicators ("fixed effects") are also included in the specification.
+
+The following code operationalizes this regression model; the conditional density of the vote proportions is t, with unknown degrees of freedom, $\nu.$ 
+
+# BUGS Model
+
+A uniform prior over $\nu$ is specified; the prior places quite a lot of probability mass over values of nu consistent with the data being normal, as well as those values of nu indicating heavy-tailed data (we let the data adjudicate between the t and the normal model).
+
+```{r}
+mod_resistant <- stan_model("stan/resistant.stan")
+```
+
+```{r}
+load("reistant.rda")
+data_resistant <- within(list(), {
+  y <- resistant$y
+  N <- length(y)
+  X <- model.matrix(~ 0 + lagy + prvwinpty + deminc + repinc, data = reistant) %>%
+    scale()
+  K <- ncol(X)
+  year <- resistant$year
+  Y <- max(year)
+  # priors
+  gamma_loc <- 0
+  gamma_scale <- 10 * sd(y)
+  tau_scale <- 2.5 * sd(y)
+  beta_loc <- rep(0, K)
+  beta_scale <- rep(2.5 * sd(y), K)
+  sigma_scale <- 5 * sd(y)
+})
+```
+
+```{r results='hide', message = FALSE}
+fit_resistant <- sampling(mod_resistant, data = data_resistant,
+                          refresh = -1)
+```
+
+```{r}
+summary(fit_resistant, par = c("nu", "sigma", "beta", "tau"))$summary
+```
+

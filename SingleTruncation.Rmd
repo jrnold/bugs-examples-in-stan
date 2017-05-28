@@ -1,0 +1,32 @@
+---
+title: Truncation: How does Stan deal with truncation?
+---
+
+Assume we have the observations, $y = 1,...,9$, from a Normal population with unknown mean and variance, subject to the constraint that $y < 10$.  Ignoring the constraint, the MLEs for the mean and variance are 5 and 6.67; with the constraint taken into account, each observation makes likelihood contribution
+$f (y; m, s_2)/F ((k - m)/s)$ where $k$ is the truncation point (in this case, 10), and the MLEs of $m, s_2$  are 5.32 and 8.28.
+
+
+```{r}
+mod_truncation <- stan_model("stan/SingleTruncation.stan")
+```
+
+This is not well identified by the data until there a reasonable number of observations.
+```{r}
+data_truncation <- within(list(), {
+  y <- sample(1:9, 256, replace = TRUE)
+  N <- length(y)
+  U <- 10
+  mu_mean <- mean(y)
+  mu_scale <- sd(y) * 10
+  sigma_scale <- sd(y) * 5
+})
+```
+
+```{r result='hide', message=FALSE}
+fit_truncation <- sampling(mod_truncation, data = data_truncation)
+```
+```{r}
+fit_truncation
+```
+
+

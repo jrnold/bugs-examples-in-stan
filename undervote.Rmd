@@ -1,0 +1,56 @@
+---
+title: "Undervoting for President, by Race: difference in two binomial proportions."
+author: Simon Jackman and Jeffrey Arnold
+---
+
+In exit polls for the 1992 election, the Voter News Service asked black and white voters if they did not vote for president (a phenomenon known as "intentional undervoting").  Of 6,537 black voters, 26 said they did not vote for president; of 44,531 white voters, 91 said they did not vote for president.
+In the American National Election Studies (1964-2000), of 1,101 black voters, 10 report not voting for president, while 57 of 9,827 white voters report not voting for president.  Substantive interest centers on whether this rate of intentional undervoting differs by race.
+
+These data appear in Tomz and Van Houweling (2003), "How Does Voting Equipment Affect the Racial Gap in Voided Ballots?", American Journal of Political Science.
+
+$$
+\begin{aligned}[t]
+r_i &\sim \mathsf{Binomial}(n_i, \pi_i) \\
+\pi_i &\sim \mathsf{Unif}(0, 1)
+\delta_{\text{white}} &= \pi_2 - \pi_1 \\
+\delta_{\text{black}} &= \pi_4 - \pi_3 \\
+\end{aligned}
+$$
+
+
+```
+model{
+	for (i in 1:4){
+		r[i] ~ dbin(p[i],n[i])
+	}
+
+	delta[1] <- p[2] - p[1]    ## difference
+	good[1] <- step(delta[1])  ## sign of the difference
+
+	delta[2] <- p[4] - p[3]    ## difference
+	good[2] <- step(delta[2])  ## sign of the difference
+
+	## priors
+	for(i in 1:4){
+		p[i] ~ dunif(0,1)
+	}
+}
+```
+
+
+```{r}
+undervote_data <-
+  list(r = c(26, 91, 10, 57),
+       n = c(6537, 44531, 1101, 9827),
+       N = 4,
+       pi_a = rep(1, 4),
+       pi_b = rep(1, 4))
+```
+
+```{r}
+undervote_mod <- stan_model("stan/undervote.stan")
+```
+
+```{r}
+undervote_fit <- sampling(undervote_mod, data = undervote_data)
+```
