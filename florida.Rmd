@@ -1,0 +1,27 @@
+---
+title: "Florida"
+author: "Simon Jackman and Jeffrey Arnold"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign; see Jackman's *Annual Review of Political Science* article.
+
+```{r}
+florida_mod <- stan_model("stan/florida.stan")
+```
+
+```{r}
+florida_data <- list(
+  mu_mean = 49.1,
+  mu_sd = 2.2,
+  y_sd = 2.2,
+  y = 55  
+)
+```
+```{r}
+florida_fit <- sampling(florida_mod, data = florida_data)
+```
+

@@ -1,8 +1,6 @@
 ---
 title: "House of Commons elections: modeling with the multivariate t density"
 author: "Simon Jackman and Jeffrey Arnold"
-date: "5/20/2017"
-output: html_document
 ---
 
 Original example from Simon Jackman. Translated to Stan by Jeffrey Arnold.
@@ -36,7 +34,7 @@ $$
 $$
 
 ```{r}
-data_92 <- within(dget("data/92.R"), {
+data_uk92 <- within(dget("data/uk92.R"), {
   X <- scale(x)
   x <- NULL
   N <- nrow(y)
@@ -51,16 +49,16 @@ data_92 <- within(dget("data/92.R"), {
 ```
 
 ```{r}
-mod_92 <- stan_model("stan/92.stan")
+mod_uk92 <- stan_model("stan/uk92.stan")
 ```
 
 ```{r}
-fit_92 <- sampling(mod_92, data = data_92)
+fit_uk92 <- sampling(mod_uk92, data = data_uk92)
 ```
 
 
 ```{r}
-summary(fit_92, par = c("nu", "a", "b", "Sigma"))$summary
+summary(fit_uk92, par = c("nu", "a", "b", "Sigma"))$summary
 ```
 
 
