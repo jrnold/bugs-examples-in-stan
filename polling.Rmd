@@ -1,0 +1,23 @@
+---
+title: "Polling the Polls"
+author: "Jeffrey Arnold"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library("rstan")
+library("pscl")
+```
+
+```{r}
+data("AustralianElectionPolling", package = "pscl")
+```
+
+```{r}
+
+```
+
