@@ -8,16 +8,123 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r}
+```{r message=FALSE}
 library("rstan")
+library("tidyverse")
+library("lubridate")
+library("stringr")
 library("pscl")
 ```
 
+House of Representatives - "first preferences""
+
+- https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_(House_of_Representatives)
+- https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election
+
 ```{r}
 data("AustralianElectionPolling", package = "pscl")
+elections <-
+  list(
+    `2007` = list(
+      date = ymd(20071124),
+      ALP = 43.4,
+      Lib = 36.3,
+      Nat = 5.5,
+      Green = 7.8,
+      FamilyFirst = 2,
+      Dems = 0.7,
+      OneNation = 0.3,
+      sampleSize = 12419863
+    ),
+    `2004` = list(
+      date = ymd(20041009),
+      ALP = 37.6,
+      Lib = 40.5,
+      Nat = 5.9,
+      Green = 7.2,
+      FamilyFirst = 2.0,
+      Dems = 1.2,
+      OneNation = 1.2,
+      sampleSize = 11715132      
+    )
+  )
+
+START_DATE <- elections[["2004"]][["date"]]
+  
+AustralianElectionPolling <-
+  AustralianElectionPolling %>%
+  mutate(midDate = as.Date(startDate + difftime(endDate, startDate)),
+         ALP_se = ALP * (100 - ALP) / sampleSize,
+         time = as.integer(difftime(midDate, START_DATE, units = "days")) + 1L,
+         pollster = as.integer(factor(org)))
+  
+```
+
+For House effects assume mean zero and a standard deviation of 7.5. The standard deviation corresponds
+to house effects with a 95% confidence interval of between -15 and 15 (which would be large).
+
+It is expected that most polling movements are $\pm 2$ percentage points. This implies an average scale of
+
+```{r}
+polling_data <- within(list(), {
+  y <- AustralianElectionPolling$ALP
+  s <- AustralianElectionPolling$ALP_se
+  time <- AustralianElectionPolling$time
+  house <- AustralianElectionPolling$pollster
+  H <- max(AustralianElectionPolling$pollster)
+  N <- length(y)
+  T <- as.integer(difftime(elections[["2007"]][["date"]], elections[["2004"]][["date"]], units = "days")) + 1
+  xi_init <- elections[["2004"]][["ALP"]]
+  xi_final <- elections[["2007"]][["ALP"]]
+  delta_loc <- 0
+  tau_scale <- sd(y)
+  zeta_scale <- 5
+})
 ```
 
 ```{r}
+polling_mod <- stan_model("stan/polling.stan")
+```
+
+```{r}
+polling_fit <- sampling(polling_mod, data = polling_data, chains = 1,
+                        init = list(list(xi = rep(mean(y), polling_data$N)))
+```
+
+```{r}
+xi <- summary(polling_fit, par = "xi")$summary %>%
+  as.data.frame() %>%
+  rownames_to_column("parameter") %>%
+  filter(!str_detect(parameter, ",2\\]")) %>%
+  mutate(date = START_DATE + row_number() - 1)
+
+ggplot() +
+  geom_ribbon(data = xi, mapping = aes(x = date, ymin = mean - 2 * sd, ymax = mean + 2 * sd), alpha = 0.3) +
+  geom_line(data = xi, mapping = aes(x = date, y = mean)) +
+  geom_point(data = AustralianElectionPolling,
+             mapping = aes(x = midDate, y = ALP, colour = org))
 
 ```
+
+```{r}
+xi <- summary(polling_fit, par = "xi")$summary %>%
+  as.data.frame() %>%
+  rownames_to_column("parameter") %>%
+  filter(str_detect(parameter, ",2\\]")) %>%
+  mutate(date = START_DATE + row_number() - 1)
+
+ggplot() +
+  geom_ribbon(data = xi, mapping = aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
+  geom_line(data = xi, mapping = aes(x = date, y = mean))
+
+```
+
+```{r}
+xi <- summary(polling_fit, par = "xi")$summary %>%
+  as.data.frame() %>%
+  rownames_to_column("parameter") %>%
+  mutate(date = START_DATE + row_number() - 1)
+
+```
+
 

@@ -34,7 +34,6 @@ parameters {
   vector[K] beta[n_country];
   // scale on country priors
   real<lower = 0.> tau;
-  real gamma;
 }
 transformed parameters {
   vector[N] mu;
@@ -43,11 +42,13 @@ transformed parameters {
   for (i in 1:N) {
     mu[i] = alpha[country[i]] + X[i] * beta[country[i]];
   }
-]
+}
 model {
   gamma ~ normal(gamma_mean, gamma_scale);
   tau ~ cauchy(0., tau_scale);
-  beta ~ normal(beta_mean, beta_scale);
+  for (k in 1:K) {
+    beta[k] ~ normal(beta_mean, beta_scale);
+  }
   alpha ~ normal(gamma, tau);
   y ~ normal(mu, sigma);
 }
