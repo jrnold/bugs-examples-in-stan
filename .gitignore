@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+*.knit.md
+*.utf8.md
+_main.*
+*.bib.sav

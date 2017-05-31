@@ -1,0 +1,10 @@
+base
+ggplot2
+StanHeaders
+rstan
+tidyverse
+tibble
+tidyr
+readr
+purrr
+dplyr

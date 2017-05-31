@@ -1,0 +1,7 @@
+genbeetles_setup	library
+unnamed-chunk-2	genbeetles_mod
+unnamed-chunk-3	genbeetles_fit
+unnamed-chunk-4	genbeetles_data	genbeetles_mod	sampling
+genbeetles_mod	stan_model
+benbeetles_data	%>%	as.numeric	dget	scale	within
+genbeetles_fit	genbeetles_data	genbeetles_mod	sampling

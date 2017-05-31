@@ -1,0 +1,4 @@
+unnamed-chunk-2	library
+bimodal_mod	stan_model
+bimodal_data	!	.col	.row	%>%	$	as_data_frame	as.integer	as.matrix	c	diag	filter	gather	is.na	list	matrix	mutate	nrow	rep	row_number	str_replace	value	within
+unnamed-chunk-3	bimodal_data	bimodal_mod	sampling

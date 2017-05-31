@@ -1,0 +1,12 @@
+before_chapter_script:
+- _common.R
+new_session: yes
+rmd_files:
+- index.Rmd
+# - bimodal.Rmd
+# - corporatism.Rmd
+- cancer.Rmd
+- florida.Rmd
+- genbeetles.Rmd
+- SingleTruncation.Rmd
+- references.Rmd

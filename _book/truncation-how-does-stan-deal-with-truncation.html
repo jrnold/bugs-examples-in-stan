@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Bayesian Models</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="Bayesian Models">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Bayesian Models" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bayesian Models" />
+  
+  
+  
+
+<meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
+
+
+<meta name="date" content="2017-05-30">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="generalized-beetles-generalizing-link-functions-for-binomial-glms.html">
+<link rel="next" href="references.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="cancer-difference-in-two-binomial-proportions.html"><a href="cancer-difference-in-two-binomial-proportions.html"><i class="fa fa-check"></i><b>1</b> Cancer: difference in two binomial proportions</a></li>
+<li class="chapter" data-level="2" data-path="learning-about-an-unknown-proportion-from-survey-data.html"><a href="learning-about-an-unknown-proportion-from-survey-data.html"><i class="fa fa-check"></i><b>2</b> Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="3" data-path="generalized-beetles-generalizing-link-functions-for-binomial-glms.html"><a href="generalized-beetles-generalizing-link-functions-for-binomial-glms.html"><i class="fa fa-check"></i><b>3</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
+<li class="chapter" data-level="4" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>4</b> Truncation: How does Stan deal with truncation?</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayesian Models</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="truncation-how-does-stan-deal-with-truncation" class="section level1">
+<h1><span class="header-section-number">4</span> Truncation: How does Stan deal with truncation?</h1>
+<p>See <span class="citation">Stan Development Team (<a href="#ref-Stan2016a">2016</a>)</span>, Chapter 11 “Truncated or Censored Data” for more on how Stan handles truncation and censoring.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
+<p>Assume we have the observations, <span class="math inline">\(y = 1,...,9\)</span>, from a Normal population with unknown mean and variance, subject to the constraint that <span class="math inline">\(y &lt; 10\)</span>, <span class="math display">\[
+\begin{aligned}[t]
+y &amp;\sim \mathsf{Normal}(\mu, \sigma^2) I(-\infty, 10) .
+\end{aligned}
+\]</span></p>
+<p>Ignoring the constraint, the MLEs for the mean and variance are 5 and 6.67; with the constraint taken into account, each observation makes likelihood contribution <span class="math display">\[
+f (y; m, s_2)/F ((k - m)/s),
+\]</span> where <span class="math inline">\(k\)</span> is the truncation point (in this case, 10), and the MLEs of <span class="math inline">\(m, s_2\)</span> are 5.32 and 8.28.</p>
+<p>The posterior of this model is not well identified by the data, so the mean, <span class="math inline">\(\mu\)</span>, and scale, <span class="math inline">\(\sigma\)</span>, are given informative priors based on the data, <span class="math display">\[
+\begin{aligned}[t]
+\mu &amp;\sim \mathsf{Normal}(\bar{y}, s_y) ,\\
+\sigma &amp;\sim \mathsf{HalfCauchy}(0, s_y) .
+\end{aligned}
+\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of <span class="math inline">\(y\)</span>, and <span class="math inline">\(s_y\)</span> is the standard deviation of <span class="math inline">\(y\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/SingleTruncation.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  vector[N] y;
+  real U;
+  real mu_mean;
+  real mu_scale;
+  real sigma_scale;
+}
+parameters {
+  real mu;
+  real<lower = 0.> sigma;
+}
+model {
+  mu ~ normal(mu_mean, mu_scale);
+  sigma ~ cauchy(0., sigma_scale);
+  for (i in 1:N) {
+    y[i] ~ normal(mu, sigma) T[, U];
+  }
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">9</span>
+  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+  U &lt;-<span class="st"> </span><span class="dv">10</span>
+  mu_mean &lt;-<span class="st"> </span><span class="kw">mean</span>(y)
+  mu_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
+  sigma_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(truncation_mod, <span class="dt">data =</span> truncation_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit
+<span class="co">#&gt; Inference for Stan model: SingleTruncation.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;         mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat</span>
+<span class="co">#&gt; mu      5.82    0.04 1.48   3.39   4.84   5.63   6.63   9.41  1201    1</span>
+<span class="co">#&gt; sigma   3.76    0.04 1.39   1.97   2.80   3.46   4.40   7.20  1250    1</span>
+<span class="co">#&gt; lp__  -13.54    0.03 1.08 -16.30 -13.99 -13.22 -12.75 -12.44  1258    1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Tue May 30 22:46:28 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+<p>We can compare these results to that of a model in which the truncation is not taken into account: <span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;\sim \mathsf{Normal}(\mu, \sigma^2), \\
+\mu &amp;\sim \mathsf{Normal}(\bar{y}, s_y) ,\\
+\sigma &amp;\sim \mathsf{HalfCauchy}(0, s_y) .
+\end{aligned}
+\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/normal.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  vector[N] y;
+  real mu_mean;
+  real mu_scale;
+  real sigma_scale;
+}
+parameters {
+  real mu;
+  real<lower = 0.> sigma;
+}
+model {
+  mu ~ normal(mu_mean, mu_scale);
+  sigma ~ cauchy(0., sigma_scale);
+  y ~ normal(mu, sigma);
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit2 &lt;-
+<span class="st">  </span><span class="kw">sampling</span>(truncation_mod2, <span class="dt">data =</span> truncation_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit2
+<span class="co">#&gt; Inference for Stan model: normal.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;         mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat</span>
+<span class="co">#&gt; mu      5.00    0.02 0.93   3.17   4.43   5.01   5.59   6.91  2193    1</span>
+<span class="co">#&gt; sigma   2.97    0.02 0.79   1.87   2.42   2.82   3.33   4.96  1836    1</span>
+<span class="co">#&gt; lp__  -13.77    0.03 1.05 -16.69 -14.16 -13.45 -13.03 -12.75  1265    1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Tue May 30 22:52:33 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Stan2016a">
+<p>Stan Development Team. 2016. <em>Stan Modeling Language Users Guide and Reference Manual, Version 2.14.0</em>. <a href="https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf" class="uri">https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="generalized-beetles-generalizing-link-functions-for-binomial-glms.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

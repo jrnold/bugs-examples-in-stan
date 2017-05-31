@@ -1,0 +1,11 @@
+cancer_setup	library
+unnamed-chunk-2	c	list	rep
+unnamed-chunk-3	stan_model
+unnamed-chunk-4	cancer_mod1
+unnamed-chunk-5	cancer_data	cancer_mod1	sampling
+unnamed-chunk-6	cancer_fit1
+cancer_mod2	stan_model
+unnamed-chunk-7	cancer_mod2
+cancer_data2	cancer_data	within
+cancer_fit2	cancer_data2	cancer_mod2	sampling
+unnamed-chunk-8	cancer_fit2

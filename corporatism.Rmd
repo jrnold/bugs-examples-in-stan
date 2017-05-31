@@ -1,9 +1,4 @@
----
-title: "Corporatism: hierarchical or "multi-level" model for economic growth in 16 OECD countries"
-author: Simon Jackman and Jeffrey Arnold
----
-
-Original example and text from Simon Jackman. Stan model and revisions by Jeffrey Arnold.
+# "Corporatism: hierarchical or "multi-level" model for economic growth in 16 OECD countries"
 
 
 The following program implements a regression model of economic growth among 16 OECD countries, 1971-1984.  The model is hierarchical in that it specifies country-specific coefficients for the following predictors: lagged growth, demand, import price movements, export price movements, leftist government and an intercept.  The magnitudes of the country-specific coefficients are conditional on (time-invariant) extent of labor organization within each country; these regression relationships constitute the 2nd level of the model.
@@ -17,49 +12,12 @@ Alvarez, R. Michael, Geoffrey Garrett and Peter Lange. 1991. "Government Partisa
 
 Western, Bruce. 1998. ``Causal Heterogeneity in Comparative Research: A Bayesian Hierarchical Modelling Approach.'' American Journal of Political Science. 42:1233--1259.
 
-model {
-	## macro (2nd level) model
-	for (i in 1:16) {             ## loop over countries
-		for (k in 1:6) {            ## loop over parameters
-			eb[i,k] <- g[k,1] + labor.org[i]*g[k,2];
-			b[i,k] ~ dnorm( eb[i,k], p[k] );
-			## n.b., each "random coefficient" b[i,k] sampled independently
-		}
-	}
+```{r corporatism_startup,message=FALSE}
+library("rstan")
+library("tidyverse")
+```
 
-  ## micro model
-	for (i in 1:224) {       ## loop over time within countries
-		ey[i] <-  b[country[i],1]         ## double-subscript selects which
-	      + imports[i]*b[country[i],5]  ## unit-specific effect to use
-        + exports[i]*b[country[i],4]  ## ordering from Western's Table 2
-        + demand[i]*b[country[i],3]
-        + growth.lag[i]*b[country[i],2]
-        + left[i]*b[country[i],6];
-		y[i] ~ dnorm( ey[i], tau[country[i]] );  ## likelihood
-	}
-
-	for (k in 1:6){                 ## loop, convert precisions to
-	   sigma.b[k] <- sqrt(1/p[k]);  ## covariate-specific std err
-	}
-
-  ## priors
-	for (i in 1:16) {
-		tau[i] ~ dgamma(1.0E-3,1.0E-3);    ## country-specific precisions
-		sigma[i] <- sqrt(1/tau[i]);        ## country-specific resid std err
-	}
-	for (k in 1:6) {
-		p[k] ~  dgamma(1.0E-3,1.0E-3);     ## covariate-specific precisions
-		g[k,1:2] ~ dmnorm(g0[1:2],G0[1:2,1:2]); ## MVN prior, 2nd level parms
-	}
-
-
-	g0[1] <- 0.0; g0[2] <- 0.0;     ## prior means, 2nd level
-	G0[1,1] <- .001; G0[1,2] <- 0;  ## prior precisions, 2nd level
-	G0[2,1] <- 0; G0[2,2] <- .001;
-
-}
-
-```{r}
+```{r corporatism}
 load("data/corporatism.rda")
 corporatism_country <- corporatism %>%
   select(country, labor.org) %>%
@@ -67,92 +25,10 @@ corporatism_country <- corporatism %>%
   
 ```
 
-```{r}
-mod_corporatism <- stan_model("stan/corporatism.stan")
+```{r corporatism_mod,results='hide'}
+corporatism_mod <- stan_model("stan/corporatism.stan")
 ```
-
-
-
-```{r}
-scal <- function(x) {
-  n <- length(unique(x))
-  if (n < 2) {
-    list(n = n, location = mean(x), scale = mean(x))
-  } else if (n == 2) {
-    list(n = n, location = mean(x), scale = diff(range(x)))
-  } else {
-    list(n = n, location = mean(x), scale = sd(x))
-  }
-}
-
-library("R6")
-AutoscaleNumeric <- R6Class("AutoscaleNumeric",
-        public(
-          n = NULL,
-          location = NULL,
-          spread = NULL,
-          initialize = function(x) {
-            vals <- scal(x)
-            self$n = vals$n
-            self$scale = vals$scale
-            self$location = vals$location
-            self
-          },
-          scale = function(x, center = FALSE, scale = FALSE) {
-            if (self$n == 1) {
-              x
-            } else {
-              if (center) {
-                x <- x - self$location
-              }
-              if (scale) {
-                x <- x / self$scale
-              }
-              x
-            }
-          },
-          rescale = function(x, center = FALSE, scale = FALSE) {
-            if (self$n == 1) {
-              x
-            } else {
-              if (scale) {
-                x <- x * self$scale
-              }
-              if (scale) {
-                x <- x + self$location
-              }
-              x
-            }
-          }          
-        )
-)
-
-AutoscaleMatrix <- R6Class("AutoscaleMatrix",
-        public(
-          margin = NULL,
-          objects = NULL,
-          initialize = function(x, margin = NULL) {
-            vals <- scal(x)
-            if (is.null(margin)) {
-              self$objects <- AutoscaleNumeric(x)
-            } else {
-              self$objects <- map(array_branch(x, margin = margin),
-                                  AutoscaleNumeric$new)  
-            }
-            self
-          },
-          scale = function(x, center = FALSE, scale = FALSE) {
-            if (is.null(self$margin)) {
-              self$objects$scale(x, center = center, scale = scale)
-            } else {
-            }
-          },
-          rescale = function(x, center = FALSE, scale = FALSE) {
-          }
-        )
-)
-
-AutoscaleDataFrame <- R6Class("AutoscaleDataFrame")
-
+```{r echo=FALSE,cache=FALSE,results='asis'}
+corporatism_mod
 ```
 

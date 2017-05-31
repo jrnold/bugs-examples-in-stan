@@ -1,0 +1,9 @@
+unnamed-chunk-2	library
+truncation_mod	stan_model
+unnamed-chunk-3	truncation_mod
+truncation_data	length	list	mean	sd	within
+truncation_fit	sampling	truncation_data	truncation_mod
+unnamed-chunk-4	truncation_fit
+truncation_mod2	stan_model
+truncation_fit2	sampling	truncation_data	truncation_mod2
+unnamed-chunk-6	truncation_fit2

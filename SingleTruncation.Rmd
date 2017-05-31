@@ -1,32 +1,83 @@
----
-title: Truncation: How does Stan deal with truncation?
----
+# Truncation: How does Stan deal with truncation?
 
-Assume we have the observations, $y = 1,...,9$, from a Normal population with unknown mean and variance, subject to the constraint that $y < 10$.  Ignoring the constraint, the MLEs for the mean and variance are 5 and 6.67; with the constraint taken into account, each observation makes likelihood contribution
-$f (y; m, s_2)/F ((k - m)/s)$ where $k$ is the truncation point (in this case, 10), and the MLEs of $m, s_2$  are 5.32 and 8.28.
-
-
-```{r}
-mod_truncation <- stan_model("stan/SingleTruncation.stan")
+See @Stan2016a, Chapter 11 "Truncated or Censored Data" for more on how Stan handles truncation and censoring.
+```{r message=FALSE}
+library("tidyverse")
+library("rstan")
 ```
 
-This is not well identified by the data until there a reasonable number of observations.
-```{r}
-data_truncation <- within(list(), {
-  y <- sample(1:9, 256, replace = TRUE)
+
+Assume we have the observations, $y = 1,...,9$, from a Normal population with unknown mean and variance, subject to the constraint that $y < 10$,
+$$
+\begin{aligned}[t]
+y &\sim \mathsf{Normal}(\mu, \sigma^2) I(-\infty, 10) .
+\end{aligned}
+$$
+
+Ignoring the constraint, the MLEs for the mean and variance are 5 and 6.67; with the constraint taken into account, each observation makes likelihood contribution
+$$
+f (y; m, s_2)/F ((k - m)/s),
+$$
+where $k$ is the truncation point (in this case, 10), and the MLEs of $m, s_2$  are 5.32 and 8.28.
+
+The posterior of this model is not well identified by the data, so the mean, $\mu$, and scale, $\sigma$, are given informative priors based on the data,
+$$
+\begin{aligned}[t]
+\mu &\sim \mathsf{Normal}(\bar{y}, s_y) ,\\
+\sigma &\sim \mathsf{HalfCauchy}(0, s_y) .
+\end{aligned}
+$$
+where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$.
+
+```{r truncation_mod,results='hide'}
+truncation_mod <- stan_model("stan/SingleTruncation.stan")
+```
+```{r echo=FALSE,results='asis',cache=FALSE}
+truncation_mod
+```
+
+```{r truncation_data}
+truncation_data <- within(list(), {
+  y <- 1:9
   N <- length(y)
   U <- 10
   mu_mean <- mean(y)
-  mu_scale <- sd(y) * 10
-  sigma_scale <- sd(y) * 5
+  mu_scale <- sd(y)
+  sigma_scale <- sd(y)
 })
 ```
 
-```{r result='hide', message=FALSE}
-fit_truncation <- sampling(mod_truncation, data = data_truncation)
+
+
+```{r truncation_fit,results='hide',message=FALSE}
+truncation_fit <- sampling(truncation_mod, data = truncation_data)
 ```
 ```{r}
-fit_truncation
+truncation_fit
+```
+
+We can compare these results to that of a model in which the truncation is not taken into account:
+$$
+\begin{aligned}[t]
+y_i &\sim \mathsf{Normal}(\mu, \sigma^2), \\
+\mu &\sim \mathsf{Normal}(\bar{y}, s_y) ,\\
+\sigma &\sim \mathsf{HalfCauchy}(0, s_y) .
+\end{aligned}
+$$
+
+```{r truncation_mod2,results='hide'}
+truncation_mod2 <- stan_model("stan/normal.stan")
+```
+```{r echo=FALSE,results='asis',cache=FALSE}
+truncation_mod2
+```
+
+```{r truncation_fit2,results='hide'}
+truncation_fit2 <-
+  sampling(truncation_mod2, data = truncation_data)
+```
+```{r}
+truncation_fit2
 ```
 
 

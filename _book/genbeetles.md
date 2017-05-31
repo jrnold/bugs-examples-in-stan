@@ -1,6 +1,8 @@
+
 # Generalized Beetles: generalizing link functions for binomial GLMs
 
-```{r genbeetles_setup,message=FALSE}
+
+```r
 library("rstan")
 library("tidyverse")
 ```
@@ -43,14 +45,43 @@ $$
 \end{aligned}
 $$
 
-```{r genbeetles_mod,results='hide'}
+
+```r
 genbeetles_mod <- stan_model("stan/genbeetles.stan")
 ```
-```{r echo=FALSE,cache=FALSE,results='asis'}
-genbeetles_mod
-```
+<pre>
+  <code class="stan">data {
+  int N;
+  int r[N];
+  int n[N];
+  vector[N] x;
+}
+parameters {
+  real alpha;
+  real beta;
+  real<lower = 0.> nu;
+}
+transformed parameters {
+  vector[N] mu;
+  for (i in 1:N) {
+    mu[i] = pow(inv_logit(alpha + beta * x[i]), nu) ;
+  }
+}
+model {
+  alpha ~ normal(0., 10.);
+  beta ~ normal(0., 2.5);
+  nu ~ gamma(0.25, 0.25);
+  r ~ binomial(n, mu);
+}
+generated quantities {
+  // probability where the maximum marginal effect
+  real pdot;
+  pdot = pow(inv_logit(nu), nu);
+}</code>
+</pre>
 
-```{r benbeetles_data}
+
+```r
 genbeetles_data <- dget("data/genbeetles.R") %>%
   within({
     x <- as.numeric(scale(x))
@@ -58,9 +89,48 @@ genbeetles_data <- dget("data/genbeetles.R") %>%
 ```
 
 
-```{r genbeetles_fit,results='hide'}
+
+```r
 genbeetles_fit <- sampling(genbeetles_mod, data = genbeetles_data)
 ```
-```{r}
+
+```r
 genbeetles_fit
+#> Inference for Stan model: genbeetles.
+#> 4 chains, each with iter=2000; warmup=1000; thin=1; 
+#> post-warmup draws per chain=1000, total post-warmup draws=4000.
+#> 
+#>          mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff
+#> alpha   -1.34    0.03 0.90   -3.31   -1.91   -1.29   -0.73    0.24   809
+#> beta     4.07    0.03 0.88    2.59    3.45    3.97    4.60    6.06   780
+#> nu       0.34    0.00 0.14    0.17    0.25    0.32    0.40    0.69   775
+#> mu[1]    0.10    0.00 0.03    0.06    0.08    0.10    0.12    0.16  1922
+#> mu[2]    0.19    0.00 0.03    0.13    0.17    0.19    0.21    0.25  2856
+#> mu[3]    0.33    0.00 0.03    0.27    0.31    0.33    0.35    0.39  4000
+#> mu[4]    0.54    0.00 0.04    0.47    0.52    0.54    0.57    0.62  1713
+#> mu[5]    0.77    0.00 0.03    0.70    0.75    0.77    0.80    0.83  2300
+#> mu[6]    0.92    0.00 0.02    0.88    0.91    0.92    0.94    0.96  3217
+#> mu[7]    0.98    0.00 0.01    0.95    0.97    0.98    0.99    0.99  1329
+#> mu[8]    0.99    0.00 0.00    0.98    0.99    0.99    1.00    1.00  1058
+#> pdot     0.84    0.00 0.04    0.76    0.81    0.84    0.87    0.90   815
+#> lp__  -185.43    0.04 1.24 -188.64 -186.03 -185.11 -184.50 -183.97  1143
+#>       Rhat
+#> alpha    1
+#> beta     1
+#> nu       1
+#> mu[1]    1
+#> mu[2]    1
+#> mu[3]    1
+#> mu[4]    1
+#> mu[5]    1
+#> mu[6]    1
+#> mu[7]    1
+#> mu[8]    1
+#> pdot     1
+#> lp__     1
+#> 
+#> Samples were drawn using NUTS(diag_e) at Tue May 30 22:19:31 2017.
+#> For each parameter, n_eff is a crude measure of effective sample size,
+#> and Rhat is the potential scale reduction factor on split chains (at 
+#> convergence, Rhat=1).
 ```

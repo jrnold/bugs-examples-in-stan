@@ -6,8 +6,6 @@ data {
   int<lower = 1, upper = N> x_obs_idx[N_obs, 2];
   int<lower = 1, upper = N> x_miss_idx[N_miss, 2];
   vector[2] mu;
-  matrix[2, 2] Sigma_cov;
-  real<lower = 0.> Sigma_df;
 }
 parameters {
   cov_matrix[2] Sigma;
@@ -23,12 +21,9 @@ transformed parameters {
   for (i in 1:N_miss) {
     X[x_miss_idx[i, 1], x_miss_idx[i, 2]] = x_miss[i];
   }
-  print(X)
 }
 model{
-  print(X)
   for (i in 1:N) {
     X[i] ~ multi_normal(mu, Sigma);
   }
-  Sigma ~ wishart(Sigma_df, Sigma_cov);
 }

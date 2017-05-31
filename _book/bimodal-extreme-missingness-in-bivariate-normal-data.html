@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+
+  <meta property="og:title" content="" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="" />
+  
+  
+  
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+
+
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="bimodal.html"><a href="#bimodal-extreme-missingness-in-bivariate-normal-data"><i class="fa fa-check"></i><b>1</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./"></a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<!--bookdown:title:end-->
+<!--bookdown:title:start-->
+<div id="bimodal-extreme-missingness-in-bivariate-normal-data" class="section level1">
+<h1><span class="header-section-number">1</span> Bimodal: Extreme missingness in bivariate normal data</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="co">#&gt; Loading required package: ggplot2</span>
+<span class="co">#&gt; Loading required package: StanHeaders</span>
+<span class="co">#&gt; rstan (Version 2.15.1, packaged: 2017-04-19 05:03:57 UTC, GitRev: 2e1f913d3ca3)</span>
+<span class="co">#&gt; For execution on a local, multicore CPU with excess RAM we recommend calling</span>
+<span class="co">#&gt; rstan_options(auto_write = TRUE)</span>
+<span class="co">#&gt; options(mc.cores = parallel::detectCores())</span>
+<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="co">#&gt; Loading tidyverse: tibble</span>
+<span class="co">#&gt; Loading tidyverse: tidyr</span>
+<span class="co">#&gt; Loading tidyverse: readr</span>
+<span class="co">#&gt; Loading tidyverse: purrr</span>
+<span class="co">#&gt; Loading tidyverse: dplyr</span>
+<span class="co">#&gt; Conflicts with tidy packages ----------------------------------------------</span>
+<span class="co">#&gt; extract(): tidyr, rstan</span>
+<span class="co">#&gt; filter():  dplyr, stats</span>
+<span class="co">#&gt; lag():     dplyr, stats</span>
+<span class="kw">library</span>(<span class="st">&quot;stringr&quot;</span>)</code></pre></div>
+<p>Simple methods for dealing with missing data can run into trouble given pernicious patterns of missingness. A famous artificial data set designed to highlight this point was created by Gordon Murray, to show how an EM algorithm can run into problems (see the Journal of the Royal Statistical Society Series B, 39:27, 1977; this example appears in the discussion to Dempster, Laird and Rubin’s much-cited EM paper):</p>
+<pre><code>x1: 1   1   -1  -1  2   2   -2 -2   *   *   *   *
+x2: 1   -1  1   -1  *   *   *   *   2   2   -2  -2</code></pre>
+<p>Assume bivariate normality, and that the means of the two variables are both zero, but the variances and covariance are unknown. Inference about the correlation coefficient <span class="math inline">\(r\)</span> between these two variables is not trivial in this instance. The marginal complete-data likelihood for <span class="math inline">\(r\)</span> is not unimodal, and has a saddle-point at zero, and two local maxima close to -1 and 1. A Bayesian analysis (with uninformative priors) similarly recovers a bimodal posterior density for the correlation coefficient; e.g., see Tanner, Tools for Statistical Inference, 3rd edition, pp95-96 or Congdon, Bayesian Statistical Modelling, p46.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bimodal_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/bimodal.stan&quot;</span>)</code></pre></div>
+<p>You can ignore the <strong>rstan</strong> warning,</p>
+<pre><code>DIAGNOSTIC(S) FROM PARSER:
+Warning (non-fatal):
+Left-hand side of sampling statement (~) may contain a non-linear transform of a parameter or local variable.
+If it does, you need to include a target += statement with the log absolute determinant of the Jacobian of the transform.
+Left-hand-side of sampling statement:
+    X[i] ~ multi_normal(...)</code></pre>
+<p>since the left hand side is a simple linear relationship and no Jacobian adjustment is needed. All we did was replace index values in the transformed parameter.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>,
+       <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>), <span class="dt">ncol =</span> <span class="dv">2</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as_data_frame</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.row =</span> <span class="kw">row_number</span>()) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">gather</span>(.col, value, <span class="op">-</span>.row) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.col =</span> <span class="kw">as.integer</span>(<span class="kw">str_replace</span>(.col, <span class="st">&quot;V&quot;</span>, <span class="st">&quot;&quot;</span>)))
+
+X_obs &lt;-<span class="st"> </span><span class="kw">filter</span>(X, <span class="op">!</span><span class="kw">is.na</span>(value))
+X_miss &lt;-<span class="st"> </span><span class="kw">filter</span>(X, <span class="kw">is.na</span>(value))
+  
+bimodal_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(X)
+  x_obs &lt;-<span class="st"> </span>X_obs<span class="op">$</span>value
+  x_obs_idx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(X_obs[ , <span class="kw">c</span>(<span class="st">&quot;.row&quot;</span>, <span class="st">&quot;.col&quot;</span>)])
+  N_obs &lt;-<span class="st"> </span><span class="kw">nrow</span>(X_obs)
+  x_miss_idx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(X_miss[ , <span class="kw">c</span>(<span class="st">&quot;.row&quot;</span>, <span class="st">&quot;.col&quot;</span>)])
+  N_miss &lt;-<span class="st"> </span><span class="kw">nrow</span>(X_miss)
+  mu &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">2</span>)
+  Sigma_cov &lt;-<span class="st"> </span><span class="kw">diag</span>(<span class="dv">2</span>)
+  Sigma_df &lt;-<span class="st"> </span><span class="dv">2</span>
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bimodal_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(bimodal_mod, <span class="dt">data =</span> bimodal_data,
+                        <span class="dt">chains =</span> <span class="dv">1</span>)</code></pre></div>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
