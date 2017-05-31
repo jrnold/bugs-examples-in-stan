@@ -16,3 +16,46 @@ link-citations: yes
 This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. 
 These were originally written in WinBUGS or JAGS.
 I have translated these examples into Stan and revised or edited them as appropriate.
+
+
+1. Undervote
+
+difference of two independent proportions; racial differences in self-reported undervoting
+filetype: odc
+last updated 8:38pm December 4, 2009
+2. Cancer
+
+difference of two independent proportions; differences in rates of lung cancer by smoking
+filetype: odc
+last updated 8:38pm December 4, 2009
+3. Florida
+
+learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign; see my Annual Review of Political Science article; this example executed in JAGS (see links)
+filetype: zip
+last updated 8:38pm December 4, 2009
+4. Turnout
+
+logit/probit models for binary response; voter turnout as a function of covariates
+filetype: odc
+last updated 8:38pm December 4, 2009
+5. Co-Sponsor
+
+computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship
+filetype: none
+last updated 7:16pm May 11, 2005
+
+
+6. Reagan: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan
+7. Political Sophistication:  generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France
+8. Legislators:  generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data
+9. Judges: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions
+10. Resistant outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.
+11. House of Commons: analysis of compositional data; vote shares for candidates to the U.K. House of Commons
+12. Campaign: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.
+13. Aspirin: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)
+14. Corporatism: hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth
+15. t-prior: non-conjugate student-t priors for mean of normal data; bimodal posterior density when prior and data conflict
+16. Bimodal: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient
+17. Unidentified: the consequences of over-parameterization; contrived example from Carlin and Louis
+18. Engines: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures
+19. Truncated: Example of sampling from a truncated normal distribution.

@@ -1,7 +1,0 @@
-florida_setup	library
-florida_mod	stan_model
-unnamed-chunk-2	florida_mod
-florida_data	list
-florida_fit	florida_data	florida_mod	sampling
-unnamed-chunk-3	florida_fit
-unnamed-chunk-4	$	florida_fit	round	summary

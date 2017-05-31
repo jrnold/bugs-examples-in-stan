@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Bayesian Models</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="Bayesian Models">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Bayesian Models" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bayesian Models" />
+  
+  
+  
+
+<meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
+
+
+<meta name="date" content="2017-05-30">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="truncation-how-does-stan-deal-with-truncation.html">
+<link rel="next" href="references.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="cancer-difference-in-two-binomial-proportions.html"><a href="cancer-difference-in-two-binomial-proportions.html"><i class="fa fa-check"></i><b>1</b> Cancer: difference in two binomial proportions</a></li>
+<li class="chapter" data-level="2" data-path="learning-about-an-unknown-proportion-from-survey-data.html"><a href="learning-about-an-unknown-proportion-from-survey-data.html"><i class="fa fa-check"></i><b>2</b> Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="3" data-path="generalized-beetles-generalizing-link-functions-for-binomial-glms.html"><a href="generalized-beetles-generalizing-link-functions-for-binomial-glms.html"><i class="fa fa-check"></i><b>3</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
+<li class="chapter" data-level="4" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>4</b> Truncation: How does Stan deal with truncation?</a></li>
+<li class="chapter" data-level="5" data-path="negative-binomial.html"><a href="negative-binomial.html"><i class="fa fa-check"></i><b>5</b> Negative Binomial</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayesian Models</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="negative-binomial" class="section level1">
+<h1><span class="header-section-number">5</span> Negative Binomial</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</code></pre></div>
+<p>The data are from the 1990 United States Census for the city of St. Louis, Missouri for Census Tracts, and from records of the St. Louis City Metropolitan Police Department for the years 1980 through 1994. For each Census Tract (with a population), N=111, an observation includes - the median household income in 1990 - the percentage unemployed (base of labor force) - a count of the number of homicide incidents.</p>
+<p>The number of homicides in this 15 year period totals 2,815. The average size of a Census Tract is 3,571 with a range of 249–8,791. Income has been rescaled by dividing by 1,000 which produces a range similar to that of percentage unemeployed and standard deviations that are very close. Tract homicide counts range from 0 through 99 with a median of 16 (mean is 25.+). An enhanced set of linear, predictors does better than this two predictor example.</p>
+<p><span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;\sim \mathsf{NegBinomial2}(\mu_i,\phi) \\
+\mu_i &amp;= \frac{1}{1 + e^{-\eta_i}} \\
+\eta_i &amp;= x_i \beta
+\end{aligned}
+\]</span> The negative binomial distribution is parameterized so that <span class="math inline">\(\mu \in \mathbb{R}^+\)</span> is the location parameter, and <span class="math inline">\(\phi \in \mathbb{R}^+\)</span> is the reciprocal overdisperson parameter, such that the mean and variance of a random variable <span class="math inline">\(Y\)</span> distributed negative binomial is <span class="math display">\[
+\begin{aligned}[t]
+E[Y] &amp;= \mu , \\
+V[Y] &amp;= \mu + \frac{\mu^2}{\phi} .
+\end{aligned}
+\]</span> As <span class="math inline">\(\phi \to \infty\)</span>, the negative binomial approaches the Poisson distribution.</p>
+<p>The parameters are given weakly informative priors, <span class="math display">\[
+\begin{aligned}[t]
+\alpha &amp;\sim \mathsf{Normal}(0, 10), \\
+\beta_k &amp;\sim \mathsf{Normal}(0, 2.5), \\
+\phi^{-1} &amp;\sim \mathsf{HalfCauchy}(0, 5).
+\end{aligned}
+\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/negbin.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  int y[N];
+  int K;
+  matrix[N, K] X;
+  // priors
+  real alpha_mean;
+  real<lower = 0.> alpha_scale;
+  vector[K] beta_mean;
+  vector<lower = 0.>[K] beta_scale;
+  real<lower = 0.> reciprocal_phi_scale;
+}
+parameters {
+  real alpha;
+  vector[K] beta;
+  real<lower = 0.> reciprocal_phi;
+}
+transformed parameters {
+  vector[N] eta;
+  real<lower = 0.> phi;
+  eta = alpha + X * beta;
+  phi = 1. / reciprocal_phi;
+}
+model {
+  reciprocal_phi ~ cauchy(0., reciprocal_phi_scale);
+  alpha ~ normal(alpha_mean, alpha_scale);
+  beta ~ normal(beta_mean, beta_scale);
+  y ~ neg_binomial_2_log(eta, phi);
+}
+generated quantities {
+  vector[N] mu;
+  vector[N] log_lik;
+  vector[N] y_rep;
+  mu = exp(eta);
+  for (i in 1:N) {
+    log_lik[i] = neg_binomial_2_log_lpmf(y[i] | eta[i], phi);
+    y_rep[i] = neg_binomial_2_rng(mu[i], phi);
+  }
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/st_louis_census.rda&quot;</span>)
+negbin_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>st_louis_census<span class="op">$</span>i8094
+  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
+  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
+  beta_mean &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
+  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)  
+  alpha_mean &lt;-<span class="st"> </span><span class="dv">0</span>
+  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
+  reciprocal_phi_scale &lt;-<span class="st"> </span><span class="dv">5</span>
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(negbin_mod, <span class="dt">data =</span> negbin_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(negbin_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;phi&quot;</span>))<span class="op">$</span>summary
+<span class="co">#&gt;           mean se_mean     sd   2.5%    25%    50%    75%  97.5% n_eff</span>
+<span class="co">#&gt; alpha    2.927 0.00126 0.0722  2.786  2.879  2.925  2.975  3.070  3300</span>
+<span class="co">#&gt; beta[1]  0.692 0.00193 0.1100  0.478  0.618  0.692  0.763  0.913  3253</span>
+<span class="co">#&gt; beta[2] -0.347 0.00171 0.1015 -0.550 -0.414 -0.346 -0.279 -0.151  3539</span>
+<span class="co">#&gt; phi      1.967 0.00584 0.3143  1.428  1.752  1.943  2.154  2.666  2894</span>
+<span class="co">#&gt;          Rhat</span>
+<span class="co">#&gt; alpha   1.000</span>
+<span class="co">#&gt; beta[1] 1.000</span>
+<span class="co">#&gt; beta[2] 0.999</span>
+<span class="co">#&gt; phi     1.001</span></code></pre></div>
+<p>We could also fit the model using the <strong><a href="https://cran.r-project.org/package=rstanarm">rstanarm</a></strong> function <a href="https://www.rdocumentation.org/packages/rstanarm/topics/stan_glm.nb">rstanarm</a>,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm.nb</span>(i8094 <span class="op">~</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_fit2
+<span class="co">#&gt; stan_glm.nb</span>
+<span class="co">#&gt;  family:  neg_binomial_2 [log]</span>
+<span class="co">#&gt;  formula: i8094 ~ pcunemp9 + incrs</span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Estimates:</span>
+<span class="co">#&gt;                       Median MAD_SD</span>
+<span class="co">#&gt; (Intercept)            2.8    0.4  </span>
+<span class="co">#&gt; pcunemp9               0.1    0.0  </span>
+<span class="co">#&gt; incrs                 -0.1    0.0  </span>
+<span class="co">#&gt; reciprocal_dispersion  2.0    0.3  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Sample avg. posterior predictive </span>
+<span class="co">#&gt; distribution of y (X = xbar):</span>
+<span class="co">#&gt;          Median MAD_SD</span>
+<span class="co">#&gt; mean_PPD 32.0    5.5  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></code></pre></div>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="truncation-how-does-stan-deal-with-truncation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -6,7 +6,7 @@ library("rstan")
 
 This is an learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign [@Jackman2004a].
 
-```{r florida_mod,results='hide'}
+```{r florida_mod,results='hide',cache.extra=tools::md5sum("stan/florida.stan")}
 florida_mod <- stan_model("stan/florida.stan")
 ```
 ```{r echo=FALSE,cache=FALSE,results='asis'}

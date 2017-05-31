@@ -129,7 +129,7 @@ genbeetles_fit
 #> pdot     1
 #> lp__     1
 #> 
-#> Samples were drawn using NUTS(diag_e) at Tue May 30 22:19:31 2017.
+#> Samples were drawn using NUTS(diag_e) at Tue May 30 23:53:13 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).

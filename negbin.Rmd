@@ -1,0 +1,77 @@
+# Negative Binomial
+
+```{r message=FALSE}
+library("tidyverse")
+library("rstan")
+library("rstanarm")
+```
+
+
+The data  are  from the 1990 United States Census for the city of St. Louis, Missouri for Census Tracts, and from records of the St. Louis City Metropolitan Police Department for the years 1980 through 1994. For each Census Tract (with a population), N=111, an observation includes
+- the median household income in 1990
+- the percentage unemployed (base of labor force)
+- a count of the number of homicide incidents.
+
+The number of homicides in this 15 year period totals 2,815.  The average size of a Census Tract is 3,571 with a range of 249--8,791. Income has been rescaled by dividing by 1,000 which produces a range similar to that of percentage unemeployed and standard deviations that are very close.  Tract homicide counts range from 0 through 99 with a median of 16 (mean is 25.+).  An enhanced set of linear, predictors does better than this two predictor example.
+
+$$
+\begin{aligned}[t]
+y_i &\sim \mathsf{NegBinomial2}(\mu_i,\phi) \\
+\mu_i &= \frac{1}{1 + e^{-\eta_i}} \\
+\eta_i &= x_i \beta
+\end{aligned}
+$$
+The negative binomial distribution is parameterized so that $\mu \in \mathbb{R}^+$ is the location parameter, and $\phi \in \mathbb{R}^+$ is the reciprocal overdisperson parameter, such that the mean and variance of a random variable $Y$ distributed negative binomial is
+$$
+\begin{aligned}[t]
+E[Y] &= \mu , \\
+V[Y] &= \mu + \frac{\mu^2}{\phi} .
+\end{aligned}
+$$
+As $\phi \to \infty$, the negative binomial approaches the Poisson distribution.
+
+The parameters are given weakly informative priors,
+$$
+\begin{aligned}[t]
+\alpha &\sim \mathsf{Normal}(0, 10), \\
+\beta_k &\sim \mathsf{Normal}(0, 2.5), \\
+\phi^{-1} &\sim \mathsf{HalfCauchy}(0, 5).
+\end{aligned}
+$$
+
+```{r negbin_mod,results='hide',cache.extra=tools::md5sum("stan/negbin.stan")}
+negbin_mod <- stan_model("stan/negbin.stan")
+```
+```{r echo=FALSE,results='asis',cache=FALSE}
+negbin_mod
+```
+
+```{r negbin_data,cache.extra=tools::md5sum("data/st_louis_census.rda")}
+load("data/st_louis_census.rda")
+negbin_data <- within(list(), {
+  y <- st_louis_census$i8094
+  N <- length(y)
+  X <- model.matrix(~ 0 + pcunemp9 + incrs, data = st_louis_census) %>% scale()
+  K <- ncol(X)
+  beta_mean <- rep(0, K)
+  beta_scale <- rep(2.5, K)  
+  alpha_mean <- 0
+  alpha_scale <- 10
+  reciprocal_phi_scale <- 5
+})
+```
+
+```{r negbin_fit,results='hide'}
+negbin_fit <- sampling(negbin_mod, data = negbin_data)
+```
+```{r}
+summary(negbin_fit, par = c("alpha", "beta", "phi"))$summary
+```
+
+We could also fit the model using the `r rpkg("rstanarm")` function `r rdoc("rstanarm", "stan_glm.nb")`,
+```{r negbin_fit2}
+negbin_fit2 <- stan_glm.nb(i8094 ~ pcunemp9 + incrs, data = st_louis_census)
+```
+```{r}
+negbin_fit2
+```

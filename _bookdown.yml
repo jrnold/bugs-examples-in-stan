@@ -9,4 +9,7 @@ rmd_files:
 - florida.Rmd
 - genbeetles.Rmd
 - SingleTruncation.Rmd
+- negbin.Rmd
+- resistant.Rmd
+- turnout2005.Rmd
 - references.Rmd

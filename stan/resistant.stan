@@ -9,16 +9,14 @@ data {
   real sigma_scale;
   vector[K] beta_loc;
   vector<lower = 0.>[K] beta_scale;
-  real gamma_loc;
-  real<lower = 0.> gamma_scale;
-  real<lower = 0.> tau_scale;
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
 }
 parameters {
   vector[Y] alpha;
   vector[K] beta;
   real<lower = 2.> nu;
   real<lower = 0.> sigma;
-  real gamma;
   real<lower = 0.> tau;
 }
 transformed parameters {
@@ -31,9 +29,7 @@ model{
   // priors for error variance
   sigma ~ cauchy(0., sigma_scale);
   // priors for year intercepts
-  alpha ~ normal(gamma, tau);
-  gamma ~ normal(gamma_loc, gamma_scale);
-  tau ~ cauchy(0., tau_scale);
+  alpha ~ normal(alpha_loc, alpha_scale);
 	// priors for the regression coefficients
 	beta ~ normal(beta_loc, beta_scale);
 	// degrees of freedom

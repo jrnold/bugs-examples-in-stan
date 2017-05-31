@@ -1,54 +1,42 @@
----
-title "Turnout: logit/probit models for binary data"
-author: Simon Jackman and Jeffrey Arnold
----
+# Turnout: logit/probit models for binary data
 
-Original BUGS model and text by Simon Jackman. Stan model and revisions by 
-Jeffrey Arnold.
-
-Voter turnout is coded as a binary indicator (y =1 if voted, 0 otherwise) and related to covariates via a logit model.  The data comprise a random 3,000 observation subset of a much larger data set analyzed by Jonathan Nagler.
-
-Original BUGS model
-```
-model{
-  for (i in 1:N){                 ## loop over observations
-    y[i] ~ dbern(p[i]);           ## binary outcome, Bernoulli trial
-    logit(p[i]) <- mu[i];         ## logit link
-    mu[i] <- beta[1]              ## regression structure for covariates
-             + beta[2]*educ[i]
-             + beta[3]*(educ[i]*educ[i])
-             + beta[4]*age[i]
-             + beta[5]*(age[i]*age[i])
-             + beta[6]*south[i]
-             + beta[7]*govelec[i]
-             + beta[8]*closing[i]
-             + beta[9]*(closing[i]*educ[i])
-             + beta[10]*(educ[i]*educ[i]*closing[i]);
-
-		## extra quantity, not necc for model fitting
-    llh[i] <- y[i]*log(p[i]) + (1-y[i])*log(1-p[i]);  ## llh contribution
-  }
-
-  sumllh <- sum(llh[]);    ## sum of log-likelihood contributions
-
-  ## priors, hyper-parameters b0 and B given at end of data file
-  beta[1:10] ~ dmnorm(b0[ ] , B[ , ]) ;  ## multivariate Normal prior
-}
+```{r message=FALSE}
+library("tidyverse")
+library("rstanarm")
+library("rstan")
 ```
 
-The Stan model for a logit link:
-```{r}
-mod_logit <- stan_model("stan/logit.stan")
+
+Voter turnout is coded as a binary indicator (`y=1` if voted, `0` otherwise) and related to covariates via a logit model.  The data comprise a random 3,000 observation subset of a much larger data set analyzed by Jonathan Nagler [@Nagler1994a]:
+
+$$
+\begin{aligned}[t]
+y_i &\sim \mathsf{Bernoulli}(\pi_i) \\
+\pi_i &= \frac{1}{1 + e^{-\eta_i}} \\
+\eta_i &= \alpha + x_i \beta
+\end{aligned}
+$$
+The regression parameters are given weakly informative priors on the logit scale,
+$$
+\begin{aligned}[t]
+\alpha &\sim \mathsf{Normal}(0, 10)\\
+\beta_k &\sim \mathsf{Normal}(0, 2.5)
+\end{aligned}
+$$
+
+```{r turnout2005_mod_logit,results='hide',cache.extra=tools::md5sum("stan/logit.stan")}
+turnout2005_mod_logit <- stan_model("stan/logit.stan")
+```
+```{r results='asis',echo=FALSE}
+turnout2005_mod_logit
 ```
 
-The Stan model for a probit link:
-```{r}
-mod_probit <- stan_model("stan/probit.stan")
-```
 
-```{r}
+```{r turnout2005,cache.extra=tools::md5sum("data/turnout2005.rda")}
 load("data/turnout2005.rda")
-data_turnout2005 <- within(list(), {
+```
+```{r turnout2005_data}
+turnout2005_data <- within(list(), {
   N <- nrow(turnout2005)
   X <- scale(model.matrix(~ 0 + closing * poly(educ, 2) + poly(age, 2) + 
                           south + govelec, data = turnout2005))
@@ -61,12 +49,55 @@ data_turnout2005 <- within(list(), {
 })
 ```
 
-```{r}
-fit_turnout2005_logit <- sampling(mod_logit, data = data_turnout2005)
+The only difference between and logit model and 
+
+```{r turnout2005_mod_probit,results='hide',cache.extra=tools::md5sum("stan/probit.stan")}
+turnout2005_mod_probit <- stan_model("stan/probit.stan")
+```
+```{r results='asis',echo=FALSE}
+turnout2005_mod_probit
 ```
 
+
+```{r turnout2005_fit_logit,results='hide'}
+turnout2005_fit_logit <- sampling(turnout2005_mod_logit, data = turnout2005_data)
+```
 ```{r}
-fit_turnout2005_probit <- sampling(mod_probit, data = data_turnout2005)
+turnout2005_fit_logit
 ```
 
-TODO: compare fits of the logit and probit.
+```{r turnout2005_fit_probit,results='hide'}
+turnout2005_fit_probit <- sampling(turnout2005_mod_probit, data = turnout2005_data)
+```
+```{r}
+turnout2005_fit_probit
+```
+
+These models can also be estimated with the `r rpkg("rstanarm")` function `r rdoc("rstanarm", "stan_glm")`:
+```{r turnout2005_fit_logit2,results='hide'}
+turnout2005_fit_logit2 <- 
+  stan_glm(y ~ closing * poly(educ, 2) + poly(age, 2) + south + govelec,
+         family = binomial(),
+         data = turnout2005)
+```
+```{r}
+turnout2005_fit_logit2
+```
+
+
+```{r turnout2005_fit_probit2,results='hide'}
+turnout2005_fit_probit2 <-
+  stan_glm(y ~ closing * poly(educ, 2) + poly(age, 2) + south + govelec,
+         family = binomial(link = "probit"),
+         data = turnout2005)
+```
+```{r}
+turnout2005_fit_probit2
+```
+
+
+## Questions {-}
+
+1. Is there any difference in the fit of the probit and logit?
+2. How do these fits compare to using a generalized logit model?
+

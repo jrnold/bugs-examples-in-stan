@@ -6,3 +6,7 @@
 *.utf8.md
 _main.*
 *.bib.sav
+stan/*.rds
+/*_cache
+/*.md
+_bookdown_files/*

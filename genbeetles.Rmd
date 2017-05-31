@@ -43,14 +43,14 @@ $$
 \end{aligned}
 $$
 
-```{r genbeetles_mod,results='hide'}
+```{r genbeetles_mod,results='hide',cache.extra=tools::md5sum("stan/genbeetles.stan")}
 genbeetles_mod <- stan_model("stan/genbeetles.stan")
 ```
 ```{r echo=FALSE,cache=FALSE,results='asis'}
 genbeetles_mod
 ```
 
-```{r benbeetles_data}
+```{r benbeetles_data,cache.extra=tools::md5sum("data/genbeetles.R")}
 genbeetles_data <- dget("data/genbeetles.R") %>%
   within({
     x <- as.numeric(scale(x))
