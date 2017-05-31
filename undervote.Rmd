@@ -1,56 +1,85 @@
----
-title: "Undervoting for President, by Race: difference in two binomial proportions."
-author: Simon Jackman and Jeffrey Arnold
----
+# Undervoting for President, by Race: difference in two binomial proportions {#undervote}
 
-In exit polls for the 1992 election, the Voter News Service asked black and white voters if they did not vote for president (a phenomenon known as "intentional undervoting").  Of 6,537 black voters, 26 said they did not vote for president; of 44,531 white voters, 91 said they did not vote for president.
-In the American National Election Studies (1964-2000), of 1,101 black voters, 10 report not voting for president, while 57 of 9,827 white voters report not voting for president.  Substantive interest centers on whether this rate of intentional undervoting differs by race.
+Does undervoting for the US president differ by race? 
+Intentional undervoting is when a voter chooses not to cast vote for
+an item on a ballot.
 
-These data appear in Tomz and Van Houweling (2003), "How Does Voting Equipment Affect the Racial Gap in Voided Ballots?", American Journal of Political Science.
+@TomzHouweling2003a analyze this phenomenon using two surveys:
 
-$$
-\begin{aligned}[t]
-r_i &\sim \mathsf{Binomial}(n_i, \pi_i) \\
-\pi_i &\sim \mathsf{Unif}(0, 1)
-\delta_{\text{white}} &= \pi_2 - \pi_1 \\
-\delta_{\text{black}} &= \pi_4 - \pi_3 \\
-\end{aligned}
-$$
+- Voter News Service (VNS) exit poll for the 1992 election
+- Americn National Election Studies (ANES) (1964-2000)
 
+Each of these surveys asked voters whether they voted for president,
+as well as the race of the respondents.
 
-```
-model{
-	for (i in 1:4){
-		r[i] ~ dbin(p[i],n[i])
-	}
-
-	delta[1] <- p[2] - p[1]    ## difference
-	good[1] <- step(delta[1])  ## sign of the difference
-
-	delta[2] <- p[4] - p[3]    ## difference
-	good[2] <- step(delta[2])  ## sign of the difference
-
-	## priors
-	for(i in 1:4){
-		p[i] ~ dunif(0,1)
-	}
-}
-```
-
+Of 6,537 black voters, 26 said they did not vote for president; of 44,531 white voters, 91 said they did not vote for president.
+In the American National Election Studies (1964-2000), of 1,101 black voters, 10 report not voting for president, while 57 of 9,827 white voters report not voting for president.  
 
 ```{r}
+undervote <- 
+  tribble(
+    ~survey, ~race, ~n, ~undervote,
+    "VNS", "black", 6537, 26,
+    "VNS", "white", 44531, 91,
+    "ANES", "black", 1101, 10,
+    "ANES", "white", 9827, 57
+  )
+```
+```{r echo=FALSE,results='asis'}
+undervote %>%
+  mutate(`Survey` = survey,
+         `Race` = race,
+         `No. Voted` = n,
+         `Didn't vote for president` = undervote) %>%
+  knitr::kable()
+```
+
+We are interested in analyzing the difference in proportions for each of these surveys independently.
+We'll model the proportions of each race and survey,
+$$
+\begin{aligned}[t]
+y_i &\sim \mathsf{Binomial}(n_i, \pi_i) ,
+\end{aligned}
+$$
+where
+$$
+i \in \{ (\text{VNS},\text{black}), (\text{VNS},\text{white}),  (\text{ANES},\text{black}),  (\text{ANES},\text{white}) \} .
+$$
+We'll model the proportions independently by assigning them identical independent uninformative priors,
+$$
+\begin{aligned}[t]
+\pi_i &\sim \mathsf{Beta}(1, 1) .
+\end{aligned}
+$$
+The racial differences in undervoting in each survey are auxiliary quantities,
+$$
+\begin{aligned}[t]
+\delta_{\text{VNS}} &= \pi_{\text{VNS},\text{black}} - \pi_{\text{VNS},\text{white}} ,\\
+\delta_{\text{ANES}} &= \pi_{\text{ANES},\text{black}} - \pi_{\text{ANES},\text{white}} . \\
+\end{aligned}
+$$
+We are also interested in the probability that black undervoting is greater than white undervoting, $\Pr(\delta_j) > 0$, in each survey.
+
+```{r undervote_mod,results='hide'}
+undervote_mod <- stan_model("stan/undervote.stan")
+```
+```{r results='asis',echo=FALSE}
+undervote_mod
+```
+
+```{r undervote_data}
+# this analysis depends on the order of the data frame
 undervote_data <-
-  list(r = c(26, 91, 10, 57),
-       n = c(6537, 44531, 1101, 9827),
-       N = 4,
+  list(y = undervote$undervote,
+       n = undervote$n,
+       N = nrow(undervote),
        pi_a = rep(1, 4),
        pi_b = rep(1, 4))
 ```
 
-```{r}
-undervote_mod <- stan_model("stan/undervote.stan")
-```
-
-```{r}
+```{r undervote_fit,results='hide'}
 undervote_fit <- sampling(undervote_mod, data = undervote_data)
+```
+```{r}
+undervote_fit
 ```

@@ -1,4 +1,4 @@
-# Learning About an Unknown Proportion from Survey Data
+# Florida: Learning About an Unknown Proportion from Survey Data {#florida}
 
 ```{r florida_setup,message=FALSE}
 library("rstan")
@@ -36,4 +36,3 @@ post_2.5 <- round(summary(florida_fit)$summary["mu", "2.5%"], 1)
 post_97.5 <- round(summary(florida_fit)$summary["mu", "97.5%"], 1)
 ```
 After observing the new poll, the mean for the posterior is `r post_mean`, with a 95% credible interval of `r post_2.5`--`r post_97.5`.
-

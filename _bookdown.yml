@@ -3,13 +3,26 @@ before_chapter_script:
 new_session: yes
 rmd_files:
 - index.Rmd
-# - bimodal.Rmd
-# - corporatism.Rmd
+- undervote.Rmd
 - cancer.Rmd
 - florida.Rmd
-- genbeetles.Rmd
-- SingleTruncation.Rmd
-- negbin.Rmd
-- resistant.Rmd
 - turnout2005.Rmd
+- cosponsor.Rmd
+- reagan.Rmd
+- sophistication.Rmd
+- legislators.Rmd
+- judges.Rmd
+- resistant.Rmd
+- uk92.Rmd
+- campaign.Rmd
+- aspirin.Rmd
+- corporatism.Rmd
+- bimodal.Rmd
+- unidentified.Rmd
+- engines.Rmd
+- truncated.Rmd
+- resistant.Rmd
+- genbeetles.Rmd
+- negbin.Rmd
+
 - references.Rmd

@@ -1,4 +1,4 @@
-# Generalized Beetles: generalizing link functions for binomial GLMs
+# Generalized Beetles: generalizing link functions for binomial GLMs {#genbeetles}
 
 ```{r genbeetles_setup,message=FALSE}
 library("rstan")

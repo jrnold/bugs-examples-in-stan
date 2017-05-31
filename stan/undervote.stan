@@ -1,6 +1,6 @@
 data {
   int n[4];
-  int r[4];
+  int y[4];
   vector[4] pi_a;
   vector[4] pi_b;
 }
@@ -8,7 +8,7 @@ parameters {
   vector<lower = 0., upper = 1.>[4] pi;
 }
 model {
-  r ~ binomial(n, pi);
+  y ~ binomial(n, pi);
   pi ~ beta(pi_a, pi_b);
 }
 generated quantities {

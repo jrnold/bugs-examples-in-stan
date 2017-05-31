@@ -1,4 +1,4 @@
-# House of Commons elections: modeling with the multivariate t density
+# House of Commons elections: modeling with the multivariate t density {#uk92}
 
 The following analysis comes from a data set on United Kingdom House of Commons elections, used in @KatzKing1999a, and re-analyzed in @TomzTuckerWittenberg2002a.  The data for this example consist of vote proportions from 1992 for 521 constituencies, for the Labor party, the Conservative Party, and the Liberal-Alliance, transformed to a 521 by 2 matrix of log-odds ratios (with the Liberal-Alliance in the denominator), as is common in the analysis of multinomial or "compositional" data [@Aitchison1982a].  @KatzKing1999a noted that the distribution of the log-odds ratios appear to be heavy-tailed relative to the normal, and model the data with a multivariate t-distribution with unknown degrees of freedom.
 

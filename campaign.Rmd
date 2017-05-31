@@ -1,12 +1,7 @@
----
-title: "Polling the Polls"
-author: "Jeffrey Arnold"
----
+# Pooling the Polls Over an Election Campaign {#campaign}
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
+This example comes from @Jackman2005a.
 
 ```{r message=FALSE}
 library("rstan")

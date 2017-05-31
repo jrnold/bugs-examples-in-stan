@@ -1,4 +1,4 @@
-# Turnout: logit/probit models for binary data
+# Turnout: logit/probit models for binary data {#turnout}
 
 ```{r message=FALSE}
 library("tidyverse")
