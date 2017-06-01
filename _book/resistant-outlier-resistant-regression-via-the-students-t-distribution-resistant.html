@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="undervote.html">
+<link rel="prev" href="judges.html">
+<link rel="next" href="uk92.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,46 +145,130 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
-<h4 class="date"><em>2017-05-31</em></h4>
-</div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
+<div id="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant" class="section level1">
+<h1><span class="header-section-number">10</span> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
+<p>Outlying data points can distort estimates of location, such as means or regression coefficients. Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers). A popular alternative to normal errors in regression analyses is the Student’s <span class="math inline">\(t\)</span> density, with an unknown degrees of freedom parameter. For low degrees of freedom, the t has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases. Treating the degrees of freedom parameter as an unknown parameter to be estimaetd thus provides a check on the appropriateness of the normal. By embedding a model with location parameters in the Student’s <span class="math inline">\(t\)</span> density, we obtain outlier-resistant estimates of location parameters.</p>
+<p>To illustrate these ideas, I use data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994. The dependent variable is the proportion of the two-party vote won by the Democratic candidate in district <span class="math inline">\(i\)</span> at election <span class="math inline">\(t\)</span> (uncontested districts are dropped from the analysis). Indicators for Democratic and Republican incumbency are the critical explanatory variables in the analysis; coefficients on these indicators are regarded as estimates of incumbency advantage. A series of year-specific indicators (“fixed effects”) are also included in the specification.</p>
+<p><span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;\sim \mathsf{StudentT}(\nu, \mu_i, \sigma) \\
+\mu_i &amp;= \alpha + x_i \beta
+\end{aligned}
+\]</span> The <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(\beta\)</span>, and <span class="math inline">\(\sigma\)</span> parameters are given weakly informative priors (assuming that all <span class="math inline">\(x\)</span> are scaled to have mean 0, standard deviation 1): <span class="math display">\[
+\begin{aligned}[t]
+\alpha &amp;\sim \mathsf{Normal}(\bar{y}, 10 s_y), \\
+\beta &amp;\sim \mathsf{Normal}(0, 2.5 s_y), \\
+\sigma &amp;\sim \mathsf{HalfCauchy}(0, 5 s_y) ,
+\end{aligned}
+\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of <span class="math inline">\(y\)</span>, and <span class="math inline">\(s_y\)</span> is the standard deviation of <span class="math inline">\(y\)</span>. The degrees of freedom parameter in the Student-t distribution is a paramter and given the weakly informative prior suggested by <span class="citation">Juárez and Steel (<a href="#ref-JuarezSteel2010a">2010</a>)</span>, <span class="math display">\[
+\nu \sim \mathsf{Gamma}(2, 0.1) .
+\]</span> The following code operationalizes this regression model; the conditional density of the vote proportions is <span class="math inline">\(t\)</span>, with unknown degrees of freedom, <span class="math inline">\(\nu.\)</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resistant_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/resistant.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  vector[N] y;
+  int K;
+  matrix[N, K] X;
+  int Y;
+  int<lower = 1, upper = Y> year[N];
+  // priors
+  real sigma_scale;
+  vector[K] beta_loc;
+  vector<lower = 0.>[K] beta_scale;
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+}
+parameters {
+  vector[Y] alpha;
+  vector[K] beta;
+  real<lower = 2.> nu;
+  real<lower = 0.> sigma;
+  real<lower = 0.> tau;
+}
+transformed parameters {
+  vector[N] mu;
+  for (i in 1:N) {
+    mu[i] = alpha[year[i]] + X[i] * beta;
+  }
+}
+model{
+  // priors for error variance
+  sigma ~ cauchy(0., sigma_scale);
+  // priors for year intercepts
+  alpha ~ normal(alpha_loc, alpha_scale);
+    // priors for the regression coefficients
+    beta ~ normal(beta_loc, beta_scale);
+    // degrees of freedom
+    nu ~ gamma(2, 0.1);
+    // likelihood
+    y ~ student_t(nu, mu, sigma);
+}
+generated quantities {
+  real delta;
+  delta = beta[3] + beta[4];
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/resistant.rda&quot;</span>)
+resistant_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>resistant<span class="op">$</span>y
+  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>lagy <span class="op">+</span><span class="st"> </span>prvwinpty <span class="op">+</span><span class="st"> </span>deminc <span class="op">+</span><span class="st"> </span>repinc, <span class="dt">data =</span> resistant) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">scale</span>()
+  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
+  year &lt;-<span class="st"> </span>resistant<span class="op">$</span>year
+  Y &lt;-<span class="st"> </span><span class="kw">max</span>(year)
+  <span class="co"># priors</span>
+  alpha_loc &lt;-<span class="st"> </span><span class="kw">mean</span>(y)
+  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
+  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
+  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y), K)
+  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resistant_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(resistant_mod, <span class="dt">data =</span> resistant_data)
+<span class="co">#&gt; Warning: There were 3994 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span>
+<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
+<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(resistant_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;nu&quot;</span>, <span class="st">&quot;sigma&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;tau&quot;</span>))<span class="op">$</span>summary
+<span class="co">#&gt;               mean se_mean    sd       2.5%        25%        50%</span>
+<span class="co">#&gt; nu        6.54e+00  0.0483 0.643   5.47e+00   6.05e+00   6.48e+00</span>
+<span class="co">#&gt; sigma     5.82e+00  0.0074 0.102   5.63e+00   5.75e+00   5.82e+00</span>
+<span class="co">#&gt; beta[1]   1.16e+01  0.0278 0.190   1.13e+01   1.15e+01   1.16e+01</span>
+<span class="co">#&gt; beta[2]  -3.19e+00  0.1396 0.364  -3.92e+00  -3.44e+00  -3.15e+00</span>
+<span class="co">#&gt; beta[3]   3.92e+00  0.0347 0.266   3.46e+00   3.72e+00   3.92e+00</span>
+<span class="co">#&gt; beta[4]  -3.90e+00  0.0312 0.196  -4.31e+00  -4.03e+00  -3.89e+00</span>
+<span class="co">#&gt; tau      8.75e+307     Inf   Inf  4.88e+306  4.23e+307  8.56e+307</span>
+<span class="co">#&gt;                75%      97.5%   n_eff Rhat</span>
+<span class="co">#&gt; nu        6.97e+00   7.95e+00  177.47 1.03</span>
+<span class="co">#&gt; sigma     5.90e+00   6.02e+00  190.65 1.03</span>
+<span class="co">#&gt; beta[1]   1.17e+01   1.20e+01   46.77 1.08</span>
+<span class="co">#&gt; beta[2]  -2.94e+00  -2.57e+00    6.78 1.22</span>
+<span class="co">#&gt; beta[3]   4.11e+00   4.45e+00   58.65 1.08</span>
+<span class="co">#&gt; beta[4]  -3.78e+00  -3.52e+00   39.69 1.08</span>
+<span class="co">#&gt; tau      1.33e+308  1.76e+308 4000.00  NaN</span></code></pre></div>
+<div id="questions-1" class="section level2 unnumbered">
+<h2>Questions</h2>
 <ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
+<li>How does using the Student-t distribution compare to using a normal distribution for the errors?</li>
 </ol>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-JuarezSteel2010a">
+<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited: 52–66. doi:<a href="https://doi.org/10.1198/jbes.2009.07145">10.1198/jbes.2009.07145</a>.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="undervote.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="judges.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="uk92.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="undervote.html">
+<link rel="prev" href="cancer.html">
+<link rel="next" href="turnout.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,46 +145,63 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
-<h4 class="date"><em>2017-05-31</em></h4>
-</div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
-<ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
-</ol>
+<div id="florida" class="section level1">
+<h1><span class="header-section-number">3</span> Florida: Learning About an Unknown Proportion from Survey Data</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
+<p>This is an learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign <span class="citation">(Jackman <a href="#ref-Jackman2004a">2004</a>)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">florida_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/florida.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  real<lower = 0., upper = 100.> y;
+  real<lower = 0.> y_sd;
+  real<lower = 0., upper = 100.> mu_mean;
+  real<lower = 0.> mu_sd;
+}
+parameters {
+  real mu;
+}
+model {
+  mu ~ normal(mu_mean, mu_sd);
+  y ~ normal(mu, y_sd);
+}</code>
+</pre>
+<p>The prior polls had a mean of 49.1% in support for Bush, with a standard deviation of 2.2%. The new poll shows 55% support for Bush, with a standard deviation of 2.2%.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">florida_data &lt;-<span class="st"> </span><span class="kw">list</span>(
+  <span class="dt">mu_mean =</span> <span class="fl">49.1</span>,
+  <span class="dt">mu_sd =</span> <span class="fl">2.2</span>,
+  <span class="dt">y_sd =</span> <span class="fl">2.2</span>,
+  <span class="dt">y =</span> <span class="dv">55</span>  
+)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">florida_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(florida_mod, <span class="dt">data =</span> florida_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">florida_fit
+<span class="co">#&gt; Inference for Stan model: florida.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;       mean se_mean   sd  2.5%   25% 50%   75% 97.5% n_eff Rhat</span>
+<span class="co">#&gt; mu   52.04    0.04 1.52 48.99 51.05  52 53.05  55.0  1347    1</span>
+<span class="co">#&gt; lp__ -2.27    0.02 0.67 -4.28 -2.41  -2 -1.85  -1.8  1604    1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 05:18:36 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+<p>After observing the new poll, the mean for the posterior is 52, with a 95% credible interval of 49–55.</p>
 
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Jackman2004a">
+<p>Jackman, Simon. 2004. “Bayesian Analysis for Political Research.” <em>Annual Review of Political Science</em> 7 (1). Annual Reviews: 483–505. doi:<a href="https://doi.org/10.1146/annurev.polisci.7.012003.104706">10.1146/annurev.polisci.7.012003.104706</a>.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="undervote.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="cancer.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="turnout.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

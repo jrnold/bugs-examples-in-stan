@@ -1,3 +1,4 @@
+
 # Cosponsorship:  computing auxiliary quantities from MCMC output {#cosponsorship}
 
 Typically, MCMC output consists of samples from the posterior density of model parameters.  But note that other quantities can be generated as well, say, imputations for missing data points, predictions, residuals, or goodness-of-fit summary statistics.  In fact, any function of the parameters can be calculated and output.

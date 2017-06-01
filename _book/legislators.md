@@ -1,6 +1,8 @@
+
 # Legislators: estimating legislators' ideal points from voting histories (roll call data) {#legislators}
 
-```{r legislators_setup,message=FALSE}
+
+```r
 library("tidyverse")
 library("rstan")
 ```

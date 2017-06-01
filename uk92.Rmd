@@ -1,5 +1,12 @@
 # House of Commons elections: modeling with the multivariate t density {#uk92}
 
+
+```{r uk92_setup,message=FALSE}
+library("tidyverse")
+library("rstan")
+```
+
+
 The following analysis comes from a data set on United Kingdom House of Commons elections, used in @KatzKing1999a, and re-analyzed in @TomzTuckerWittenberg2002a.  The data for this example consist of vote proportions from 1992 for 521 constituencies, for the Labor party, the Conservative Party, and the Liberal-Alliance, transformed to a 521 by 2 matrix of log-odds ratios (with the Liberal-Alliance in the denominator), as is common in the analysis of multinomial or "compositional" data [@Aitchison1982a].  @KatzKing1999a noted that the distribution of the log-odds ratios appear to be heavy-tailed relative to the normal, and model the data with a multivariate t-distribution with unknown degrees of freedom.
 
 This specification includes covariates for the conditional means of the two log odds ratios.  Six covariates are used: (1) a constant; (2) and (3) the lagged values (from the previous election) of the two log odds ratios; (4) an indicator for whether the Conservative candidate is the incumbent; (5) the incumbency status of the Labor candidate; (6) the incumbency status of the Liberal/Alliance candidate.  
@@ -26,8 +33,8 @@ $$
 \end{aligned}
 $$
 
-```{r cache.extra="data/uk92.R"}
-data_uk92 <- within(dget("data/uk92.R"), {
+```{r cache.extra=tools::md5sum("data/uk92.R")}
+uk92_data <- within(dget("data/uk92.R"), {
   X <- scale(x)
   x <- NULL
   N <- nrow(y)
@@ -49,11 +56,11 @@ uk92_mod
 ```
 
 
-```{r results='hide'}
-fit_uk92 <- sampling(mod_uk92, data = data_uk92)
+```{r uk92_fit,results='hide'}
+uk92_fit <- sampling(uk92_mod, data = uk92_data)
 ```
 ```{r}
-summary(fit_uk92, par = c("nu", "a", "b", "Sigma"))$summary
+summary(uk92_fit, par = c("nu", "a", "b", "Sigma"))$summary
 ```
 
 

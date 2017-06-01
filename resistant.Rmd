@@ -1,6 +1,6 @@
 # Resistant: Outlier-resistant regression via the Student's $t$ distribution (#resistant)
 
-```{r message=FALSE,cache=FALSE}
+```{r resistant_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```

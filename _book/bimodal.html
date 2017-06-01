@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Bayesian Model Examples</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="Bayesian Model Examples">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Bayesian Model Examples" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bayesian Model Examples" />
+  
+  
+  
+
+<meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
+
+
+<meta name="date" content="2017-05-31">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="corporatism.html">
+<link rel="next" href="engines-right-censored-failure-times.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
+<li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
+<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
+<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
+<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
+<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
+<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="10" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</a><ul>
+<li class="chapter" data-level="" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate t density</a></li>
+<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
+<li class="chapter" data-level="13" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</a><ul>
+<li class="chapter" data-level="13.1" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#data"><i class="fa fa-check"></i><b>13.1</b> data</a></li>
+<li class="chapter" data-level="13.2" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#initial-values"><i class="fa fa-check"></i><b>13.2</b> initial values</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</a></li>
+<li class="chapter" data-level="15" data-path="bimodal.html"><a href="bimodal.html"><i class="fa fa-check"></i><b>15</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
+<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
+<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
+<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
+<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayesian Model Examples</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="bimodal" class="section level1">
+<h1><span class="header-section-number">15</span> Bimodal: Extreme missingness in bivariate normal data</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="co">#&gt; Loading required package: ggplot2</span>
+<span class="co">#&gt; Loading required package: StanHeaders</span>
+<span class="co">#&gt; rstan (Version 2.15.1, packaged: 2017-04-19 05:03:57 UTC, GitRev: 2e1f913d3ca3)</span>
+<span class="co">#&gt; For execution on a local, multicore CPU with excess RAM we recommend calling</span>
+<span class="co">#&gt; rstan_options(auto_write = TRUE)</span>
+<span class="co">#&gt; options(mc.cores = parallel::detectCores())</span>
+<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="co">#&gt; Loading tidyverse: tibble</span>
+<span class="co">#&gt; Loading tidyverse: tidyr</span>
+<span class="co">#&gt; Loading tidyverse: readr</span>
+<span class="co">#&gt; Loading tidyverse: purrr</span>
+<span class="co">#&gt; Loading tidyverse: dplyr</span>
+<span class="co">#&gt; Conflicts with tidy packages ----------------------------------------------</span>
+<span class="co">#&gt; extract(): tidyr, rstan</span>
+<span class="co">#&gt; filter():  dplyr, stats</span>
+<span class="co">#&gt; lag():     dplyr, stats</span>
+<span class="kw">library</span>(<span class="st">&quot;stringr&quot;</span>)</code></pre></div>
+<p>Simple methods for dealing with missing data can run into trouble given pernicious patterns of missingness. A famous artificial data set designed to highlight this point was created by Gordon Murray, to show how an EM algorithm can run into problems <span class="citation">(Murray <a href="#ref-Murray1977a">1977</a>,<span class="citation">Dempster, Laird, and Rubin (<a href="#ref-DempsterLairdRubin1977a">1977</a>)</span>)</span>.</p>
+<pre><code>x1: 1   1   -1  -1  2   2   -2 -2   *   *   *   *
+x2: 1   -1  1   -1  *   *   *   *   2   2   -2  -2</code></pre>
+<p>Assume bivariate normality, and that the means of the two variables are both zero, but the variances and covariance are unknown. Inference about the correlation coefficient <span class="math inline">\(r\)</span> between these two variables is not trivial in this instance. The marginal complete-data likelihood for <span class="math inline">\(r\)</span> is not unimodal, and has a saddle-point at zero, and two local maxima close to -1 and 1. A Bayesian analysis (with uninformative priors) similarly recovers a bimodal posterior density for the correlation coefficient; e.g., <span class="citation">(Tanner <a href="#ref-Tanner1996a">1996</a>, <span class="citation">Congdon (<a href="#ref-Congdon2007a">2007</a>)</span>)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bimodal_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/bimodal.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  int<lower = 0, upper=N> N_obs;
+  int<lower = 0, upper=N> N_miss;
+  vector[N_obs] x_obs;
+  int<lower = 1, upper = N> x_obs_idx[N_obs, 2];
+  int<lower = 1, upper = N> x_miss_idx[N_miss, 2];
+  vector[2] mu;
+}
+parameters {
+  cov_matrix[2] Sigma;
+  vector[N_miss] x_miss;
+}
+transformed parameters {
+  // using an array of vectors is more convenient when sampling
+  // multi_normal than using an matrix
+  vector[2] X[N];
+  for (i in 1:N_obs) {
+    X[x_obs_idx[i, 1], x_obs_idx[i, 2]] = x_obs[i];
+  }
+  for (i in 1:N_miss) {
+    X[x_miss_idx[i, 1], x_miss_idx[i, 2]] = x_miss[i];
+  }
+}
+model{
+  for (i in 1:N) {
+    X[i] ~ multi_normal(mu, Sigma);
+  }
+}</code>
+</pre>
+<p>You can ignore the <strong>rstan</strong> warning,</p>
+<pre><code>DIAGNOSTIC(S) FROM PARSER:
+Warning (non-fatal):
+Left-hand side of sampling statement (~) may contain a non-linear transform of a parameter or local variable.
+If it does, you need to include a target += statement with the log absolute determinant of the Jacobian of the transform.
+Left-hand-side of sampling statement:
+    X[i] ~ multi_normal(...)</code></pre>
+<p>since the left hand side is a simple linear relationship and no Jacobian adjustment is needed. All we did was replace index values in the transformed parameter.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X_mat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>,
+       <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span>), <span class="dt">ncol =</span> <span class="dv">2</span>)
+X_mat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">12</span>), <span class="dt">ncol =</span> <span class="dv">2</span>)
+X_mat[<span class="dv">1</span>, <span class="dv">1</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
+X_mat[<span class="dv">3</span>, <span class="dv">2</span>] &lt;-<span class="st"> </span><span class="ot">NA</span>
+<span class="co">#       1, -1, 1, -1, NA, NA, NA, NA, 2, 2, -2, -2), ncol = 2)</span>
+X &lt;-<span class="st"> </span>X_mat <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as_data_frame</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.row =</span> <span class="kw">row_number</span>()) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">gather</span>(.col, value, <span class="op">-</span>.row) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.col =</span> <span class="kw">as.integer</span>(<span class="kw">str_replace</span>(.col, <span class="st">&quot;V&quot;</span>, <span class="st">&quot;&quot;</span>)))
+
+X_obs &lt;-<span class="st"> </span><span class="kw">filter</span>(X, <span class="op">!</span><span class="kw">is.na</span>(value))
+X_miss &lt;-<span class="st"> </span><span class="kw">filter</span>(X, <span class="kw">is.na</span>(value))
+  
+bimodal_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(X)
+  x_obs &lt;-<span class="st"> </span>X_obs<span class="op">$</span>value
+  x_obs_idx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(X_obs[ , <span class="kw">c</span>(<span class="st">&quot;.row&quot;</span>, <span class="st">&quot;.col&quot;</span>)])
+  N_obs &lt;-<span class="st"> </span><span class="kw">nrow</span>(X_obs)
+  x_miss_idx &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(X_miss[ , <span class="kw">c</span>(<span class="st">&quot;.row&quot;</span>, <span class="st">&quot;.col&quot;</span>)])
+  N_miss &lt;-<span class="st"> </span><span class="kw">nrow</span>(X_miss)
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bimodal_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(bimodal_mod, <span class="dt">data =</span> bimodal_data,
+                        <span class="dt">chains =</span> <span class="dv">1</span>)
+<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
+<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name mu is not numeric and not used</span></code></pre></div>
+
+<p>Original BUGS code and text by Simon Jackman; translated to Stan by Jeffrey Arnold.</p>
+<p>The following example illustrates the need for caution in diagnosing convergence, and is based on an example appearing in Carlin and Louis’ Bayes and Empirical Bayes Methods for Data Analysis, 2nd edition, p174.</p>
+<p>Consider a model for the mean as an additive sum of two parameters: e.g., <span class="math inline">\(y ~ N(q_1 + q_2, 1)\)</span>. The data are not informative about <span class="math inline">\(q_1\)</span> and <span class="math inline">\(q_2\)</span> , but are informative about <span class="math inline">\(m = q_1 + q_2\)</span> and the likelihood function for the two unidentified parameters has a ridge along the locus of points <span class="math display">\[
+\left\{ q_1, q_2 : \bar{y} = q_1 + q_2 \right\} ,
+\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of the observed data.</p>
+<p>In the Bayesian approach, we are obliged to specify priors over the model parameters. Proper priors ensure unimodal posteriors for <span class="math inline">\(q_1\)</span> and <span class="math inline">\(q_2\)</span>, and can be used to the sample from the posterior for this problem. But as Carlin and Louis show (see their Q25, p191), we need to be careful with models of this type. The posteriors for theta are not identical to the prior (the posterior standard deviations are 7.05, while the prior standard deviations used below are 10), suggesting that the data are somewhat informative about both theta parameters, when this is not the case. An inexperienced user of Markov chain Monte Carlo methods might fail to recognize that the q parameters are not identified, and naively report the posterior summaries for theta generated by the software. On the other hand, note that the identified parameter <span class="math inline">\(m = q_1 + q_2\)</span> is well behaved.</p>
+<p>The original BUGS model</p>
+<pre><code>model{
+
+    ## loop over observations
+    for (i in 1:1){
+        y[i] ~ dnorm(mu,1.0);  ## known precision
+    }
+    mu &lt;- theta[1] + theta[2]
+
+    ## priors
+    #theta[1] ~ dnorm(0.0, 0.01);     ## this form is not efficient
+    #theta[2] ~ dnorm(0.0, 0.01);     ## vis-a-vis en bloc approach below
+
+    theta[1:2] ~ dmnorm(b0[],B0[,])   ## en bloc updating for theta
+    b0[1] &lt;- 0 b0[2] &lt;- 0
+    B0[1,1] &lt;- .01 B0[2,2] &lt;- .01
+    B0[1,2] &lt;- 0 B0[2,1] &lt;- 0
+}</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="co">#&gt; Loading required package: ggplot2</span>
+<span class="co">#&gt; Loading required package: StanHeaders</span>
+<span class="co">#&gt; rstan (Version 2.15.1, packaged: 2017-04-19 05:03:57 UTC, GitRev: 2e1f913d3ca3)</span>
+<span class="co">#&gt; For execution on a local, multicore CPU with excess RAM we recommend calling</span>
+<span class="co">#&gt; rstan_options(auto_write = TRUE)</span>
+<span class="co">#&gt; options(mc.cores = parallel::detectCores())</span>
+mod_unidentified &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/unidentified.stan&quot;</span>)
+<span class="co">#&gt; In file included from file452878d1498c.cpp:8:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:12:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/config.hpp:13:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/config.hpp:39:</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/config/compiler/clang.hpp:196:11: warning: &#39;BOOST_NO_CXX11_RVALUE_REFERENCES&#39; macro redefined [-Wmacro-redefined]</span>
+<span class="co">#&gt; #  define BOOST_NO_CXX11_RVALUE_REFERENCES</span>
+<span class="co">#&gt;           ^</span>
+<span class="co">#&gt; &lt;command line&gt;:6:9: note: previous definition is here</span>
+<span class="co">#&gt; #define BOOST_NO_CXX11_RVALUE_REFERENCES 1</span>
+<span class="co">#&gt;         ^</span>
+<span class="co">#&gt; In file included from file452878d1498c.cpp:8:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:42:</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function &#39;set_zero_all_adjoints&#39; [-Wunused-function]</span>
+<span class="co">#&gt;     static void set_zero_all_adjoints() {</span>
+<span class="co">#&gt;                 ^</span>
+<span class="co">#&gt; In file included from file452878d1498c.cpp:8:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:43:</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: &#39;static&#39; function &#39;set_zero_all_adjoints_nested&#39; declared in header file should be declared &#39;static inline&#39; [-Wunneeded-internal-declaration]</span>
+<span class="co">#&gt;     static void set_zero_all_adjoints_nested() {</span>
+<span class="co">#&gt;                 ^</span>
+<span class="co">#&gt; In file included from file452878d1498c.cpp:8:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:11:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:59:</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/autocorrelation.hpp:17:14: warning: function &#39;fft_next_good_size&#39; is not needed and will not be emitted [-Wunneeded-internal-declaration]</span>
+<span class="co">#&gt;       size_t fft_next_good_size(size_t N) {</span>
+<span class="co">#&gt;              ^</span>
+<span class="co">#&gt; In file included from file452878d1498c.cpp:8:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:11:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:298:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/arr.hpp:39:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/arr/functor/integrate_ode_rk45.hpp:13:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/numeric/odeint.hpp:61:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/numeric/odeint/util/multi_array_adaption.hpp:29:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array.hpp:21:</span>
+<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/base.hpp:28:</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:42:43: warning: unused typedef &#39;index_range&#39; [-Wunused-local-typedef]</span>
+<span class="co">#&gt;       typedef typename Array::index_range index_range;</span>
+<span class="co">#&gt;                                           ^</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:43:37: warning: unused typedef &#39;index&#39; [-Wunused-local-typedef]</span>
+<span class="co">#&gt;       typedef typename Array::index index;</span>
+<span class="co">#&gt;                                     ^</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:53:43: warning: unused typedef &#39;index_range&#39; [-Wunused-local-typedef]</span>
+<span class="co">#&gt;       typedef typename Array::index_range index_range;</span>
+<span class="co">#&gt;                                           ^</span>
+<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:54:37: warning: unused typedef &#39;index&#39; [-Wunused-local-typedef]</span>
+<span class="co">#&gt;       typedef typename Array::index index;</span>
+<span class="co">#&gt;                                     ^</span>
+<span class="co">#&gt; 8 warnings generated.</span></code></pre></div>
+<p>Use very large scales for this; though the behavior is still present with weakly informative scales.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data_unidentified &lt;-<span class="st"> </span><span class="kw">list</span>(
+  <span class="dt">y =</span> <span class="dv">0</span>,
+  <span class="dt">theta_mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">2</span>),
+  <span class="dt">theta_scale =</span> <span class="kw">rep</span>(<span class="dv">100</span>, <span class="dv">2</span>)
+)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_unidentified &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_unidentified, <span class="dt">data =</span> data_unidentified,
+                             <span class="dt">refresh =</span> <span class="op">-</span><span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fit_unidentified
+<span class="co">#&gt; Inference for Stan model: unidentified.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;           mean se_mean    sd    2.5%    25%   50%   75%  97.5% n_eff Rhat</span>
+<span class="co">#&gt; theta[1]  2.14    3.17 72.33 -143.32 -42.92  1.26 48.84 144.24   520 1.01</span>
+<span class="co">#&gt; theta[2] -2.13    3.17 72.34 -144.19 -48.87 -1.48 43.01 142.92   520 1.01</span>
+<span class="co">#&gt; mu        0.00    0.02  0.99   -1.98  -0.67  0.03  0.68   1.94  3548 1.00</span>
+<span class="co">#&gt; lp__     -1.02    0.04  1.06   -4.02  -1.38 -0.68 -0.28  -0.02   579 1.01</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 08:42:20 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Murray1977a">
+<p>Murray, Gordon. 1977. “Discussion on the Paper by Professor Dempster et Al.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). [Royal Statistical Society, Wiley]: 27. <a href="http://www.jstor.org/stable/2984875" class="uri">http://www.jstor.org/stable/2984875</a>.</p>
+</div>
+<div id="ref-DempsterLairdRubin1977a">
+<p>Dempster, A. P., N. M. Laird, and D. B. Rubin. 1977. “Maximum Likelihood from Incomplete Data via the Em Algorithm.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). [Royal Statistical Society, Wiley]: 1–38. <a href="http://www.jstor.org/stable/2984875" class="uri">http://www.jstor.org/stable/2984875</a>.</p>
+</div>
+<div id="ref-Tanner1996a">
+<p>Tanner, Martin A. 1996. <em>Tools for Statistical Inference</em>. Springer.</p>
+</div>
+<div id="ref-Congdon2007a">
+<p>Congdon, Peter. 2007. <em>Bayesian Statistical Modelling</em>. Wiley.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="corporatism.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="engines-right-censored-failure-times.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

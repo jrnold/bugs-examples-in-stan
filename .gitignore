@@ -10,3 +10,5 @@ stan/*.rds
 /*_cache
 /*.md
 _bookdown_files/*
+/*_files
+/*.rds

@@ -1,6 +1,8 @@
+
 # Political Sophistication: item-response modeling with mixed data types {#sophistication}
 
-```{r sophistication_setup,message=FALSE}
+
+```r
 library("tidyverse")
 library("rstan")
 ```

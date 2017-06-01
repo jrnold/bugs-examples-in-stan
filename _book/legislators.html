@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="undervote.html">
+<link rel="prev" href="sophistication.html">
+<link rel="next" href="judges.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,46 +145,76 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
-<h4 class="date"><em>2017-05-31</em></h4>
-</div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
-<ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
-</ol>
+<div id="legislators" class="section level1">
+<h1><span class="header-section-number">8</span> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
+<p>Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators. Political scientists analyze roll call data using the Euclidean spatial voting model: each legislator (<span class="math inline">\(i = 1, \dots, n\)</span>) has a preferred policy position (<span class="math inline">\(\xi\)</span>, a point in low-dimensional Euclidean space), and each vote (<span class="math inline">\(j = 1, \dots, m\)</span>) amounts to a choice between an “Aye” (<span class="math inline">\(\psi_y\)</span>) and a “Nay” location (<span class="math inline">\(q_j\)</span>) respectively. Legislators are assumed to choose on the basis of utility maximization, with utilities (in one-dimension), <span class="math display">\[
+\begin{aligned}[t]
+U_i (q_j) &amp;= -(\xi_i - q_j)^2 + \nu_{i,j} , \\ 
+U_i (\psi_j) &amp;= -(\xi_i - \psi_j)^2 + \omega_{i,j} ,
+\end{aligned}
+\]</span> where <span class="math inline">\(\nu_{i,j}\)</span> and <span class="math inline">\(\omega_{i,j}\)</span> are iid disturbances. The utility differential <span class="math inline">\(y_{i,j}^* = U_i(q_j) - U_i(\psi_j)\)</span> is observed only in terms of sign. Assuming of utility maximization, the legislator votes “Nay” when <span class="math inline">\(y_{i,j}^* &lt; 0\)</span>, and “Yea” when <span class="math inline">\(y_{i,j}^* &gt; 0\)</span>. Simple algebra yields a hierarchical binary response model in which the legislators’ ideal points appear as unobserved covariates: i.e., <span class="math display">\[
+y_{i,j}^* = \xi_i \beta_{j} - \alpha_j + \epsilon_{i,j}
+\]</span> where the <span class="math inline">\(\alpha_j\)</span> and <span class="math inline">\(\beta_j\)</span> are functions of the vote-specific parameters <span class="math inline">\(q_j\)</span> and <span class="math inline">\(\psi_j\)</span>. Subject to identifying restrictions, the legislators’ preferred positions can be estimated from the roll call data, via a logit or probit model. In addition, with one-dimensional models, the “Yea” and “Nay” locations can be estimated In higher dimensions, only the hyperplane separating the “Aye” and “Nay” locations can be recovered.</p>
+<p>There is an extremely close correspondence between the statistical analysis of roll call data and item-response (IRT) models used in educational testing. A two-parameter item-response model is equivalent to the statistical operationalization of the model described above, with the unobserved ideal point taking the part of the latent trait, and the item-discrimination parameters tapping ideological discrimination. <span class="citation">Johnson and Albert (<a href="#ref-JohnsonAlbert1999a">1999</a>)</span> show that the two parameter IRT model is well suited to estimation and inference via Bayesian simulation. The probability of an “Aye” vote is the probability that <span class="math inline">\(y_{i,j}^* &gt; 0\)</span>, if <span class="math inline">\(\nu_{i,j}\)</span> and <span class="math inline">\(\omega_{i,j}\)</span> have Type-1 extreme value distributions, then <span class="math display">\[
+\begin{aligned}[t]
+y_{i,j} &amp;\sim \mathsf{Bernoulli}(\pi_{i,j}) \\
+\mathsf{Logit}(\pi_{i,j}) &amp;= \xi_i \beta_j - \alpha_j
+\end{aligned}
+\]</span></p>
+<p>In the implementation below, an iid <span class="math inline">\(\mathsf{Normal}(0,1)\)</span> prior is used for the unobserved ideal points; vague normal priors are used for the <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\alpha\)</span> parameters. For identification, two legislators are constrained to have fixed ideal points: here I set the ideal point of a legislator known to be liberal to -1.0, and the ideal point of a conservative to 1.0. Alternatively, we might employ restrictions or tight priors on particular <span class="math inline">\(\beta\)</span> parameters.</p>
+<p>The following example uses data from the 106th U.S. Senate, which sat from January 1997 through October 1998, with n = 102 legislators. Unanimous roll calls were dropped from the analysis. …</p>
+<ul>
+<li><span class="citation">J. H. Albert (<a href="#ref-Albert1992a">1992</a>)</span></li>
+<li><span class="citation">Albert and Chib (<a href="#ref-AlbertChib1993a">1993</a>)</span></li>
+<li><span class="citation">Clinton, Jackman, and Rivers (<a href="#ref-ClintonJackmanRivers2004a">2004</a>)</span></li>
+<li><span class="citation">Enelow and Hinich (<a href="#ref-EnelowHinich1984a">1984</a>)</span></li>
+<li><span class="citation">Jackman (<a href="#ref-Jackman2000a">2000</a>)</span></li>
+<li><span class="citation">Jackman (<a href="#ref-Jackman2001a">2001</a>)</span></li>
+<li><span class="citation">Johnson and Albert (<a href="#ref-JohnsonAlbert1999a">1999</a>)</span></li>
+<li><span class="citation">Londregan (<a href="#ref-Londregan2007a">2007</a>)</span></li>
+<li><span class="citation">Poole and Rosenthal (<a href="#ref-PooleRosenthal2000a">2000</a>)</span></li>
+</ul>
 
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-JohnsonAlbert1999a">
+<p>Johnson, Valen E., and James H. Albert. 1999. <em>Ordinal Data Modeling</em>. Springer-Verlag. doi:<a href="https://doi.org/10.1007/b98832">10.1007/b98832</a>.</p>
+</div>
+<div id="ref-Albert1992a">
+<p>Albert, J. H. 1992. “Bayesian Estimation of Normal Ogive Item Response Curves Using Gibbs Sampling.” <em>Journal of Educational and Behavioral Statistics</em> 17 (3). American Educational Research Association (AERA): 251–69. doi:<a href="https://doi.org/10.3102/10769986017003251">10.3102/10769986017003251</a>.</p>
+</div>
+<div id="ref-AlbertChib1993a">
+<p>Albert, James H., and Siddhartha Chib. 1993. “Bayesian Analysis of Binary and Polychotomous Response Data.” <em>Journal of the American Statistical Association</em> 88 (422). Informa UK Limited: 669–79. doi:<a href="https://doi.org/10.1080/01621459.1993.10476321">10.1080/01621459.1993.10476321</a>.</p>
+</div>
+<div id="ref-ClintonJackmanRivers2004a">
+<p>Clinton, Joshua, Simon Jackman, and Douglas Rivers. 2004. “The Statistical Analysis of Roll Call Data.” <em>American Political Science Review</em> 98 (02). Cambridge University Press (CUP): 355–70. doi:<a href="https://doi.org/10.1017/s0003055404001194">10.1017/s0003055404001194</a>.</p>
+</div>
+<div id="ref-EnelowHinich1984a">
+<p>Enelow, J.M., and M.J. Hinich. 1984. <em>The Spatial Theory of Voting: An Introduction</em>. Cambridge University Press. <a href="https://books.google.com/books?id=lXY6AAAAIAAJ" class="uri">https://books.google.com/books?id=lXY6AAAAIAAJ</a>.</p>
+</div>
+<div id="ref-Jackman2000a">
+<p>Jackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” <em>Political Analysis</em> 8 (4). [Oxford University Press, Society for Political Methodology]: 307–32. <a href="http://www.jstor.org/stable/25791616" class="uri">http://www.jstor.org/stable/25791616</a>.</p>
+</div>
+<div id="ref-Jackman2001a">
+<p>Jackman, Simon. 2001. “Multidimensional Analysis of Roll Call Data via Bayesian Simulation: Identification, Estimation, Inference, and Model Checking.” <em>Political Analysis</em> 9 (3). [Oxford University Press, Society for Political Methodology]: 227–41. <a href="http://www.jstor.org/stable/25791646" class="uri">http://www.jstor.org/stable/25791646</a>.</p>
+</div>
+<div id="ref-Londregan2007a">
+<p>Londregan, J.B. 2007. <em>Legislative Institutions and Ideology in Chile</em>. Political Economy of Instituti. Cambridge University Press. <a href="https://books.google.com/books?id=WpXHHYf7lJoC" class="uri">https://books.google.com/books?id=WpXHHYf7lJoC</a>.</p>
+</div>
+<div id="ref-PooleRosenthal2000a">
+<p>Poole, Keith T., and Howard Rosenthal. 2000. <em>Congress: A Political-Economic History of Roll Call Voting</em>. Oxford University Press.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="undervote.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="sophistication.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="judges.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

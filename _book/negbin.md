@@ -1,5 +1,5 @@
 
-# Negative Binomial
+# Negative Binomial: Estimating Homicides in Census Tracks {#negbin}
 
 
 ```r
@@ -7,7 +7,6 @@ library("tidyverse")
 library("rstan")
 library("rstanarm")
 ```
-
 
 The data  are  from the 1990 United States Census for the city of St. Louis, Missouri for Census Tracts, and from records of the St. Louis City Metropolitan Police Department for the years 1980 through 1994. For each Census Tract (with a population), N=111, an observation includes
 - the median household income in 1990

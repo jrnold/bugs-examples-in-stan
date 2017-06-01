@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="undervote.html">
+<link rel="prev" href="turnout.html">
+<link rel="next" href="reagan.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,46 +145,72 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
-<h4 class="date"><em>2017-05-31</em></h4>
-</div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
-<ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
-</ol>
+<div id="cosponsorship" class="section level1">
+<h1><span class="header-section-number">5</span> Cosponsorship: computing auxiliary quantities from MCMC output</h1>
+<p>Typically, MCMC output consists of samples from the posterior density of model parameters. But note that other quantities can be generated as well, say, imputations for missing data points, predictions, residuals, or goodness-of-fit summary statistics. In fact, any function of the parameters can be calculated and output.</p>
+<p>I demonstrate these ideas in the context of a generalized linear model for binary data. The specific application is <span class="citation">Krehbiel (<a href="#ref-Krehbiel1995a">1995</a>)</span>, a study of legislative behavior. The dependent variable is a binary indicator, coded 1 if members of the U.S. House of Representatives chose to cosponsor bill HR 3266, and 0 otherwise (228 legislators cosponsored HR 3266, out of the 434 legislators for which data is available). HR3266 was a wide-ranging spending bill designed to circumvent the usual budget-making process, that was considered by the 103rd House of Representatives in 1993/94. Seven covariates are used in the analysis: a measure of each member’s liberalism as measured by the interest group Americans for Democratic Action (ADA), a measure of fiscal conservatism published by the National Taxpayers’ Union (NTU), an indicator variable for Democratic Party membership, a measure of Congressional seniority (years since first election, and thus inversely proportional to seniority), the electoral margin of the member, an indicator for membership of the House Appropriations Committee, and an indicator for membership of the House Budget Committee. <span class="citation">Krehbiel (<a href="#ref-Krehbiel1995a">1995</a>)</span> multivariate analysis finds that after controlling for legislators’ policy preferences (as measured with the ADA and NTU scores), Democrats were actually more likely to support H.R. 3266 than Republicans. Seniority is also a key predictor, with junior members more likely to cosponsor this legislation than members with greater seniority.</p>
+<p>Several auxiliary quantities are estimated in the following BUGS program. Percent-correctly-predicted (PCP) and a related quantity (expected PCP, or ePCP; see <span class="citation">Herron (<a href="#ref-Herron1999a">1999</a>)</span>) are easily coded using the BUGS “equals” and “step” constructs. <span class="citation">Herron (<a href="#ref-Herron1999a">1999</a>)</span> also investigated the effect sizes of certain key predictors, by holding other covariates at fixed values and then comparing the predicted probabilities under various hypothetical scenarios. Again, these are easily programmed and computed in WinBUGS; uncertainty in these quantities follows from the uncertainty in the parameters, and it is extremely easy to use WinBUGS to produce samples from the posterior density of these quantities.</p>
+<p>I also compute latent residuals <span class="citation">(Gelman et al. <a href="#ref-GelmanGoegebeurTuerlinckxEtAl2000a">2000</a>; J. Albert and Chib <a href="#ref-AlbertChib1995a">1995</a>)</span>. These quantities are simply the difference between the latent y* and their fitted values. In a typical logit or probit analysis, y* is completely ignored by the analyst. But for Bayesian simulation, y* is central to the recovery of the parameters themselves: recall that Bayesian simulation in this context largely amounts to treating the y* as missing data. Hence not only are the y* recovered, but with very little additional effort we can also recover the latent residuals, at each iteration t. Moreover, these latent residuals have uncertainty associated with them, stemming from uncertainty in b, and so we recover not just point estimates but their posterior densities.</p>
+<p><span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;= \mathsf{Bernoulli}(\mu_i) \\
+\mu_i &amp;= \mathsf{Logit}^{-1}(x_i \beta)
+\end{aligned}
+\]</span></p>
+<p>model{ for (i in 1:N){ # loop over observations mu[i] &lt;- beta[1] + beta[2]<em>ada[i] + beta[3]</em>ntu[i] + beta[4]<em>dem[i] + beta[5]</em>frosh[i] + beta[6]<em>margin[i] + beta[7]</em>approp[i] + beta[8]*budget[i];</p>
+<pre><code>    ystar[i] ~ dnorm(mu[i],1)I(lo[y[i]+1], up[y[i]+1]);  # trunc Normal
 
+    ## auxiliary quantities, individual specific
+    e[i] &lt;-  ystar[i] - mu[i];        # latent residuals
+    probit(p[i]) &lt;- mu[i];            # predicted probs
+
+    ## goodness of fit summaries
+    llh[i] &lt;- (equals(y[i],1)*log(p[i])) + (equals(y[i],0)*log(1-p[i]));
+    epcp[i] &lt;- (equals(y[i],1)*p[i]) + (equals(y[i],0)*(1-p[i]));
+    pcp[i] &lt;- equals(y[i],1)*step(p[i]-.5)
+            + equals(y[i],0)*step(.5-p[i]);
+}
+
+## aggregate auxiliary quantities
+sumllh &lt;- sum(llh[]);     # sum likelihood contributions
+PCP &lt;- sum(pcp[])/N;      # sum pcp contributions
+
+## clarify calculations</code></pre>
+<p>## probability of co-sponsorship for “average” member (median x vals) probit(pbar) &lt;- beta[1] + beta[2]<em>0.55 + beta[3]</em>0.32 + beta[4] + beta[5]<em>86 + beta[6]</em>0.26;</p>
+<pre><code>## party affiliation, effect size
+probit(p.dem) &lt;- beta[1] + beta[2]*0.55 + beta[3]*0.32
+               + beta[4] + beta[5]*86 + beta[6]*0.26;</code></pre>
+<p>probit(p.rep) &lt;- beta[1] + beta[2]<em>0.55 + beta[3]</em>0.32 + beta[5]<em>86 + beta[6]</em>0.26; d.party &lt;- p.dem - p.rep;</p>
+<p>## “attributable effect”, all sources, due to party affiliation probit(p.dem.all) &lt;- beta[1] + beta[2]<em>0.8 + beta[3]</em>0.2 + beta[4] + beta[5]<em>86 + beta[6]</em>0.28; probit(p.rep.all) &lt;- beta[1] + beta[2]<em>0.1 + beta[3]</em>0.74 + beta[5]<em>86 + beta[6]</em>0.24; d.party.all &lt;- p.dem.all - p.rep.all</p>
+<p>## bounds for truncated normal sampling lo[1] &lt;- -50; lo[2] &lt;- 0; up[1] &lt;- 0; up[2] &lt;- 50;</p>
+<pre><code>## priors, multivariate normal, mean and precision in data file
+beta[1:k] ~ dmnorm(b0[ ] , B0[ , ]);</code></pre>
+<p>}</p>
+<p>Initial Values (MLEs): list(beta=c(-7.94, -.74, 8.82, 1.00, .052, -.051, -.24, -.858))</p>
+
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Krehbiel1995a">
+<p>Krehbiel, Keith. 1995. “Cosponsors and Wafflers from a to Z.” <em>American Journal of Political Science</em> 39 (4). JSTOR: 906. doi:<a href="https://doi.org/10.2307/2111662">10.2307/2111662</a>.</p>
+</div>
+<div id="ref-Herron1999a">
+<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP): 83–98. doi:<a href="https://doi.org/10.1093/oxfordjournals.pan.a029806">10.1093/oxfordjournals.pan.a029806</a>.</p>
+</div>
+<div id="ref-GelmanGoegebeurTuerlinckxEtAl2000a">
+<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell: 247–68. doi:<a href="https://doi.org/10.1111/1467-9876.00190">10.1111/1467-9876.00190</a>.</p>
+</div>
+<div id="ref-AlbertChib1995a">
+<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP): 747–69. doi:<a href="https://doi.org/10.1093/biomet/82.4.747">10.1093/biomet/82.4.747</a>.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="undervote.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="turnout.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="reagan.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

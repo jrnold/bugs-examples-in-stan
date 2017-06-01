@@ -1,5 +1,5 @@
 
-# Resistant: Outlier-resistant regression via the t distribution
+# Resistant: Outlier-resistant regression via the Student's $t$ distribution (#resistant)
 
 
 ```r
@@ -132,3 +132,8 @@ summary(resistant_fit, par = c("nu", "sigma", "beta", "tau"))$summary
 #> beta[4]  -3.78e+00  -3.52e+00   39.69 1.08
 #> tau      1.33e+308  1.76e+308 4000.00  NaN
 ```
+
+## Questions {-}
+
+1. How does using the Student-t distribution compare to using a normal distribution for the errors?
+

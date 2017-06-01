@@ -1,5 +1,5 @@
 
-# Learning About an Unknown Proportion from Survey Data
+# Florida: Learning About an Unknown Proportion from Survey Data {#florida}
 
 
 ```r
@@ -55,11 +55,10 @@ florida_fit
 #> mu   52.04    0.04 1.52 48.99 51.05  52 53.05  55.0  1347    1
 #> lp__ -2.27    0.02 0.67 -4.28 -2.41  -2 -1.85  -1.8  1604    1
 #> 
-#> Samples were drawn using NUTS(diag_e) at Tue May 30 21:50:30 2017.
+#> Samples were drawn using NUTS(diag_e) at Wed May 31 05:18:36 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
 ```
 
 After observing the new poll, the mean for the posterior is 52, with a 95% credible interval of 49--55.
-

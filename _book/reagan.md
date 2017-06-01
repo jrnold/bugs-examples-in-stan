@@ -1,6 +1,8 @@
+
 # Reagan: linear regression with AR(1) disturbances {#reagan}
 
-```{r reagan_setup,message=FALSE}
+
+```r
 library("tidyverse")
 library("rstan")
 ```

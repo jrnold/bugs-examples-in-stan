@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="undervote.html">
+<link rel="prev" href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html">
+<link rel="next" href="bimodal.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,46 +145,94 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
-<h4 class="date"><em>2017-05-31</em></h4>
-</div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
-<ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
-</ol>
+<div id="corporatism" class="section level1">
+<h1><span class="header-section-number">14</span> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</code></pre></div>
+<p>The following program implements a regression model of economic growth among 16 OECD countries, 1971-1984 <span class="citation">(Western <a href="#ref-Western1998a">1998</a>, <span class="citation">Alvarez, Garrett, and Lange (<a href="#ref-AlvarezGarrettLange1991a">1991</a>)</span>)</span>. The model is hierarchical in that it specifies country-specific coefficients for the following predictors: lagged growth, demand, import price movements, export price movements, leftist government and an intercept. The magnitudes of the country-specific coefficients are conditional on (time-invariant) extent of labor organization within each country; these regression relationships constitute the 2nd level of the model.</p>
+<p>The data come from N=16 countries, and T=14 years (1971:1984) with K=6 covariates at the lowest (“micro”) level of the hierarchy, and J=2 covariates (an intercept and the labor organization variable) at the 2nd level.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/corporatism.rda&quot;</span>)
+corporatism_country &lt;-<span class="st"> </span>corporatism <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">select</span>(country, labor.org) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">distinct</span>()
+  </code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corporatism_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/corporatism.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  // number of observations
+  int N;
+  // response variable
+  vector[N] y;
+  // number of predictors in the regression
+  int K;
+  // design matrix of country-year obs
+  matrix[N, K] X;
+  // number of countries
+  int n_country;
+  // countries for each observation
+  int<lower = 1, upper = n_country> country[N];
+  // design matrix of country-variables
+  int J;
+  matrix[n_country, J] U;
+  // priors
+  // mean and scale of normal prior on beta
+  vector[K] beta_mean;
+  vector<lower = 0.>[K] beta_scale;
+  // mean and scale of normal prior on gamma
+  real gamma_mean;
+  real<lower = 0.> gamma_scale;
+  // scale for half-Cauchy prior on tau
+  real<lower = 0.> tau_scale;
+}
+parameters {
+  // obs. errors.
+  real<lower = 0.> sigma;
+  // country-specific terms
+  vector[n_country] gamma;
+  vector[J] delta;
+  // regression coefficients
+  vector[K] beta[n_country];
+  // scale on country priors
+  real<lower = 0.> tau;
+}
+transformed parameters {
+  vector[N] mu;
+  vector[n_country] alpha;
+  alpha = gamma + U * delta;
+  for (i in 1:N) {
+    mu[i] = alpha[country[i]] + X[i] * beta[country[i]];
+  }
+}
+model {
+  gamma ~ normal(gamma_mean, gamma_scale);
+  tau ~ cauchy(0., tau_scale);
+  for (k in 1:K) {
+    beta[k] ~ normal(beta_mean, beta_scale);
+  }
+  alpha ~ normal(gamma, tau);
+  y ~ normal(mu, sigma);
+}
+generated quantities {
+}</code>
+</pre>
 
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Western1998a">
+<p>Western, Bruce. 1998. “Causal Heterogeneity in Comparative Research: A Bayesian Hierarchical Modelling Approach.” <em>American Journal of Political Science</em> 42 (4). [Midwest Political Science Association, Wiley]: 1233–59. doi:<a href="https://doi.org/10.2307/2991856">10.2307/2991856</a>.</p>
+</div>
+<div id="ref-AlvarezGarrettLange1991a">
+<p>Alvarez, R. Michael, Geoffrey Garrett, and Peter Lange. 1991. “Government Partisanship, Labor Organization, and Macroeconomic Performance.” <em>The American Political Science Review</em> 85 (2). [American Political Science Association, Cambridge University Press]: 539–56. <a href="http://www.jstor.org/stable/1963174" class="uri">http://www.jstor.org/stable/1963174</a>.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="undervote.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="bimodal.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

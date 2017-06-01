@@ -1,6 +1,7 @@
 # Cancer: difference in two binomial proportions {#cancer}
 
 ```{r cancer_setup,message=FALSE}
+library("tidyverse")
 library("rstan")
 ```
 

@@ -1,5 +1,5 @@
 
-# Generalized Beetles: generalizing link functions for binomial GLMs
+# Generalized Beetles: generalizing link functions for binomial GLMs {#genbeetles}
 
 
 ```r
@@ -129,7 +129,7 @@ genbeetles_fit
 #> pdot     1
 #> lp__     1
 #> 
-#> Samples were drawn using NUTS(diag_e) at Tue May 30 23:53:13 2017.
+#> Samples were drawn using NUTS(diag_e) at Wed May 31 05:18:42 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).

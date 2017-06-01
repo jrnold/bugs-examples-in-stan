@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="undervote.html">
+<link rel="prev" href="genbeetles.html">
+<link rel="next" href="references.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,37 +145,120 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
-<h4 class="date"><em>2017-05-31</em></h4>
-</div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
-<ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
-</ol>
+<div id="negbin" class="section level1">
+<h1><span class="header-section-number">19</span> Negative Binomial: Estimating Homicides in Census Tracks</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</code></pre></div>
+<p>The data are from the 1990 United States Census for the city of St. Louis, Missouri for Census Tracts, and from records of the St. Louis City Metropolitan Police Department for the years 1980 through 1994. For each Census Tract (with a population), N=111, an observation includes - the median household income in 1990 - the percentage unemployed (base of labor force) - a count of the number of homicide incidents.</p>
+<p>The number of homicides in this 15 year period totals 2,815. The average size of a Census Tract is 3,571 with a range of 249–8,791. Income has been rescaled by dividing by 1,000 which produces a range similar to that of percentage unemeployed and standard deviations that are very close. Tract homicide counts range from 0 through 99 with a median of 16 (mean is 25.+). An enhanced set of linear, predictors does better than this two predictor example.</p>
+<p><span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;\sim \mathsf{NegBinomial2}(\mu_i,\phi) \\
+\mu_i &amp;= \frac{1}{1 + e^{-\eta_i}} \\
+\eta_i &amp;= x_i \beta
+\end{aligned}
+\]</span> The negative binomial distribution is parameterized so that <span class="math inline">\(\mu \in \mathbb{R}^+\)</span> is the location parameter, and <span class="math inline">\(\phi \in \mathbb{R}^+\)</span> is the reciprocal overdisperson parameter, such that the mean and variance of a random variable <span class="math inline">\(Y\)</span> distributed negative binomial is <span class="math display">\[
+\begin{aligned}[t]
+E[Y] &amp;= \mu , \\
+V[Y] &amp;= \mu + \frac{\mu^2}{\phi} .
+\end{aligned}
+\]</span> As <span class="math inline">\(\phi \to \infty\)</span>, the negative binomial approaches the Poisson distribution.</p>
+<p>The parameters are given weakly informative priors, <span class="math display">\[
+\begin{aligned}[t]
+\alpha &amp;\sim \mathsf{Normal}(0, 10), \\
+\beta_k &amp;\sim \mathsf{Normal}(0, 2.5), \\
+\phi^{-1} &amp;\sim \mathsf{HalfCauchy}(0, 5).
+\end{aligned}
+\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/negbin.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  int y[N];
+  int K;
+  matrix[N, K] X;
+  // priors
+  real alpha_mean;
+  real<lower = 0.> alpha_scale;
+  vector[K] beta_mean;
+  vector<lower = 0.>[K] beta_scale;
+  real<lower = 0.> reciprocal_phi_scale;
+}
+parameters {
+  real alpha;
+  vector[K] beta;
+  real<lower = 0.> reciprocal_phi;
+}
+transformed parameters {
+  vector[N] eta;
+  real<lower = 0.> phi;
+  eta = alpha + X * beta;
+  phi = 1. / reciprocal_phi;
+}
+model {
+  reciprocal_phi ~ cauchy(0., reciprocal_phi_scale);
+  alpha ~ normal(alpha_mean, alpha_scale);
+  beta ~ normal(beta_mean, beta_scale);
+  y ~ neg_binomial_2_log(eta, phi);
+}
+generated quantities {
+  vector[N] mu;
+  vector[N] log_lik;
+  vector[N] y_rep;
+  mu = exp(eta);
+  for (i in 1:N) {
+    log_lik[i] = neg_binomial_2_log_lpmf(y[i] | eta[i], phi);
+    y_rep[i] = neg_binomial_2_rng(mu[i], phi);
+  }
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/st_louis_census.rda&quot;</span>)
+negbin_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>st_louis_census<span class="op">$</span>i8094
+  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
+  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
+  beta_mean &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
+  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)  
+  alpha_mean &lt;-<span class="st"> </span><span class="dv">0</span>
+  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
+  reciprocal_phi_scale &lt;-<span class="st"> </span><span class="dv">5</span>
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(negbin_mod, <span class="dt">data =</span> negbin_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(negbin_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;phi&quot;</span>))<span class="op">$</span>summary
+<span class="co">#&gt;           mean se_mean     sd   2.5%    25%    50%    75%  97.5% n_eff</span>
+<span class="co">#&gt; alpha    2.927 0.00126 0.0722  2.786  2.879  2.925  2.975  3.070  3300</span>
+<span class="co">#&gt; beta[1]  0.692 0.00193 0.1100  0.478  0.618  0.692  0.763  0.913  3253</span>
+<span class="co">#&gt; beta[2] -0.347 0.00171 0.1015 -0.550 -0.414 -0.346 -0.279 -0.151  3539</span>
+<span class="co">#&gt; phi      1.967 0.00584 0.3143  1.428  1.752  1.943  2.154  2.666  2894</span>
+<span class="co">#&gt;          Rhat</span>
+<span class="co">#&gt; alpha   1.000</span>
+<span class="co">#&gt; beta[1] 1.000</span>
+<span class="co">#&gt; beta[2] 0.999</span>
+<span class="co">#&gt; phi     1.001</span></code></pre></div>
+<p>We could also fit the model using the <strong><a href="https://cran.r-project.org/package=rstanarm">rstanarm</a></strong> function <a href="https://www.rdocumentation.org/packages/rstanarm/topics/stan_glm.nb">rstanarm</a>,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm.nb</span>(i8094 <span class="op">~</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">negbin_fit2
+<span class="co">#&gt; stan_glm.nb</span>
+<span class="co">#&gt;  family:  neg_binomial_2 [log]</span>
+<span class="co">#&gt;  formula: i8094 ~ pcunemp9 + incrs</span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Estimates:</span>
+<span class="co">#&gt;                       Median MAD_SD</span>
+<span class="co">#&gt; (Intercept)            2.8    0.4  </span>
+<span class="co">#&gt; pcunemp9               0.1    0.0  </span>
+<span class="co">#&gt; incrs                 -0.1    0.0  </span>
+<span class="co">#&gt; reciprocal_dispersion  2.0    0.3  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Sample avg. posterior predictive </span>
+<span class="co">#&gt; distribution of y (X = xbar):</span>
+<span class="co">#&gt;          Median MAD_SD</span>
+<span class="co">#&gt; mean_PPD 32.0    5.5  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></code></pre></div>
 
 </div>
             </section>
@@ -183,8 +266,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-
-<a href="undervote.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="genbeetles.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

@@ -6,7 +6,7 @@ rmd_files:
 - undervote.Rmd
 - cancer.Rmd
 - florida.Rmd
-- turnout2005.Rmd
+- turnout.Rmd
 - cosponsor.Rmd
 - reagan.Rmd
 - sophistication.Rmd
@@ -24,5 +24,4 @@ rmd_files:
 - resistant.Rmd
 - genbeetles.Rmd
 - negbin.Rmd
-
 - references.Rmd

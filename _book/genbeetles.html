@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="negbin.html">
-
+<link rel="prev" href="truncation-how-does-stan-deal-with-truncation.html">
+<link rel="next" href="negbin.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,112 +145,123 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
+<div id="genbeetles" class="section level1">
+<h1><span class="header-section-number">18</span> Generalized Beetles: generalizing link functions for binomial GLMs</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</code></pre></div>
+<p>GLMs rely on link functions, linking the linear predictors and the response probability, <span class="math inline">\(\pi\)</span>. Logit and probit are perhaps the most familiar link functions, mapping from the unit probability interval to the real line using the inverse CDFs of the logistic and standard Normal distributions, respectively. The logit and probit link functions have the interesting property that they are symmetric about <span class="math inline">\(\pi = 0.5\)</span>, and guarantee the effects of <span class="math inline">\(x_i\)</span> on <span class="math inline">\(\pi\)</span> to be greatest when <span class="math inline">\(\pi = 0.5\)</span>. To see this, recall that in GLMs for binomial data the effects of <span class="math inline">\(x_i\)</span> on <span class="math inline">\(\pi\)</span> are not constant, but vary over <span class="math inline">\(\pi\)</span>. For logit and probit, with link functions symmetric around zero, the effect of <span class="math inline">\(x_i\)</span> on <span class="math inline">\(\pi\)</span> is at its greatest when <span class="math inline">\(f(x_i \beta)\)</span> is its maximum, which for logit and probit occurs at <span class="math inline">\(x_i \beta = 0\)</span>. In dose-response studies, this means that responsiveness to dose is at its greatest when subjects are on the cusp of a response, at, that is, when <span class="math inline">\(E(\pi) = 0.5\)</span>. In a study of voter turnout, ordinary logit or probit is estimated subject to the constraint that the effects of the covariates are at their greatest for citizens who are indifferent between turning out and abstaining [Nagler1994a]. Furthermore, for logit/probit, these marginal effects diminish in magnitude symmetrically as we move away from <span class="math inline">\(E(\pi) = 0.5\)</span>; this symmetry follows from the symmetry of the logistic and normal PDFs/CDFs.</p>
+<p>One can easily envisage situations where the researcher would not want to impose these features of the logit or probit link functions on their data. In many settings, knowledge of exactly where the marginal impact of the covariates is maximized is of tremendous practical importance, with implications for targeting policy interventions, resource allocation, and so on. For example, how to distribute resources for educational or health improvements? Given that the effects of interventions are not constant across a set of baseline probabilities, knowing where proposed interventions are likely to have bigger or smaller effects is valuable information for policy-makers. As we have seen, logit/probit constrain these effects to be at their greatest at <span class="math inline">\(E(\pi) = .5\)</span>, via their symmetric S-shaped link functions. Ceteris paribus we would prefer to estimate the shape of the link function from the data.</p>
+<p>A relatively straightforward way to let the data be informative as to the shape of the link function is via a simple one-parameter transformation of the logit link [Prentice1976a]: <span class="math display">\[
+\pi = \frac{1}{(1 + \exp(-x_i \beta))^m}
+\]</span> where <span class="math inline">\(m &gt; 0\)</span> is a parameter that skews the logit link. The standard logit model is a special case, where <span class="math inline">\(m = 1\)</span>.</p>
+<p>Estimating <span class="math inline">\(m\)</span> and <span class="math inline">\(b\)</span> by maximum likelihood is relatively straightforward, although there is little reason to believe the frequentist sampling distribution for <span class="math inline">\(m\)</span> is likely to be well approximated by the normal in a finite sample. Notice that <span class="math inline">\(m\)</span> enters the model in a highly non-linear fashion, and that different ranges of <span class="math inline">\(m\)</span> imply quite different relationships between the linear predictors and <span class="math inline">\(\pi\)</span>. In Bayesian terms, we can reasonably expect the posterior density of <span class="math inline">\(m\)</span> to be non-normal, and probably log-normal. Likewise, the posterior densities of related quantities of interest such as the LD50 could well be non-normal. Inferences for these quantities could well be misleading if we were to rely only on point estimates and asymptotic normal approximations; instead, a Bayesian approach via MCMC offers a way for us to obtain arbitrarily precise approximations to the posterior densities of these quantities.</p>
+<p>To demonstrate the use of MCMC methods in this context, I use the famous beetles data of <span class="citation">Bliss (<a href="#ref-Bliss1935a">1935</a>)</span>. These data have been extensively used by statisticians in studies generalized link functions <span class="citation">(Prentice <a href="#ref-Prentice1976a">1976</a>; Stukel <a href="#ref-Stukel1988a">1988</a>)</span>, and are used by <span class="citation">Spiegelhalter, Best, and Gilks (<a href="#ref-SpiegelhalterBestGilks1996a">1996</a>)</span> to demonstrate how BUGS handles GLMs for binomial data. <span class="citation">Carlin and Louis (<a href="#ref-CarlinLouis2000a">2000</a>)</span> use these data in an MCMC implementation of the one-parameter generalization used here; they made use of re-parameterizations and problem-specific computer programming to handle the non-conjugacies introduced via the skew parameter <span class="math inline">\(m\)</span>. Here I show how WinBUGS can handle this problem relatively simply.</p>
+<p><span class="math display">\[
+\begin{aligned}[t]
+r_i &amp;\sim \mathsf{Binomial}(n_i, \pi_i) \\
+\pi_i &amp;= 1 - \frac{1}{(1 + e^{(\alpha + x_i&#39; \beta_i)})^\nu}
+\end{aligned}
+\]</span></p>
+<p>I give <span class="math inline">\(\mu\)</span> a Gamma prior with a of 1.0 (corresponding to the standard logit model), and a standard deviation of 2, <span class="math display">\[
+\nu \sim \mathsf{Gamma}(0.25, 0.25)
+\]</span> The regression coefficients are given weakly informative priors, <span class="math display">\[
+\begin{aligned}[t]
+\alpha &amp;\sim N(0, 10) \\
+\beta &amp;\sim N(0, 2.5)
+\end{aligned}
+\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">genbeetles_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/genbeetles.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  int r[N];
+  int n[N];
+  vector[N] x;
+}
+parameters {
+  real alpha;
+  real beta;
+  real<lower = 0.> nu;
+}
+transformed parameters {
+  vector[N] mu;
+  for (i in 1:N) {
+    mu[i] = pow(inv_logit(alpha + beta * x[i]), nu) ;
+  }
+}
+model {
+  alpha ~ normal(0., 10.);
+  beta ~ normal(0., 2.5);
+  nu ~ gamma(0.25, 0.25);
+  r ~ binomial(n, mu);
+}
+generated quantities {
+  // probability where the maximum marginal effect
+  real pdot;
+  pdot = pow(inv_logit(nu), nu);
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">genbeetles_data &lt;-<span class="st"> </span><span class="kw">dget</span>(<span class="st">&quot;data/genbeetles.R&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">within</span>({
+    x &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">scale</span>(x))
+  })</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">genbeetles_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(genbeetles_mod, <span class="dt">data =</span> genbeetles_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">genbeetles_fit
+<span class="co">#&gt; Inference for Stan model: genbeetles.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;          mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff</span>
+<span class="co">#&gt; alpha   -1.34    0.03 0.90   -3.31   -1.91   -1.29   -0.73    0.24   809</span>
+<span class="co">#&gt; beta     4.07    0.03 0.88    2.59    3.45    3.97    4.60    6.06   780</span>
+<span class="co">#&gt; nu       0.34    0.00 0.14    0.17    0.25    0.32    0.40    0.69   775</span>
+<span class="co">#&gt; mu[1]    0.10    0.00 0.03    0.06    0.08    0.10    0.12    0.16  1922</span>
+<span class="co">#&gt; mu[2]    0.19    0.00 0.03    0.13    0.17    0.19    0.21    0.25  2856</span>
+<span class="co">#&gt; mu[3]    0.33    0.00 0.03    0.27    0.31    0.33    0.35    0.39  4000</span>
+<span class="co">#&gt; mu[4]    0.54    0.00 0.04    0.47    0.52    0.54    0.57    0.62  1713</span>
+<span class="co">#&gt; mu[5]    0.77    0.00 0.03    0.70    0.75    0.77    0.80    0.83  2300</span>
+<span class="co">#&gt; mu[6]    0.92    0.00 0.02    0.88    0.91    0.92    0.94    0.96  3217</span>
+<span class="co">#&gt; mu[7]    0.98    0.00 0.01    0.95    0.97    0.98    0.99    0.99  1329</span>
+<span class="co">#&gt; mu[8]    0.99    0.00 0.00    0.98    0.99    0.99    1.00    1.00  1058</span>
+<span class="co">#&gt; pdot     0.84    0.00 0.04    0.76    0.81    0.84    0.87    0.90   815</span>
+<span class="co">#&gt; lp__  -185.43    0.04 1.24 -188.64 -186.03 -185.11 -184.50 -183.97  1143</span>
+<span class="co">#&gt;       Rhat</span>
+<span class="co">#&gt; alpha    1</span>
+<span class="co">#&gt; beta     1</span>
+<span class="co">#&gt; nu       1</span>
+<span class="co">#&gt; mu[1]    1</span>
+<span class="co">#&gt; mu[2]    1</span>
+<span class="co">#&gt; mu[3]    1</span>
+<span class="co">#&gt; mu[4]    1</span>
+<span class="co">#&gt; mu[5]    1</span>
+<span class="co">#&gt; mu[6]    1</span>
+<span class="co">#&gt; mu[7]    1</span>
+<span class="co">#&gt; mu[8]    1</span>
+<span class="co">#&gt; pdot     1</span>
+<span class="co">#&gt; lp__     1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 05:18:42 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
 
+</div>
+<h3>References</h3>
 <div id="refs" class="references">
-<div>
-<p>Aitchison, J. 1982. “The Statistical Analysis of Compositional Data.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 44 (2). [Royal Statistical Society, Wiley]: 139–77. <a href="http://www.jstor.org/stable/2345821" class="uri">http://www.jstor.org/stable/2345821</a>.</p>
-</div>
-<div>
-<p>Albert, J. H. 1992. “Bayesian Estimation of Normal Ogive Item Response Curves Using Gibbs Sampling.” <em>Journal of Educational and Behavioral Statistics</em> 17 (3). American Educational Research Association (AERA): 251–69. doi:<a href="https://doi.org/10.3102/10769986017003251">10.3102/10769986017003251</a>.</p>
-</div>
-<div>
-<p>Albert, James H., and Siddhartha Chib. 1993. “Bayesian Analysis of Binary and Polychotomous Response Data.” <em>Journal of the American Statistical Association</em> 88 (422). Informa UK Limited: 669–79. doi:<a href="https://doi.org/10.1080/01621459.1993.10476321">10.1080/01621459.1993.10476321</a>.</p>
-</div>
-<div>
-<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP): 747–69. doi:<a href="https://doi.org/10.1093/biomet/82.4.747">10.1093/biomet/82.4.747</a>.</p>
-</div>
-<div>
-<p>Alvarez, R. Michael, Geoffrey Garrett, and Peter Lange. 1991. “Government Partisanship, Labor Organization, and Macroeconomic Performance.” <em>The American Political Science Review</em> 85 (2). [American Political Science Association, Cambridge University Press]: 539–56. <a href="http://www.jstor.org/stable/1963174" class="uri">http://www.jstor.org/stable/1963174</a>.</p>
-</div>
-<div>
+<div id="ref-Bliss1935a">
 <p>Bliss, C. I. 1935. “The Calculation of the Dosage-Mortality Curve.” <em>Annals of Applied Biology</em> 22 (1). Wiley-Blackwell: 134–67. doi:<a href="https://doi.org/10.1111/j.1744-7348.1935.tb07713.x">10.1111/j.1744-7348.1935.tb07713.x</a>.</p>
 </div>
-<div>
-<p>Carlin, Bradley P., and Thomas A. Louis. 2000. <em>Bayes and Empirical Bayes Methods for Data Analysis</em>. 2nd ed. Chapman; Hall/CRC.</p>
-</div>
-<div>
-<p>Clinton, Joshua, Simon Jackman, and Douglas Rivers. 2004. “The Statistical Analysis of Roll Call Data.” <em>American Political Science Review</em> 98 (02). Cambridge University Press (CUP): 355–70. doi:<a href="https://doi.org/10.1017/s0003055404001194">10.1017/s0003055404001194</a>.</p>
-</div>
-<div>
-<p>Congdon, Peter. 2007. <em>Bayesian Statistical Modelling</em>. Wiley.</p>
-</div>
-<div>
-<p>Dempster, A. P., N. M. Laird, and D. B. Rubin. 1977. “Maximum Likelihood from Incomplete Data via the Em Algorithm.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). [Royal Statistical Society, Wiley]: 1–38. <a href="http://www.jstor.org/stable/2984875" class="uri">http://www.jstor.org/stable/2984875</a>.</p>
-</div>
-<div>
-<p>Dorn, Harold F. 1954. “The Relationship of Cancer of the Lung and the Use of Tobacco.” <em>The American Statistician</em> 8 (5). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 7–13. <a href="http://www.jstor.org/stable/2681545" class="uri">http://www.jstor.org/stable/2681545</a>.</p>
-</div>
-<div>
-<p>Draper, IDavid. 1992. <em>Combining Information: Statistical Issues and Opportunities for Research</em>. Contemporary Statistics. National Academy Press. <a href="https://books.google.com/books?id=l0ArAAAAYAAJ" class="uri">https://books.google.com/books?id=l0ArAAAAYAAJ</a>.</p>
-</div>
-<div>
-<p>Enelow, J.M., and M.J. Hinich. 1984. <em>The Spatial Theory of Voting: An Introduction</em>. Cambridge University Press. <a href="https://books.google.com/books?id=lXY6AAAAIAAJ" class="uri">https://books.google.com/books?id=lXY6AAAAIAAJ</a>.</p>
-</div>
-<div>
-<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell: 247–68. doi:<a href="https://doi.org/10.1111/1467-9876.00190">10.1111/1467-9876.00190</a>.</p>
-</div>
-<div>
-<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP): 83–98. doi:<a href="https://doi.org/10.1093/oxfordjournals.pan.a029806">10.1093/oxfordjournals.pan.a029806</a>.</p>
-</div>
-<div>
-<p>Jackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” <em>Political Analysis</em> 8 (4). [Oxford University Press, Society for Political Methodology]: 307–32. <a href="http://www.jstor.org/stable/25791616" class="uri">http://www.jstor.org/stable/25791616</a>.</p>
-</div>
-<div>
-<p>———. 2001. “Multidimensional Analysis of Roll Call Data via Bayesian Simulation: Identification, Estimation, Inference, and Model Checking.” <em>Political Analysis</em> 9 (3). [Oxford University Press, Society for Political Methodology]: 227–41. <a href="http://www.jstor.org/stable/25791646" class="uri">http://www.jstor.org/stable/25791646</a>.</p>
-</div>
-<div>
-<p>———. 2004. “Bayesian Analysis for Political Research.” <em>Annual Review of Political Science</em> 7 (1). Annual Reviews: 483–505. doi:<a href="https://doi.org/10.1146/annurev.polisci.7.012003.104706">10.1146/annurev.polisci.7.012003.104706</a>.</p>
-</div>
-<div>
-<p>Johnson, Valen E., and James H. Albert. 1999. <em>Ordinal Data Modeling</em>. Springer-Verlag. doi:<a href="https://doi.org/10.1007/b98832">10.1007/b98832</a>.</p>
-</div>
-<div>
-<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited: 52–66. doi:<a href="https://doi.org/10.1198/jbes.2009.07145">10.1198/jbes.2009.07145</a>.</p>
-</div>
-<div>
-<p>Katz, Jonathan N., and Gary King. 1999. “A Statistical Model for Multiparty Electoral Data.” <em>American Political Science Review</em> 93 (01). Cambridge University Press (CUP): 15–32. doi:<a href="https://doi.org/10.2307/2585758">10.2307/2585758</a>.</p>
-</div>
-<div>
-<p>Krehbiel, Keith. 1995. “Cosponsors and Wafflers from a to Z.” <em>American Journal of Political Science</em> 39 (4). JSTOR: 906. doi:<a href="https://doi.org/10.2307/2111662">10.2307/2111662</a>.</p>
-</div>
-<div>
-<p>Londregan, J.B. 2007. <em>Legislative Institutions and Ideology in Chile</em>. Political Economy of Instituti. Cambridge University Press. <a href="https://books.google.com/books?id=WpXHHYf7lJoC" class="uri">https://books.google.com/books?id=WpXHHYf7lJoC</a>.</p>
-</div>
-<div>
-<p>Murray, Gordon. 1977. “Discussion on the Paper by Professor Dempster et Al.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). [Royal Statistical Society, Wiley]: 27. <a href="http://www.jstor.org/stable/2984875" class="uri">http://www.jstor.org/stable/2984875</a>.</p>
-</div>
-<div>
-<p>Nagler, Jonathan. 1994. “Scobit: An Alternative Estimator to Logit and Probit.” <em>American Journal of Political Science</em> 38 (1). [Midwest Political Science Association, Wiley]: 230–55. <a href="http://www.jstor.org/stable/2111343" class="uri">http://www.jstor.org/stable/2111343</a>.</p>
-</div>
-<div>
-<p>Poole, Keith T., and Howard Rosenthal. 2000. <em>Congress: A Political-Economic History of Roll Call Voting</em>. Oxford University Press.</p>
-</div>
-<div>
+<div id="ref-Prentice1976a">
 <p>Prentice, Ross L. 1976. “A Generalization of the Probit and Logit Methods for Dose Response Curves.” <em>Biometrics</em> 32 (4). [Wiley, International Biometric Society]: 761–68. <a href="http://www.jstor.org/stable/2529262" class="uri">http://www.jstor.org/stable/2529262</a>.</p>
 </div>
-<div>
-<p>Spiegelhalter, D. J., A. Thomas N. Best, and W. R. Gilks. 1996. “BUGS: Bayesian Inference Using Gibbs Sampling, Version 0.5.”</p>
-</div>
-<div>
-<p>Stan Development Team. 2016. <em>Stan Modeling Language Users Guide and Reference Manual, Version 2.14.0</em>. <a href="https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf" class="uri">https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf</a>.</p>
-</div>
-<div>
+<div id="ref-Stukel1988a">
 <p>Stukel, Therese A. 1988. “Generalized Logistic Models.” <em>Journal of the American Statistical Association</em> 83 (402). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 426–31. <a href="http://www.jstor.org/stable/2288858" class="uri">http://www.jstor.org/stable/2288858</a>.</p>
 </div>
-<div>
-<p>Tanner, Martin A. 1996. <em>Tools for Statistical Inference</em>. Springer.</p>
+<div id="ref-SpiegelhalterBestGilks1996a">
+<p>Spiegelhalter, D. J., A. Thomas N. Best, and W. R. Gilks. 1996. “BUGS: Bayesian Inference Using Gibbs Sampling, Version 0.5.”</p>
 </div>
-<div>
-<p>Tomz, Michael, and Robert P. Van Houweling. 2003. “How Does Voting Equipment Affect the Racial Gap in Voided Ballots?” <em>American Journal of Political Science</em> 47 (1). Wiley-Blackwell: 46–60. doi:<a href="https://doi.org/10.1111/1540-5907.00004">10.1111/1540-5907.00004</a>.</p>
-</div>
-<div>
-<p>Tomz, Michael, Joshua A. Tucker, and Jason Wittenberg. 2002. “An Easy and Accurate Regression Model for Multiparty Electoral Data.” <em>Political Analysis</em> 10 (1). [Oxford University Press, Society for Political Methodology]: 66–83. <a href="http://www.jstor.org/stable/25791665" class="uri">http://www.jstor.org/stable/25791665</a>.</p>
-</div>
-<div>
-<p>Western, Bruce. 1998. “Causal Heterogeneity in Comparative Research: A Bayesian Hierarchical Modelling Approach.” <em>American Journal of Political Science</em> 42 (4). [Midwest Political Science Association, Wiley]: 1233–59. doi:<a href="https://doi.org/10.2307/2991856">10.2307/2991856</a>.</p>
-</div>
+<div id="ref-CarlinLouis2000a">
+<p>Carlin, Bradley P., and Thomas A. Louis. 2000. <em>Bayes and Empirical Bayes Methods for Data Analysis</em>. 2nd ed. Chapman; Hall/CRC.</p>
 </div>
 </div>
             </section>
@@ -258,8 +269,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="negbin.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="truncation-how-does-stan-deal-with-truncation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="negbin.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

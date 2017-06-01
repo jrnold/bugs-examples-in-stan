@@ -1,6 +1,6 @@
 # Negative Binomial: Estimating Homicides in Census Tracks {#negbin}
 
-```{r message=FALSE}
+```{r negbin_setup,message=FALSE}
 library("tidyverse")
 library("rstan")
 library("rstanarm")

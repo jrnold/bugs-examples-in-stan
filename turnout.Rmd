@@ -1,6 +1,6 @@
 # Turnout: logit/probit models for binary data {#turnout}
 
-```{r message=FALSE}
+```{r turnout_setup,message=FALSE}
 library("tidyverse")
 library("rstanarm")
 library("rstan")
@@ -21,6 +21,13 @@ $$
 \begin{aligned}[t]
 \alpha &\sim \mathsf{Normal}(0, 10)\\
 \beta_k &\sim \mathsf{Normal}(0, 2.5)
+\end{aligned}
+$$
+and on the probit scale,
+$$
+\begin{aligned}[t]
+\alpha &\sim \mathsf{Normal}(0, 8) \\
+\beta_k &\sim \mathsf{Normal}(0, 2)
 \end{aligned}
 $$
 
@@ -67,7 +74,9 @@ turnout2005_fit_logit
 ```
 
 ```{r turnout2005_fit_probit,results='hide'}
-turnout2005_fit_probit <- sampling(turnout2005_mod_probit, data = turnout2005_data)
+turnout2005_fit_probit <- 
+  sampling(turnout2005_mod_probit,
+           data = turnout2005_data)
 ```
 ```{r}
 turnout2005_fit_probit
@@ -84,11 +93,13 @@ turnout2005_fit_logit2 <-
 turnout2005_fit_logit2
 ```
 
-
+For the probit model, the priors need to be reduced.
 ```{r turnout2005_fit_probit2,results='hide'}
 turnout2005_fit_probit2 <-
   stan_glm(y ~ closing * poly(educ, 2) + poly(age, 2) + south + govelec,
          family = binomial(link = "probit"),
+         prior_intercept = normal(location = 0, scale = 8, autoscale = TRUE),
+         prior = normal(location = 0, scale = 1.5, autoscale = TRUE),
          data = turnout2005)
 ```
 ```{r}

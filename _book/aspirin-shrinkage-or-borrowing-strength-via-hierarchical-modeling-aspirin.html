@@ -33,8 +33,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-
-<link rel="next" href="undervote.html">
+<link rel="prev" href="campaign.html">
+<link rel="next" href="corporatism.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -145,46 +145,52 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
-<h4 class="date"><em>2017-05-31</em></h4>
+<div id="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin" class="section level1">
+<h1><span class="header-section-number">13</span> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</h1>
+<p>The following data come from a meta-analysis of heart attack data. Each observation is the results of a study of survivorship following a heart attack (myocardial infarction). In each study, some victims were given aspirin immediately following their heart attack, while some vicitims were not. The observed values of y are the differences in mean survivorship observed in each study, with the other piece of data, the standard deviations, reflecting the relative sizes of the two groups in each study (i.e., although the data are binomial, given the large number of observations per study a normal approximation is valid and reduces each study’s data to the observed treatement effect and a standard deviation). The goal of the meta-analysis is to synthesize the six studies, so as to arrive at an overall conclusion regarding the effects of aspirin on survivorship following a heart attack.</p>
+<p>This is an extremely simple example of hierarchical modeling. Via the exchangeability assumption (i.e., the study-specific means have a common prior), the studies “borrow strength” from one another, introducing some bias (each study’s mean qi is shrunk back towards the common mean), but with the benefit of gaining precision (smaller variance). We also gain a better estimate of the overall effect of aspirin on survivorship after heart attack than we would get from naively pooling the studies.</p>
+<p>These data and the meta-analysis is discussed at length in <span class="citation">Draper (<a href="#ref-Draper1992a">1992</a>)</span>.</p>
+<p>model{ for(i in 1:6){ ## loop over studies theta[i] ~ dnorm(mu,tau); ## prior for each study v[i] &lt;- pow(sd[i],2); ## convert each study’s se to var precision[i] &lt;- 1/v[i]; ## convert var to precision y[i] ~ dnorm(theta[i],precision[i]); ## model for each study b[i] &lt;- v[i]/(v[i] + sigma2) ## shrinkage (auxilary quantity) } mu ~ dnorm(0.0, .001); ## prior for the common mean tau ~ dgamma(.01, .01); ## “between-study” precision, prior sigma2 &lt;- 1/tau; ## convert precision to variance good &lt;- step(mu); ## E(good) = Pr(mu&gt;0 | data) }</p>
+<div id="data" class="section level2">
+<h2><span class="header-section-number">13.1</span> data</h2>
+<p>list(y=c(2.77,2.50,1.84,2.56,2.31,-1.15), sd=c(1.65,1.31,2.34,1.67,1.98,0.90))</p>
 </div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
-<ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
-</ol>
+<div id="initial-values" class="section level2">
+<h2><span class="header-section-number">13.2</span> initial values</h2>
+<p>list(mu=0,tau=1)</p>
+<p>Results: The boost in survivorship is estimated at 1.32 percentage points with a standard deviation of .93; the posterior mean of “good” yields a Bayesian p-value for this overall treatment effect, the (posterior) probability that aspirin does not increase survivorship is 1 - .9447 = .0553. Note that a classical analysis that simply pooled the studies yields an average treatment effect of .86 and a standard error of .59 (z = 1.47, p = .072).</p>
+<pre><code> node    mean    sd  MC error   2.5%    median  97.5%   start   sample
+b[1]    0.6661  0.2461  0.007897    0.1663  0.6882  0.9953  1001    10000
+b[2]    0.5894  0.2701  0.00917 0.1117  0.5818  0.9926  1001    10000
+b[3]    0.7712  0.1995  0.005867    0.2863  0.8161  0.9977  1001    10000
+b[4]    0.67    0.2447  0.007828    0.1696  0.6933  0.9954  1001    10000
+b[5]    0.7232  0.2229  0.006835    0.2231  0.7606  0.9967  1001    10000
+b[6]    0.4634  0.2923  0.0108  0.05601 0.3963  0.9844  1001    10000
+good    0.9447  0.2286  0.004739    0.0 1.0 1.0 1001    10000
+mu  1.316   0.9346  0.02277 -0.3015 1.263   3.304   1001    10000
+sigma2  2.612   6.079   0.1084  0.01284 1.234   13.65   1001    10000
+theta[1]    1.736   1.177   0.02922 -0.2638 1.603   4.352   1001    10000
+theta[2]    1.738   1.065   0.02805 -0.06121    1.62    4.037   1001    10000
+theta[3]    1.375   1.29    0.027   -1.053  1.269   4.246   1001    10000
+theta[4]    1.655   1.176   0.02757 -0.3317 1.523   4.292   1001    10000
+theta[5]    1.538   1.247   0.02587 -0.6295 1.405   4.325   1001    10000
+theta[6]    -0.07534    0.9488  0.02355 -1.985  -0.02785    1.636   1001    10000</code></pre>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Draper1992a">
+<p>Draper, IDavid. 1992. <em>Combining Information: Statistical Issues and Opportunities for Research</em>. Contemporary Statistics. National Academy Press. <a href="https://books.google.com/books?id=l0ArAAAAYAAJ" class="uri">https://books.google.com/books?id=l0ArAAAAYAAJ</a>.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-<a href="undervote.html" class="navigation navigation-next navigation-unique" aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="campaign.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="corporatism.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>

@@ -1,5 +1,11 @@
 # Undervoting for President, by Race: difference in two binomial proportions {#undervote}
 
+```{r undervote_setup,message=FALSE}
+library("tidyverse")
+library("rstan")
+```
+
+
 Does undervoting for the US president differ by race? 
 Intentional undervoting is when a voter chooses not to cast vote for
 an item on a ballot.
@@ -15,7 +21,7 @@ as well as the race of the respondents.
 Of 6,537 black voters, 26 said they did not vote for president; of 44,531 white voters, 91 said they did not vote for president.
 In the American National Election Studies (1964-2000), of 1,101 black voters, 10 report not voting for president, while 57 of 9,827 white voters report not voting for president.  
 
-```{r}
+```{r undervote}
 undervote <- 
   tribble(
     ~survey, ~race, ~n, ~undervote,
@@ -60,7 +66,7 @@ $$
 $$
 We are also interested in the probability that black undervoting is greater than white undervoting, $\Pr(\delta_j) > 0$, in each survey.
 
-```{r undervote_mod,results='hide'}
+```{r undervote_mod,results='hide',cache.extra=tools::md5sum("stan/undervote.stan")}
 undervote_mod <- stan_model("stan/undervote.stan")
 ```
 ```{r results='asis',echo=FALSE}

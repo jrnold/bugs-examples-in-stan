@@ -3,7 +3,7 @@
 
 This example comes from @Jackman2005a.
 
-```{r message=FALSE}
+```{r campaign_setup,message=FALSE}
 library("rstan")
 library("tidyverse")
 library("lubridate")
@@ -16,7 +16,7 @@ House of Representatives - "first preferences""
 - https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_(House_of_Representatives)
 - https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election
 
-```{r}
+```{r AustralianElectionPolling}
 data("AustralianElectionPolling", package = "pscl")
 elections <-
   list(
@@ -60,8 +60,8 @@ to house effects with a 95% confidence interval of between -15 and 15 (which wou
 
 It is expected that most polling movements are $\pm 2$ percentage points. This implies an average scale of
 
-```{r}
-polling_data <- within(list(), {
+```{r campaign_data}
+campaign_data <- within(list(), {
   y <- AustralianElectionPolling$ALP
   s <- AustralianElectionPolling$ALP_se
   time <- AustralianElectionPolling$time
@@ -77,17 +77,26 @@ polling_data <- within(list(), {
 })
 ```
 
-```{r}
-polling_mod <- stan_model("stan/polling.stan")
+```{r campaign_mod,results='hide',cache.extra=tools::md5sum("stan/campaign.stan")}
+campaign_mod <- stan_model("stan/campaign.stan")
+```
+```{r echo=FALSE,results='asis'}
+campaign_mod
 ```
 
+
+```{r campaign_fit,results='hide'}
+campaign_fit <- sampling(campaign_mod, data = campaign_data,
+                         chains = 1,
+                         init = list(list(xi = rep(mean(campaign_data$y), campaign_data$N))))
+```
 ```{r}
-polling_fit <- sampling(polling_mod, data = polling_data, chains = 1,
-                        init = list(list(xi = rep(mean(y), polling_data$N)))
+campaign_fit
 ```
 
-```{r}
-xi <- summary(polling_fit, par = "xi")$summary %>%
+
+```{r campaign_plot_xi}
+xi <- summary(campaign_fit, par = "xi")$summary %>%
   as.data.frame() %>%
   rownames_to_column("parameter") %>%
   filter(!str_detect(parameter, ",2\\]")) %>%
@@ -100,26 +109,4 @@ ggplot() +
              mapping = aes(x = midDate, y = ALP, colour = org))
 
 ```
-
-```{r}
-xi <- summary(polling_fit, par = "xi")$summary %>%
-  as.data.frame() %>%
-  rownames_to_column("parameter") %>%
-  filter(str_detect(parameter, ",2\\]")) %>%
-  mutate(date = START_DATE + row_number() - 1)
-
-ggplot() +
-  geom_ribbon(data = xi, mapping = aes(x = date, ymin = `2.5%`, ymax = `97.5%`), alpha = 0.3) +
-  geom_line(data = xi, mapping = aes(x = date, y = mean))
-
-```
-
-```{r}
-xi <- summary(polling_fit, par = "xi")$summary %>%
-  as.data.frame() %>%
-  rownames_to_column("parameter") %>%
-  mutate(date = START_DATE + row_number() - 1)
-
-```
-
 

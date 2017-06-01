@@ -1,8 +1,9 @@
 
-# Cancer: difference in two binomial proportions
+# Cancer: difference in two binomial proportions {#cancer}
 
 
 ```r
+library("tidyverse")
 library("rstan")
 ```
 
@@ -108,7 +109,7 @@ cancer_fit1
 #> lambda_up    1
 #> lp__         1
 #> 
-#> Samples were drawn using NUTS(diag_e) at Tue May 30 21:48:51 2017.
+#> Samples were drawn using NUTS(diag_e) at Wed May 31 05:17:34 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
@@ -195,15 +196,15 @@ cancer_fit2
 #> post-warmup draws per chain=1000, total post-warmup draws=4000.
 #> 
 #>             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff
-#> a           1.69    0.01 0.29   1.16   1.49   1.68   1.89   2.29  1795
-#> b           1.66    0.02 0.64   0.53   1.21   1.62   2.07   3.00  1727
-#> p[1]        0.96    0.00 0.02   0.92   0.95   0.96   0.98   0.99  2720
+#> a           1.68    0.01 0.29   1.15   1.49   1.67   1.87   2.29  1849
+#> b           1.71    0.01 0.65   0.56   1.27   1.67   2.11   3.07  1945
+#> p[1]        0.96    0.00 0.02   0.91   0.95   0.97   0.98   0.99  2751
 #> p[2]        0.84    0.00 0.04   0.76   0.82   0.84   0.87   0.91  1881
-#> delta       0.12    0.00 0.04   0.04   0.09   0.12   0.15   0.21  1653
+#> delta       0.12    0.00 0.04   0.04   0.09   0.12   0.15   0.21  1764
 #> delta_up    1.00    0.00 0.04   1.00   1.00   1.00   1.00   1.00  4000
-#> lambda      1.66    0.02 0.64   0.53   1.21   1.62   2.07   3.00  1727
+#> lambda      1.71    0.01 0.65   0.56   1.27   1.67   2.11   3.07  1945
 #> lambda_up   1.00    0.00 0.04   1.00   1.00   1.00   1.00   1.00  4000
-#> lp__      -52.43    0.03 1.01 -55.09 -52.80 -52.13 -51.74 -51.47  1502
+#> lp__      -52.44    0.03 1.01 -55.22 -52.83 -52.13 -51.72 -51.47  1587
 #>           Rhat
 #> a            1
 #> b            1
@@ -215,7 +216,7 @@ cancer_fit2
 #> lambda_up    1
 #> lp__         1
 #> 
-#> Samples were drawn using NUTS(diag_e) at Tue May 30 21:49:40 2017.
+#> Samples were drawn using NUTS(diag_e) at Wed May 31 05:18:31 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
