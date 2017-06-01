@@ -50,13 +50,8 @@ uk92_mod
 
 
 ```{r results='hide'}
-fit_uk92 <- sampling(mod_uk92, data = data_uk92)
+fit_uk92 <- sampling(uk92_mod, data = data_uk92)
 ```
 ```{r}
 summary(fit_uk92, par = c("nu", "a", "b", "Sigma"))$summary
 ```
-
-
-This differs slightly from the original Jackman model.
-The Jackman model omitted an intercept, but did not fix the scale of the Sigma distribution.
-It also used several prior distributions better suited for WinBUGS.
