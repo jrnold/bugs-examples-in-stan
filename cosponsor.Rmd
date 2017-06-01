@@ -9,12 +9,17 @@ Several auxiliary quantities are estimated in the following BUGS program.  Perce
 I also compute latent residuals [@GelmanGoegebeurTuerlinckxEtAl2000a; @AlbertChib1995a].   These quantities are simply the difference between the latent y* and their fitted values.  In a typical logit or probit analysis, y* is completely ignored by the analyst.  But for Bayesian simulation, y* is central to the recovery of the parameters themselves: recall that Bayesian simulation in this context
 largely amounts to treating the y* as missing data.  Hence not only are the y* recovered, but with very little additional effort we can also recover the latent residuals, at each iteration t.  Moreover, these latent residuals have uncertainty associated with them, stemming from uncertainty in b, and so we recover not just point estimates but their posterior densities.
 
+
 $$
 \begin{aligned}[t]
 y_i &= \mathsf{Bernoulli}(\mu_i) \\
 \mu_i &= \mathsf{Logit}^{-1}(x_i \beta)
 \end{aligned}
 $$
+
+```{r}
+
+```
 
 model{
 	for (i in 1:N){	                   # loop over observations
