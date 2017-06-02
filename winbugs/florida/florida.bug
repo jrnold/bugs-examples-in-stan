@@ -1,0 +1,13 @@
+model{
+
+	## model for survey results
+	y ~ dnorm(mu,tau)   
+	tau <- 1/pow(2.2, 2)
+
+	## prior, from previous studies, with sd = 2.2	
+	mu ~ dnorm(49.1,prec)
+	prec <- 1/pow(2.2,2)
+	psd <- 2.2
+
+	
+}

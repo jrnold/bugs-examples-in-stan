@@ -1,0 +1,106 @@
+Legislators: estimating ideal points from roll call data
+
+Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators.  Political scientists analyze roll call data using a spatial model: each legislator has a preferred policy position (a point in low-dimensional Euclidean space), and each vote amounts to a choice between "Aye" and a "Nay" locations.  Legislators are assumed to choose on the basis of utility maximization, with the utility of each choice declining in the square of the distance between the ideal point and the implicit location of each choice (so-called "quadratic loss"), plus a random disturbance.  Subject to identifying restrictions, the legislators' preferred positions and, for one-dimensional models, the midpoint between the "Aye" and "Nay" locations can be estimated using the roll call data (in higher dimensions we recover a hyperplane between the "Aye" and "Nay" locations).
+
+There is an extremely close correspondence between the statistical analysis of roll call data and item-response models used in educational testing.  A two-parameter item-response model is equivalent to the statistical operationalization of the model described in the previous paragraph, with the unobserved ideal point taking the part of the latent trait, and the item-discrimination parameters tapping ideological discrimination.
+
+If the legislators utilities have disturbance terms that are (a) distributed normal, (b) independent across legislators and roll calls, then the connection with a two-parameter item-response model with normal errors is complete.  In turn a two-parameter item-response model with normal errors amounts to a hierarchical probit model, well suited to estimation and inference via Bayesian simulation.
+
+In the implementation below, the iid N(0,1) prior identifies the unobserved ideal points, and vague Normal priors are used for the item-discrimination parameters.  In addition, the probit model here is implemented using truncated Normal sampling; the observed data are represented to the model as the lower and upper truncation points.  "Nay" votes imply the latent variable ystar lies to the left of zero; for "Yea" votes ystar lies to the right of 0 (negative and postive infinity are operationalized as -10 and 10, respectively). 
+
+###########################################################
+## one dimensional model
+## 
+## use sen1051d.stval.dpt as initial values
+##
+## simon jackman
+## dept of political science, stanford university
+## feb 2001
+###########################################################
+model{
+	for (i in 1:N){
+		for(j in 1:M){
+			ystar[i,j] ~ dnorm(mu[i,j],1)I(lower[i,j],upper[i,j]);
+			mu[i,j] <- x[i]*beta[j,1] - beta[j,2];
+			ok[i,j] <- y.ok[i,j]*equals(step(mu[i,j]),step(upper[i,j]-5));
+			}
+		}
+		
+	helms <- x[66];      ## monitor these nodes as sanity checks
+	kennedy <- x[41];  
+	fiengold <- x[97]; 
+	boxer <- x[9];     
+	chafee <- x[77];   
+	mosely <- x[26];  
+	gramm <- x[85];   
+	check <- helms-kennedy;
+
+	## goodness of fit
+	allok <- (sum(ok[,])/N.OK)*100;
+	for (i in 1:N){
+		x.ok[i]<- sum(ok[i,])/sum(y.ok[i,])*100;
+	}
+	for (j in 1:M){
+		bill.ok[j] <- sum(ok[,j])/sum(y.ok[,j])*100;
+  }
+	
+	## priors		
+	for (i in 1:N){
+		x[i] ~ dnorm(0.0,1.0);
+	}
+	for (j in 1:M){
+	  beta[j,1:2] ~ dmnorm(b0[1:2],B0[1:2,1:2]);
+	}
+	b0[1] <- 0;     b0[2] <- 0;
+	B0[1,1] <- .04; B0[2,2] <- .04; 
+	B0[1,2] <- 0; 	B0[2,1] <- 0;
+}		
+
+
+
+###########################################################
+## one dimensional model with uniform (-1, 1) priors
+## use stval.1d.unif.dpt as initial values
+##
+## simon jackman
+## dept of political science, stanford university
+## feb 2001
+###########################################################
+model{
+	for (i in 1:N){
+		for(j in 1:M){
+			ystar[i,j] ~ dnorm(mu[i,j],1)I(lower[i,j],upper[i,j]);
+			mu[i,j] <- x[i]*beta[j,1] - beta[j,2];
+			ok[i,j] <- y.ok[i,j]*equals(step(mu[i,j]),step(upper[i,j]-5));
+			}
+		}
+		
+	helms <- x[66];      ## monitor these nodes as sanity checks
+	kennedy <- x[41];  
+	fiengold <- x[97]; 
+	boxer <- x[9];     
+	chafee <- x[77];   
+	mosely <- x[26];  
+	gramm <- x[85];   
+	check <- helms-kennedy;
+
+	## goodness of fit
+	allok <- (sum(ok[,])/N.OK)*100;
+	for (i in 1:N){
+		x.ok[i]<- sum(ok[i,])/sum(y.ok[i,])*100;
+	}
+	for (j in 1:M){
+		bill.ok[j] <- sum(ok[,j])/sum(y.ok[,j])*100;
+  }
+	
+	## priors		
+	for (i in 1:N){
+		x[i] ~ dunif(-1.0,1.0);
+	}
+	for (j in 1:M){
+	  beta[j,1:2] ~ dmnorm(b0[1:2],B0[1:2,1:2]);
+	}
+	b0[1] <- 0;     b0[2] <- 0;
+	B0[1,1] <- .04; B0[2,2] <- .04; 
+	B0[1,2] <- 0; 	B0[2,1] <- 0;
+}		
