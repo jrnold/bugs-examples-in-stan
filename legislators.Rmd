@@ -11,35 +11,171 @@ library("rstan")
 Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators.  Political scientists analyze roll call data using the Euclidean spatial voting model: each legislator (i = 1, ..., n) has a preferred policy position (xi, a point in low-dimensional Euclidean space), and each vote (j = 1, ..., m) amounts to a choice between "Aye" and a "Nay" locations, qj  and Yj,  respectively. Legislators are assumed to choose on the basis of utility maximization, with utilities (in one-dimension)
 
 In these models, the only observed data are votes, and the analyst wants to 
-model those votes as a function of legislator- ($\theta_i$), and vote-specific ($\alpha_i$, $\lambda_i$) parameters.
+model those votes as a function of legislator- ($\xi_i$), and vote-specific ($\alpha_i$, $\beta_i$) parameters.
 The vote of legislator $i$ on roll-call $j$ ($y_{i,j}$) is a function of a
-the legislator's ideal point ($\theta_i$), the vote's cutpoint ($\alpha_j$), 
-and the vote's discrimination ($\lambda_j$):
+the legislator's ideal point ($\xi_i$), the vote's cutpoint ($\alpha_j$), 
+and the vote's discrimination ($\beta_j$):
 $$
 \begin{aligned}[t]
 y_{i,j} &\sim \mathsf{Bernoulli}(\pi_i) \\
 \pi_i &= \frac{1}{1 + \exp(-\mu_{i,j})} \\
-\mu_{i,j} &= \beta_j \theta_i - \alpha_j
+\mu_{i,j} &= \beta_j \xi_i - \alpha_j
 \end{aligned}
 $$
 
-Ideal points (like many latent space models) are unidentified. In particular, 
-there are three types of invariance:
+## Identification
+
+Ideal points (like many latent space models) are unidentified.
+In particular,  there are three types of invariance:
 
 1. Additive Aliasing
 2. Multiplicative Ailising
 3. Rotation (Reflection) Invariance
 
+Scale invariance:
+$$
+\begin{aligned}[t]
+\mu_{i,j} &= \alpha_j + \beta_j \xi_i \\
+         &= \alpha_j + \left(\frac{\beta_j}{c}\right) \left(\xi_i c \right) \\
+         &= \alpha_j + \beta^*_j \xi^*_i
+\end{aligned}
+$$
 
-This example models the ideology of the 109th U.S. Senate. 
-This data is conveniently included in the `pscl` package:
+Addition invariance:
+$$
+\begin{aligned}[t]
+\mu_{i,j} &= \alpha_j + \beta_j \xi_i \\
+          &= \alpha_j - \beta_j c + \beta_j c + \beta_j \xi_i \\
+         &= (\alpha_j - \beta_j c) + \beta_j (\xi_i + c) \\
+         &= \alpha_j^* + \beta_j \xi^*_i
+\end{aligned}
+$$
+
+Rotation invariance:
+$$
+\begin{aligned}[t]
+\mu_{i,j} &= \alpha_j + \beta_j \xi_i \\
+          &= \alpha_j  + \beta_j (-1) (-1) \xi_i \\
+          &= \alpha_j  + (-\beta_j) (-\xi_i) \\          
+          &= \alpha_j + \beta_j^* \xi^*_i
+\end{aligned}
+$$
+
+Example:
+```{r}
+xi <- c(-1, -0.5, 0.5, 1)
+alpha <- c(1, 0, -1)
+beta <- c(-0.5, 0, 0.5)
+y <- matrix(c(1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1), 3, 4)
+k <- 1
+
+list(sum(plogis(y - (alpha + beta %o% xi))),
+     sum(plogis(y - (alpha + -beta %o% -xi))),
+     sum(plogis(y - ((alpha - beta * k) + beta %o% (xi + k)))),
+     sum(plogis(y - ((alpha + (beta / k) %o% (xi * k))))))
+```
+
+For each of these: Which types of rotation does it solve?
+
+1. Fix one element of $\beta$. 
+2. Fix one element of $\xi$.
+3. Fix one element of $\alpha$.
+4. Fix two elements of $\alpha$.
+5. Fix two elements of $\xi$.
+6. Fix two elements of $\beta$.
+
+
+
+
+```{r message=FALSE}
+# mod_ideal_point_1 <- stan_model("legislators.stan")
+```
+```{r results='asis'}
+# mod_ideal_point_1
+```
+
+```{r}
+# xi <-
+#   s109_legis_data %>%
+#   mutate(init = if_else(party == "R", 1,
+#                         if_else(party == "D", -1, 0)),
+#          # set values
+#          xi = if_else(legislator == "FRIST (R TN)", 1,
+#                          if_else(legislator == "REID (D NV)", -1, NA_real_)))
+#                          
+```
+
+```{r}
+data_ideal_point_1 <-
+  within(list(), {
+    y <- as.integer(s109_votes$yea)
+    y_idx_leg <- as.integer(s109_votes$.legis_id)
+    y_idx_vote <- as.integer(s109_votes$.rollcall_id)
+    Y_obs <- length(y)
+    N <- max(s109_votes$.legis_id)
+    K <- max(s109_votes$.rollcall_id)
+    # priors
+    alpha_loc <- rep(0, K)
+    alpha_scale <- rep(5, K)
+    beta_loc <- rep(0, K)
+    beta_scale <- rep(2.5, K)
+    beta_skew <- rep(0, K)
+    N_obs <- sum(!is.na(xi$xi))
+    xi_obs_idx <- which(!is.na(xi$xi))
+    xi_obs <- xi$xi[!is.na(xi$xi)]
+    N_param <- sum(is.na(xi$xi))
+    xi_param_idx <- which(is.na(xi$xi))
+    xi_loc <- rep(0, N_param)
+    xi_scale <- rep(5, N_param)
+  })
+```
+
+```{r}
+init_1 <- list(
+  list(xi_param = xi$init[is.na(xi$xi)])
+)
+```
+
+```{r results = 'hide'}
+# fit_ideal_1 <- sampling(mod_ideal_point_1,
+#                         data = data_ideal_point_1,
+#                         init = init_1,
+#                         chains = 1,
+#                         iter = 500)
+```
+
+```{r}
+# ideal_points <- 
+#   bind_cols(s109_legis_data,
+#            as_tibble(summary(fit_ideal_1, par = "xi")$summary)) %>%
+#   mutate(legislator = fct_reorder(legislator, mean))
+```
+
+```{r}
+# ggplot(ideal_points, aes(x = legislator, y = mean,
+#                          ymin = `2.5%`, ymax = `97.5%`, colour = party)) +
+#   geom_pointrange() +
+#   coord_flip() + 
+#   scale_color_manual(values = c(D = "blue", Indep = "green", R = "red"))
+```
+
+## 109th Senate
+
+This example models the voting of the [109th U.S. Senate](https://en.wikipedia.org/wiki/109th_United_States_Congress).
+Votes for the 109th Senate is included in the `r pkg("pscl")` package:
 ```{r}
 data("s109", package = "pscl")
 ```
-This is not a data frame, see the documentation for its structure.
+The `s109` object is not a data frame, so see its `r rdoc("pscl", "s109")` documentation for information about its structure.
+```{r}
+s109
+```
 
-In our ideal point model, we will use binary responses, but the `s109` data
-includes multiple [codes](http://voteview.com/senate109.htm) for respones to 
+
+This data includes all [roll-call](https://en.wikipedia.org/wiki/Voting_methods_in_deliberative_assemblies) votes, votes in which the responses of the senators are recorded.
+
+For simplicity, the ideal point model uses binary responses, but the `s109` data
+includes multiple [codes](http://voteview.com/senate109.htm) for respones to
 roll-calls.
 
 ---- ----------------------------------------------------------
@@ -56,7 +192,8 @@ roll-calls.
 9    Not Voting
 ---- ----------------------------------------------------------
 
-To simplify the analysis, the outcomes will be aggregated to "Yes", "No", and missing values (which 
+In the data processing, we will aggregate the respones into "Yes", "No", and missing values.
+
 ```{r}
 s109_vote_data <- as.data.frame(s109$vote.data) %>%
   mutate(rollcall = paste(session, number, sep = "-"),
@@ -85,9 +222,44 @@ s109_votes <- s109$votes %>%
 
 ```
 
-Identify votes. Restrict all party line votes to have positive betas:
+## Identification by Fixing Legislator's Ideal Points
+
+Identification of latent state models can be challenging. The first method for identifying ideal point models is to fix the values of two legislators.
+These can be arbitrary, but if they are chosen along the ideological dimension of 
+interest it can help the substantive interpretation.
+
+Since we \textit{a priori} know, or expect, that the primary ideological dimension is Liberal-Conservative [@PooleRosenthal], I'll fix the ideal points of the two
+party leaders in that congress.
+In the 109th Congress, the Republican party was the majority party and [Bill Frist](https://en.wikipedia.org/wiki/Bill_Frist) (Tennessee) was the majority (Republican) leader, and [Harry Reid](https://en.wikipedia.org/wiki/Harry_Reid) (Nevada) wad the minority (Democratic) leader:
+$$
+\begin{aligned}[t]
+\xi_\text{FRIST (R TN)} & = 1 \\
+\xi_\text{REID (D NV)} & = -1
+\end{aligned}
+$$
+
+For all of those give a weakly informative prior to the ideal points, and item difficulty and discrimination parameters,
+$$
+\begin{aligned}[t]
+\xi_{i} &\sim \mathsf{Normal}(0, 10) && i \in \{1 \dots J\} / \{\text{"REID (D NV)"}, \text{"FRIST (R TN)"} \} \\
+\alpha_{j} &\sim \mathsf{Normal}(0, 10) \\
+\beta_{j} &\sim \mathsf{Normal}(0, 2.5) && j \in 1, \dots, J
+\end{aligned}
+$$
+
+
+# Fixing Signs of Legislators
+
+To fix the scale and location invariances, it is sufficient to give a proper prior distribution to the ideal points of the legislators,
+$$
+\xi_i \sim \mathsf{Normal}(0, 1)
+$$
+However, this does not fix the rotation invariance since it does not restrict the signs of the latent space.
+The rotation invariance can be resolved by either restricting the signs of a $\beta_i$ (vote discrimination parameter), or $\xi_i$ (legislator ideal point).
+
+
 ```{r}
-lambda <-
+beta <-
   s109_votes %>%
   group_by(.rollcall_id, party) %>%
   summarise(yea = mean(yea)) %>%
@@ -103,22 +275,6 @@ lambda <-
 
 ```
 
-```{r message=FALSE}
-# mod_ideal_point <- stan_model("ideal_point-4.stan")
-```
-```{r results='asis'}
-# mod_ideal_point
-```
-
-## No Identification
-
-```{r}
-# theta <-
-#   s109_legis_data %>%
-#   mutate(init = if_else(party == "R", 1,
-#                         if_else(party == "D", -1, 0)))
-```
-
 ```{r}
 data_ideal_point <-
   within(list(), {
@@ -131,18 +287,18 @@ data_ideal_point <-
     # priors
     alpha_loc <- 0
     alpha_scale <- 5.0
-    lambda_loc <- rep(0, K)
-    lambda_scale <- rep(2.5, K)
-    lambda_alpha <- lambda$alpha
+    beta_loc <- rep(0, K)
+    beta_scale <- rep(2.5, K)
+    beta_alpha <- beta$alpha
   })
 ```
-The prior scale for all the non-fixed $\theta_k$ is weakly informative since the scale is fixed by the two ideal points. However, this may still help regularize some extreme legsilators.
+The prior scale for all the non-fixed $\xi_k$ is weakly informative since the scale is fixed by the two ideal points. However, this may still help regularize some extreme legsilators.
 Likewise, a stronger prior on $\alpha$ can help regularize the cutpoints of lopsided votes.
 
 ```{r}
 init <- list(list( 
-  lambda = lambda$init,
-  theta = theta$init
+  beta = beta$init,
+  xi = xi$init
 ))
 ```
 
@@ -158,7 +314,7 @@ Extract the ideal point data:
 ```{r}
 # ideal_points <- 
 #   bind_cols(s109_legis_data,
-#            as_tibble(summary(mod_sampling, par = "theta")$summary)) %>%
+#            as_tibble(summary(mod_sampling, par = "xi")$summary)) %>%
 #   mutate(legislator = fct_reorder(legislator, mean))
 ```
 
@@ -169,172 +325,3 @@ Extract the ideal point data:
 #   coord_flip() + 
 #   scale_color_manual(values = c(D = "blue", Indep = "green", R = "red"))
 ```
-
-## Understanding Invariance
-
-Scale invariance:
-$$
-\begin{aligned}[t]
-\mu_{i,j} &= \alpha_j + \lambda_j \theta_i \\
-         &= \alpha_j + \left(\frac{\lambda_j}{c}\right) \left(\theta_i c \right) \\
-         &= \alpha_j + \lambda^*_j \theta^*_i
-\end{aligned}
-$$
-
-Addition invariance:
-$$
-\begin{aligned}[t]
-\mu_{i,j} &= \alpha_j + \lambda_j \theta_i \\
-          &= \alpha_j - \lambda_j c + \lambda_j c + \lambda_j \theta_i \\
-         &= (\alpha_j - \lambda_j c) + \lambda_j (\theta_i + c) \\
-         &= \alpha_j^* + \lambda_j \theta^*_i
-\end{aligned}
-$$
-
-Rotation invariance:
-$$
-\begin{aligned}[t]
-\mu_{i,j} &= \alpha_j + \lambda_j \theta_i \\
-          &= \alpha_j  + \lambda_j (-1) (-1) \theta_i \\
-          &= \alpha_j  + (-\lambda_j) (-\theta_i) \\          
-          &= \alpha_j + \lambda_j^* \theta^*_i
-\end{aligned}
-$$
-
-Example:
-```{r}
-theta <- c(-1, -0.5, 0.5, 1)
-alpha <- c(1, 0, -1)
-lambda <- c(-0.5, 0, 0.5)
-y <- matrix(c(1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1), 3, 4)
-k <- 1
-
-list(sum(plogis(y - (alpha + lambda %o% theta))),
-     sum(plogis(y - (alpha + -lambda %o% -theta))),
-     sum(plogis(y - ((alpha - lambda * k) + lambda %o% (theta + k)))),
-     sum(plogis(y - ((alpha + (lambda / k) %o% (theta * k))))))
-```
-
-Questions: For each of these: Which types of rotation does it solve?
-
-1. Fix one element of $\lambda$. 
-2. Fix one element of $\theta$.
-3. Fix one element of $\alpha$.
-4. Fix two elements of $\alpha$.
-5. Fix two elements of $\theta$.
-6. Fix two elements of $\lambda$.
-
-
-## Identification by Fixing Legislator's Ideal Points
-
-Identification of latent state models can be challenging.
-Since we \textit{a priori} know, or expect, that the primary ideological dimension is Liberal-Conservative.
-$$
-\begin{aligned}[t]
-\theta[\text{FRIST (R TN)}] & = 1 \\
-\theta[\text{REID (D NV)}] & = -1
-\end{aligned}
-$$
-Otherwise, give a weakly informative prior to the ideal points, and item difficulty and discrimination parameters,
-$$
-\begin{aligned}[t]
-\theta_{k} &\sim \mathsf{Normal}(0, 2.5) \\
-\alpha_{k} &\sim \mathsf{Normal}(0, 10.) \\
-\lambda_{k} &\sim \mathsf{Normal}(0, 2.5.) 
-\end{aligned}
-$$
-
-```{r message=FALSE}
-# mod_ideal_point_1 <- stan_model("legislators.stan")
-```
-```{r results='asis'}
-# mod_ideal_point_1
-```
-
-```{r}
-# theta <-
-#   s109_legis_data %>%
-#   mutate(init = if_else(party == "R", 1,
-#                         if_else(party == "D", -1, 0)),
-#          # set values
-#          theta = if_else(legislator == "FRIST (R TN)", 1,
-#                          if_else(legislator == "REID (D NV)", -1, NA_real_)))
-#                          
-```
-
-```{r}
-data_ideal_point_1 <-
-  within(list(), {
-    y <- as.integer(s109_votes$yea)
-    y_idx_leg <- as.integer(s109_votes$.legis_id)
-    y_idx_vote <- as.integer(s109_votes$.rollcall_id)
-    Y_obs <- length(y)
-    N <- max(s109_votes$.legis_id)
-    K <- max(s109_votes$.rollcall_id)
-    # priors
-    alpha_loc <- rep(0, K)
-    alpha_scale <- rep(5, K)
-    lambda_loc <- rep(0, K)
-    lambda_scale <- rep(2.5, K)
-    lambda_skew <- rep(0, K)
-    N_obs <- sum(!is.na(theta$theta))
-    theta_obs_idx <- which(!is.na(theta$theta))
-    theta_obs <- theta$theta[!is.na(theta$theta)]
-    N_param <- sum(is.na(theta$theta))
-    theta_param_idx <- which(is.na(theta$theta))
-    theta_loc <- rep(0, N_param)
-    theta_scale <- rep(5, N_param)
-  })
-```
-
-```{r}
-init_1 <- list(
-  list(theta_param = theta$init[is.na(theta$theta)])
-)
-```
-
-```{r results = 'hide'}
-# fit_ideal_1 <- sampling(mod_ideal_point_1,
-#                         data = data_ideal_point_1,
-#                         init = init_1,
-#                         chains = 1,
-#                         iter = 500)
-```
-
-```{r}
-# ideal_points <- 
-#   bind_cols(s109_legis_data,
-#            as_tibble(summary(fit_ideal_1, par = "theta")$summary)) %>%
-#   mutate(legislator = fct_reorder(legislator, mean))
-```
-
-```{r}
-# ggplot(ideal_points, aes(x = legislator, y = mean,
-#                          ymin = `2.5%`, ymax = `97.5%`, colour = party)) +
-#   geom_pointrange() +
-#   coord_flip() + 
-#   scale_color_manual(values = c(D = "blue", Indep = "green", R = "red"))
-```
-
-
-### Questions {-}
-
-1. Are there any problems with Rhat or n_eff?
-2. Why is Bush's ideal point so uncertain?
-3. Why are the ideal points at either end more uncertain?
-3. What is the reason for the skew normal distributions? 
-4. See Jackman and replicate:
-
-    8. Which Senator is the most liberal, and what is the probability that they are the most liberal?
-    9. Which Senator is the median (50%), median of the majority party?
-    10. Which bill discriminates the least? 
-
-- @Albert1992a
-- @AlbertChib1993a
-- @ClintonJackmanRivers2004a
-- @EnelowHinich1984a
-- @Jackman2000a
-- @Jackman2001a
-- @JohnsonAlbert1999a
-- @Londregan2007a
-- @PooleRosenthal2000a

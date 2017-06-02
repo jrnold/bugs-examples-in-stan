@@ -1,11 +1,10 @@
 # Judges: estimating the ideological locations of Supreme Court justices {#judges}
 
-```{r}
+```{r judges_setup,message=FALSE}
 library("pscl")
 library("tidyverse")
 library("rstan")
 ```
-
 
 This program implements an ideal-point model (similar to the
 Legislators example), estimating both the locations of the justices on a latent ideological dimension, and two parameters specific to each case (corresponding to the item difficulty and item discrimination parameters of a two-parameter IRT model).  The data consist of the decisions of Justices Rehnquist, Stevens, O'Connor, Scalia, Kennedy, Souter, Thomas, Ginsberg and Bryer, in that order, $i = 1, \dots , 9$. The decisions are coded 1 for votes with the majority, and 0 for votes against the majority, and `NA` for abstentions.
@@ -53,8 +52,8 @@ sc9497_votes <- sc9497$votes %>%
 ```
 
 ```{r message=FALSE}
-mod_ideal_point <- stan_model("ideal_point.stan")
+# mod_ideal_point <- stan_model("ideal_point.stan")
 ```
 ```{r results='asis'}
-mod_ideal_point
+# mod_ideal_point
 ```

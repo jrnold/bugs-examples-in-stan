@@ -6,7 +6,6 @@ library("rstanarm")
 library("rstan")
 ```
 
-
 Voter turnout is coded as a binary indicator (`y=1` if voted, `0` otherwise) and related to covariates via a logit model.  The data comprise a random 3,000 observation subset of a much larger data set analyzed by Jonathan Nagler [@Nagler1994a]:
 
 $$
@@ -111,4 +110,3 @@ turnout2005_fit_probit2
 
 1. Is there any difference in the fit of the probit and logit?
 2. How do these fits compare to using a generalized logit model?
-

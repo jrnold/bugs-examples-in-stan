@@ -6,9 +6,9 @@ data {
   int K;
   matrix[N, K] X;
   // priors
-  real alpha_mean;
+  real alpha_loc;
   real<lower = 0.> alpha_scale;
-  vector[K] beta_mean;
+  vector[K] beta_loc;
   vector<lower = 0.>[K] beta_scale;
 }
 parameters {
@@ -21,8 +21,8 @@ transformed parameters {
   eta = alpha + X * beta;
 }
 model {
-  alpha ~ normal(alpha_mean, alpha_scale);
-  beta ~ normal(beta_mean, beta_scale);
+  alpha ~ normal(alpha_loc, alpha_scale);
+  beta ~ normal(beta_loc, beta_scale);
   // y ~ bernoulli(inv_logit(eta));
   // this is faster and more numerically stable
   y ~ bernoulli_logit(eta);
