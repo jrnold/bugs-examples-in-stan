@@ -1,0 +1,23 @@
+# Ordered Logistic and Probit Regression
+
+```{r}
+
+```
+
+Consider a response $y_i \in \{1, \dots, K}$.
+Suppose each obesrvation has response $x_i \in \mathbb{R}^D$ and a sequence of cutpoints $\gamma \in \mathbb{R}^{K - 1}$, which are sorted such that $\gamma_d < gamma_{d + 1}$.
+
+$$
+\begin{aligned}[t]
+y_i &\sim \mathsf{Bernoulli}(\pi_i) ,
+\{k \in 1, \dots, K: \gamma_k < \eta_i \leq \gamma_{k + 1} \} \\
+\eta_i &= \alpha + x_i' \beta
+\end{aligned}
+$$
+$\gamma_0 = -\infty$ and $\gamma_K = \infty$.
+
+Adapted from @Stan2016a, Section 8.8 "Ordered Logitstic and Probit Regression" and the example using **pscl** dataset.
+
+```{r}
+(data("politicalInformation", package = "pscl"))
+```
