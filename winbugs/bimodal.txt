@@ -1,0 +1,65 @@
+Bimodal: Extreme missingness in bivariate normal data
+
+Simple methods for dealing with missing data can run into trouble given pernicious patterns of missingness.  A famous artificial data set designed to highlight this point was created by Gordon Murray, to show how an EM algorithm can run into problems (see the Journal of the Royal Statistical Society Series B, 39:27, 1977; this example appears in the discussion to Dempster, Laird and Rubin's much-cited EM paper):
+
+x1:	1	1	-1	-1	2	2	-2 -2	*	*	*	*
+x2:	1	-1	1	-1	*	*	*	*	2	2	-2	-2
+
+Assume bivariate normality, and that the means of the two variables are both zero, but the variances and covariance are unknown.  Inference about the correlation coefficient  r  between these two variables is not trivial in this instance.  The marginal complete-data likelihood for r  is not unimodal, and has a saddle-point at zero, and two local maxima close to -1 and 1.  A Bayesian analysis (with uninformative priors) similarly recovers a bimodal posterior density for the correlation coefficient; e.g., see Tanner, Tools for Statistical Inference, 3rd edition, pp95-96 or Congdon, Bayesian Statistical Modelling, p46.
+
+model{
+	for(i in 1:N){
+		x[i,1:2] ~ dmnorm(mu[1:2],tau[1:2,1:2]) 
+	}
+	mu[1] <- 0 mu[2] <- 0
+	tau[1:2,1:2] ~ dwish(S[1:2,1:2], 2)
+	
+	S[1,1] <- 1 S[1,2] <- 0
+	S[2,1] <- 0 S[2,2] <- 1
+
+	Sigma[1:2,1:2] <- inverse(tau[,])
+	rho <- Sigma[1,2]/sqrt(Sigma[1,1]*Sigma[2,2])
+	
+}
+
+Data 
+list(x = structure(.Data = c(-1,- 1,
+                             -1,   1,
+									            1,  -1,
+									            1,   1,
+									            2, NA,
+									           -2, NA,
+									            2, NA,
+									           -2, NA,
+									           NA, 2,
+									           NA, -2,
+									           NA, 2,
+									           NA, -2),
+						                .Dim = c(12,2)), 
+		N=12)				
+
+
+Alternative Parameterization:
+
+Operationalizing this model in BUGS used to be tricky.  While BUGS can deal with multivariate nodes, WinBUGS 1.3 did not handle partially missing data in a multivariate node (WinBUGS 1.4 solves this problem; see below).  Accordingly, we model these bivariate normal data with two univariate normal nodes, with a marginal model for x1, and a conditional model for x2 (or vice-versa).  
+
+model{
+  for (i in 1:N){
+    x[i,1] ~ dnorm(0.0,tau1);      # marginal model
+    x[i,2] ~ dnorm(mu[i],tau21);   # conditional on x1
+    mu[i] <- beta*x[i,1];          # E(x2|x1)
+  }
+  
+  # deterministic relationships for marginal-conditional model
+  sig21 <- 1/tau21;
+  sig1sq <- 1/tau1;
+  sig2sq <- sig21 + sig1sq*pow(beta,2); 
+  rho <- beta*sqrt(sig1sq/sig2sq); ## is quantity of interest
+  
+  # priors
+  beta ~ dnorm(0,.001);         
+  tau1 ~ dgamma(.01,.01);     
+  tau21 ~ dgamma(.01,.01);
+}
+
+

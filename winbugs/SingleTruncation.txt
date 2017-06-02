@@ -1,0 +1,93 @@
+Truncation: How does WinBUGS deal with truncation?  
+
+There is a lot of discussion as to when the I(,) construct can be used in WinBUGS.  The help included with WinBUGS is reasonably straightforward on the issue, at Section 3.3 ("Censoring and Truncation"):
+
+Censoring is denoted using the notation I(lower, upper) e.g.
+
+				x ~ ddist(theta)I(lower, upper)				
+				
+would denote a  quantity x  from distribution ddist  with parameters theta, which had been observed to lie between lower and upper.  Leaving either lower or upper blank corresponds to no limit,  e.g.  I(lower,)  corresponds to an observation known to lie above lower.  Whenever censoring is specified the censored node contributes a term to the full conditional distribution of its parents.  This structure is only of use if x has not been observed.
+
+It is vital to note that this construct does NOT correspond to a truncated distribution, which generates a likelihood that is a complex function of the basic parameters.  Truncated distributions might be handled by working out an algebraic form for the likelihood and using the technique for arbitrary distributions described above.
+
+Assume we have the observations, y = 1,...,9, from a Normal population with unknown mean and variance, subject to the constraint that y < 10.  Ignoring the constraint, the MLEs for the mean and variance are 5 and 6.67; with the constraint taken into account, each observation makes likelihood contribution 
+f (y; m, s2)/F ((k - m)/s) , where k is the truncation point (in this case, 10), and the MLEs of m, s2  are 5.32 and 8.28.
+
+Below are two tricks for sampling from arbitrary distributions so as to handle truncated data, the "ones" trick (discussed in the WinBUGS help, see the last paragraph of section 3.2), and the "zeros" trick.  These approaches require the user to construct the likelihood contributions for each observation (or, the negative log-likelihood, for the "zeros" trick), and then use a Bernoulli model (ones) or a Poisson model (zeros).  These two tricks are implemented in the first part of the program.  For completeness, I show how the zeros trick can be used for the unconstrained problem, along with a naive (and incorrect) attempt to use the I(,) construct.  A uniform prior for m is specified, concentrating uncertainty about this parameter to an interval close to the observed data.  See the results below for a comparison of the methods.
+
+Compare the (invalid) use of the I(,) construct below with valid uses in other programs, such as my Turnout and Legislators examples (implementing probit models by data augmentation, sampling a latent quantity from truncated normals).
+
+model{
+		for(i in 1:9){
+		## the zeros and ones trick, induce Metropolis sampling
+	  for(j in 1:2){
+			c[i,j] <- phi((up - mu[j])/sigma[j])
+			e[i,j] <- (y[i,j] - mu[j])/sigma[j]
+			arg[i,j] <- -pow(e[i,j],2)/2
+			p[i,j] <- sqrt(prec[j]/(2*3.14159)) * exp(arg[i,j])
+			like[i,j] <- p[i,j]/c[i,j]
+		}
+		f[i] <- -log(like[i,1])    ## negative log-likelihood
+		zeros[i] <- 0
+		zeros[i] ~ dpois(f[i])
+		ones[i] <- 1
+		ones[i] ~ dbern(like[i,2])
+	
+		## try the zeros trick for untruncated, just to show it works
+		e[i,3] <- (y[i,3] - mu[3])/sigma[3]
+		arg[i,3] <- -pow(e[i,3],2)/2
+  	p[i,3] <- sqrt(prec[3]/(2*3.14159)) * exp(arg[i,3])
+		like[i,3] <- p[i,3]
+		g[i] <- -log(like[i,3])
+		zeros.untrunc[i] <- 0
+		zeros.untrunc[i] ~ dpois(g[i])
+		
+		## compare with I(,) construct, the WinBUGS help says
+		## that it is ignored when lhs of twiddle is observed
+		y[i,4] ~ dnorm(mu[4],prec[4])I(,up)
+		}
+	  
+	## priors
+	for(k in 1:4){
+		mu[k] ~ dunif(-5,15)        ## uniform prior on means
+		prec[k] ~ dgamma(0.1,0.1)   ## gamma priors, precisions
+		var[k] <- 1/prec[k]
+		sigma[k] <- sqrt(var[k])    ## convert precisions to std dev
+	}
+
+  ## truncation bound	
+	up <- 10
+
+}
+
+Data:
+list(y=structure(.Data=c(
+	1,1,1,1,
+  2,2,2,2,
+	3,3,3,3,
+	4,4,4,4,
+	5,5,5,5,
+	6,6,6,6,
+	7,7,7,7,
+	8,8,8,8,
+	9,9,9,9),
+.Dim=c(9,4)))
+		
+
+Initial Values:
+list(mu=c(5,5,5,5),prec=c(.12,.12,.12,.12))
+
+Results:
+2 chains of 50,000 iterations each (discarding the first 10,000 as burn-in) produced the following results.  The posterior means for the means of the truncated model are greater than the MLEs, since the posterior density for this parameter has pronounced right skew (see the density plots below, and compare the posterior means and medians); but the posterior mode is located at the MLEs.  Note that the untruncated model (3) produces 5 as the estimate of the mean, as does model (4), using the I(,) construct (which is the result expected given the WinBUGS help).
+
+		 node	 mean	 sd	 MC error	2.5%	median	97.5%	start	sample
+	mu[1]	7.238	2.849	0.02001	3.427	6.41	14.08	10001	80000
+	mu[2]	7.266	2.869	0.02062	3.409	6.419	14.12	10001	80000
+	mu[3]	4.998	1.042	0.003712	2.916	4.999	7.069	10001	80000
+	mu[4]	5.0	1.043	0.003785	2.919	5.0	7.078	10001	80000
+	sigma[1]	4.514	1.99	0.01347	2.044	4.029	9.37	10001	80000
+	sigma[2]	4.532	2.0	0.01405	2.045	4.046	9.404	10001	80000
+	sigma[3]	3.002	0.8642	0.003691	1.845	2.833	5.162	10001	80000
+	sigma[4]	2.994	0.8743	0.004033	1.838	2.824	5.14	10001	80000
+
+
