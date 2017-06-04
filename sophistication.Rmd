@@ -8,8 +8,8 @@ library("rstan")
 
 ## Data
 
-```{r}
-load("data/PoliticalSophistication.rda")
+```{r PoliticalSophistication}
+(load("data/PoliticalSophistication.rda"))
 ```
 
 As part of a survey of French public opinion , 2,148 respondents were administered a series of 19 items assessing their knowledge of political leaders, political institutions, constitutional provisions, and the policies of the political parties [@GrunbergMayerSniderman2002a].
@@ -20,38 +20,95 @@ In addition, at the end of the thirty minute phone interview, the interviewer as
 
 ## Model
 
-$y_{i,j}$ are binary responses to political information questions for respondent $i$ to question $j$.
-$$
-\begin{aligned}[t]
-y_{i,j} &\sim \mathsf{Bernoulli}(\mathsf{Logit}^{-1}(\beta_j \xi_i - \alpha_j))
-\end{aligned}
-$$
-Additionally, each interviewer assigned an overall knowledge score, $z_i$.
-$$
-\begin{aligned}[t]
-z_i &\sim \mathsf{Normal}(\theta_i, \sigma^2)
-\end{aligned}
-$$
-The interviewer score is modeled as a linear function of a the latent score of the respondent ($\xi_i$) and an interviewer specific random effect, $\nu_{m[i]}$, where $m[i]$ means that $i$ was interviewed by $m$,
-$$
-\begin{aligned}[t]
-\theta_i &= \gamma \xi_i + \nu_{m[i]} \\
-\nu_m &\sim \mathsf{Normal}(0, \tau) 
-\end{aligned}
-$$
-for $i = 1, \dots, N$ respondents, and $m = 1, \dots, M$ interviewers.
+The survey data consists of 20 items, $y_1, \dots, y_20$. The first 19 items, $y_1, \dots, y_19$ binary responses to political information questions.
+The final item, $y_20$, is a political sophistication score (0--20) assigned by the interviewer.
 
-The following priors are assigned:
+Let $y_{i,j}$ be the response of respondent $i \in 1, \dots, N$ to question $j \in 1, \dots, 20$.
 $$
 \begin{aligned}[t]
-\xi_m &\sim \mathsf{Normal}(0, 1) \\
-\tau &\sim \mathsf{HalfCauchy}(0, 5 s_{z} ) \\
-\sigma &\sim \mathsf{HalfCauchy}(0, 5 s_{z} ) \\
-\delta &\sim \mathsf{Normal}(0, 10 s_{z} ) \\
-\beta_k &\sim \mathsf{Normal}(0, 2.5) \\
-\alpha_k &\sim \mathsf{Normal}(0, 10) \\
-\gamma &\sim \mathsf{HalfNormal}(0, 2.5 s_z)
+y_{i,j} &\sim \mathsf{Bernoulli}(\mathsf{Logit}^{-1}(\beta_j \xi_i - \alpha_j)) 
 \end{aligned}
+$$
+for $j \in 1, \dots, j$.
+Item 20 is modeled as
+$$
+\begin{aligned}[t]
+y_{20,j} &\sim \mathsf{Normal}(\theta_i, \sigma^2) , \\
+\theta_i &= \gamma \xi_i + \nu_{m[i]} .
+\end{aligned}
+$$
+Since the question is assigned by the interviewer, $\theta_i$ is a linear function of a the latent score of the respondent ($\xi_i$) and an interviewer specific random effect, $\nu_{m[i]}$, where $m[i]$ means that $i$ was interviewed by interviewer $m \in 1, \dots, M$.
+The interviewer effects are given a prior distribution, 
+$$
+\nu_m \sim \mathsf{Normal}(0, \tau)  .
 $$
 
+To fix scale and location invariances, the respondents' abilities are given a standard normal distribution, 
+$$
+\xi_m \sim \mathsf{Normal}(0, 1) .
+$$
+Since higher interviewer assessments should be associated with a higher latent political knowledge score, the rotation invariance is resolved by restricting the coefficient for the respondents to be positive, 
+$$
+\gamma \sim \mathsf{HalfNormal}(0, 2.5 s_z) .
+$$
 
+The remaining parameters are assigned weakly informative priors.
+
+$$
+\begin{aligned}[t]
+\tau &\sim \mathsf{HalfCauchy}(0, 5 s_{y_{20}}) , \\
+\sigma &\sim \mathsf{HalfCauchy}(0, 5 s_{y_{20}})  , \\
+\delta &\sim \mathsf{Normal}(10, 10 s_{y_{20}}) , \\
+\beta_k &\sim \mathsf{Normal}(0, 2.5) , \\
+\alpha_k &\sim \mathsf{Normal}(0, 10) .
+\end{aligned}
+$$
+where $s_{y_{20}}$ is the scale for $y_20$.
+We could use the empirical standard deviation of $y_20$, or an a-priori measure.
+A value of $s_{y_{20}} = 21 / 4$, would place 95% of the mass of a normal distribution between 0 and 20.
+
+```{r mod_sophistication,results='hide'}
+mod_sophistication <- stan_model("stan/sophistication.stan")
+```
+```{r echo=FALSE,results='asis'}
+mod_sophistication
+```
+
+
+## Estimation
+
+```{r data_sophistication}
+y_scale <- 21 / 4
+  
+data_sophistication <- within(list(), {
+  y_bern <- t(as.matrix(select(PoliticalSophistication, Q1:Q19)))
+  N <- ncol(y_bern)
+  K <- nrow(y_bern)
+  y_norm <- PoliticalSophistication$Q20
+  interviewer <- PoliticalSophistication$interviewer
+  J <- max(interviewer)
+  # priors
+  sigma_scale <- 5 * y_scale
+  xi_loc <- 0
+  xi_scale <- 1
+  alpha_loc <- 0
+  alpha_scale <- 5
+  beta_loc <- 0
+  beta_scale <- 2.5
+  gamma_scale <- 2.5 * y_scale
+  # priors for interviewer effects
+  tau_scale <- y_scale
+  delta_loc <- 10
+  delta_scale <- y_scale
+})
+```
+
+```{r}
+fit_sophistication <- sampling(mod_sophistication, data = data_sophistication, init = 0, chains = 1)
+```
+
+
+## Questions / Extensions
+
+- An alternative parameterization would place the political sophistication on the same 0-20 scale as `Q20`. 
+- Model Q20 as an ordinal variable instead of a continuous variable.

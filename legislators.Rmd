@@ -62,7 +62,7 @@ $$
 $$
 
 Example:
-```{r}
+```{r legislators_identification}
 xi <- c(-1, -0.5, 0.5, 1)
 alpha <- c(1, 0, -1)
 beta <- c(-0.5, 0, 0.5)
@@ -85,24 +85,26 @@ For each of these: Which types of rotation does it solve?
 6. Fix two elements of $\beta$.
 
 
+## Model
 
-
-```{r message=FALSE}
-# mod_ideal_point_1 <- stan_model("legislators.stan")
+```{r legislators_mod_ideal_point_1,results='hide',cache.extra =tools::md5sum("stan/ideal_point_1.stan")}
+mod_ideal_point_1 <- stan_model("stan/ideal_point_1.stan")
 ```
 ```{r results='asis'}
-# mod_ideal_point_1
+mod_ideal_point_1
 ```
 
+## Estimation
+
 ```{r}
-# xi <-
-#   s109_legis_data %>%
-#   mutate(init = if_else(party == "R", 1,
-#                         if_else(party == "D", -1, 0)),
-#          # set values
-#          xi = if_else(legislator == "FRIST (R TN)", 1,
-#                          if_else(legislator == "REID (D NV)", -1, NA_real_)))
-#                          
+xi <-
+  s109_legis_data %>%
+  mutate(init = if_else(party == "R", 1,
+                        if_else(party == "D", -1, 0)),
+         # set values
+         xi = if_else(legislator == "FRIST (R TN)", 1,
+                         if_else(legislator == "REID (D NV)", -1, NA_real_)))
+
 ```
 
 ```{r}
@@ -258,25 +260,8 @@ However, this does not fix the rotation invariance since it does not restrict th
 The rotation invariance can be resolved by either restricting the signs of a $\beta_i$ (vote discrimination parameter), or $\xi_i$ (legislator ideal point).
 
 
-```{r}
-beta <-
-  s109_votes %>%
-  group_by(.rollcall_id, party) %>%
-  summarise(yea = mean(yea)) %>%
-  spread(party, yea) %>%
-  ungroup() %>%
-  mutate(partyline = "",
-         partyline = if_else(R < 0.1 & D > 0.9, "D", partyline),
-         partyline = if_else(R > 0.9 & D < 0.1, "R", partyline),
-         alpha = if_else(partyline %in% "R", 20,
-                          if_else(partyline %in% "D", -20, 0)),
-         init = if_else(partyline %in% "R", 1,
-                        if_else(partyline %in% "D", -1, 0)))
-
-```
-
-```{r}
-data_ideal_point <-
+```{r legislators_data}
+legislators_data <-
   within(list(), {
     y <- as.integer(s109_votes$yea)
     y_idx_leg <- as.integer(s109_votes$.legis_id)
@@ -295,12 +280,6 @@ data_ideal_point <-
 The prior scale for all the non-fixed $\xi_k$ is weakly informative since the scale is fixed by the two ideal points. However, this may still help regularize some extreme legsilators.
 Likewise, a stronger prior on $\alpha$ can help regularize the cutpoints of lopsided votes.
 
-```{r}
-init <- list(list( 
-  beta = beta$init,
-  xi = xi$init
-))
-```
 
 ```{r results = 'hide'}
 # mod_sampling <- sampling(mod_ideal_point,

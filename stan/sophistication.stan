@@ -4,19 +4,17 @@ data {
   // number of items
   int K;
   // binary responses
-  int<lower = 0, upper = 1> y[N, K];
+  int<lower = 0, upper = 1> y_bern[K, N];
   // interviewer overall rating
-  vector[N] z;
+  vector[N] y_norm;
   // interviewers
   int J;
   int<lower = 1, upper = J> interviewer[N];
   // priors
-  vector[N] xi_loc;
-  vector<lower = 0.>[N] xi_scale;
-  vector[K] beta_loc;
-  vector<lower = 0.>[K] beta_scale;
-  vector[K] alpha_loc;
-  vector<lower = 0.>[K] alpha_scale;
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+  real beta_loc;
+  real<lower = 0.> beta_scale;
   real<lower = 0.> gamma_scale;
   real<lower = 0.> sigma_scale;
   real<lower = 0.> tau_scale;
@@ -25,7 +23,7 @@ data {
 }
 parameters {
   // respondent latent score
-  vector[N] xi;
+  vector[N] xi_raw;
   // item discrimination
   vector[K] beta;
   // item difficulty
@@ -44,6 +42,9 @@ parameters {
 transformed parameters {
   // interviewer rating
   vector[N] theta;
+  // abilities
+  vector[N] xi;
+  xi = (xi_raw - mean(xi_raw));
   // respondent latent score
   for (i in 1:N) {
     theta[i] = gamma * xi[i] + nu[interviewer[i]];
@@ -51,7 +52,7 @@ transformed parameters {
 }
 model {
   // priors
-  xi ~ normal(xi_loc, xi_scale);
+  xi_raw ~ normal(0., 1.);
   beta ~ normal(beta_loc, beta_scale);
   alpha ~ normal(alpha_loc, alpha_scale);
   gamma ~ normal(0., gamma_scale);
@@ -60,10 +61,10 @@ model {
   delta ~ normal(delta_loc, delta_scale);
   // binary responses
   for (k in 1:K) {
-    y[k] ~ bernoulli_logit(beta[k] * xi - alpha[k]);
+    y_bern[k] ~ bernoulli_logit(beta[k] * xi - alpha[k]);
   }
   // interviewer random effects
   nu ~ normal(delta, tau);
   // interviewer score
-  z ~ normal(theta, sigma);
+  y_norm ~ normal(theta, sigma);
 }
