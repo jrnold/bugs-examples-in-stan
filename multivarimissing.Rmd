@@ -1,27 +1,17 @@
-Multivariate Missing Data
+# Multivariate Missing Data {#multivarmissing}
 
-The following example highlights some of WinBUGS' capacities for handling missing data.  We have a data set of 10 observations on 3 variables.  Only one of the variables, z, is completely observed.  The other two variables, x and y, have a non-overlapping pattern of missing data.
-
-Data (rectangular format):
-x[]	y[]	z[]
-1	NA	NA
-2	NA	4
-3	NA	3
-4	NA	5
-5	NA	7
-NA	7	9
-NA	8	8
-NA	9	11
-NA	8	10
-NA	9	8
-
-
-We use z to make imputations for x, and use the complete data for x (observed and imputed) and z to predict y.  No special handling of the missing data is required; when missing data appears on the left-hand side of a stochastic expression (a "~" or "twiddle"), WinBUGS will automatically generate imputations.  Version 1.4 of WinBUGS promises even better capacities for dealing with missing data.
-
-This example displays extremely high within-chain autocorrelation for the regression parameters, which is not unsurprising given the large amount of missing data.  Multiple chains, a long run, and/or a large thinning interval is required in order to reassure ourselves that the sampler is visiting locations in the parameter space with frequencies proportional to their posterior probability.
-
-```{r}
+```{r multivarmissing,message=FALSE}
 library("tidyverse")
+library("rstan")
+```
+
+This example shows how to impute missing data. See @Stan2016a, Chapter 10 "Missing Data & Partially Known Parameters" for more discussion.
+
+Consider a data set of 10 observations on 3 variables
+Only one of the variables, $z$, is completely observed.
+The other two variables, x$ and $y$, have a non-overlapping pattern of missing data.
+
+```{r multivarmissing}
 multivarmissing <- tribble(
   ~x, ~y, ~z,
 1,	NA,	NA,
@@ -36,50 +26,106 @@ NA,	8,	10,
 NA,	9,	8)
 ```
 
+The missing elements of $x$ and $y$ are parameters, and the observed elements of $x$, $y$, and $z$ are data.
+These are combined in the `transformed parameters` block, and modeled.
+
+## Separate Regressions
+
+We use $z$ to predict $x$,
+and $z$ and $x$ (both observed and imputed) to impute $y$.
 $$
 \begin{aligned}[t]
 x_i &\sim \mathsf{Normal}(\mu_{x,i}, \sigma_x) \\
 \mu_{x,i} &= \gamma_1 + \gamma_2 z_i \\
-\gamma_1 &\sim \mathsf{Normal}(0, 10) \\
-\gamma_2 &\sim \mathsf{Normal}(0, 2.5) \\
-\sigma_x &\sim \mathsf{HalfCauchy}(0, 5) \\
 y_i &\sim \mathsf{Normal}(\mu_{y,i}, \sigma_y) \\
 \mu_{y,i} &= \beta_1 + \beta_2 y_i + \beta_3 z_i \\
-\beta_1 &\sim \mathsf{Normal}(0, 10) \\
-\beta_2, \beta_3 &\sim \mathsf{Normal}(0, 2.5) \\
-\sigma_y &\sim \mathsf{HalfCauchy}(0, 5) \\
 z_i &\sim \mathsf{Normal}(\mu_z, \sigma_z)
 \end{aligned}
 $$
 
+The parameters are given weakly informative parameters:
+$$
+\begin{aligned}[t]
+\sigma_x,\sigma_y,\sigma_z &\sim \mathsf{HalfCauchy}(0, 5) \\
+\gamma_1, \beta_1 &\sim \mathsf{Normal}(0, 10) \\
+\gamma_2, \beta_2, \beta_3 &\sim \mathsf{Normal}(0, 2.5)
+\end{aligned}
+$$
+Note that this assumes that $x$, $y$, and $z$ are standardized to have zero mean and unit variance. 
 
-model{
-	for (i in 1:10){
-		x[i] ~ dnorm(mux[i],taux);
-		mux[i] <- gamma[1] + gamma[2]*z[i];
+```{r data_multivarmissing}
+data_multivarmissing <- within(list(), {
+  N <- nrow(multivarmissing)
+  x_obs <- multivarmissing$x[!is.na(multivarmissing$x)] %>%
+    scale() %>% as.numeric()
+  x_obs_idx <- array(which(!is.na(multivarmissing$x)))
+  N_x_obs <- length(x_obs_idx)  
+  x_miss_idx <- array(which(is.na(multivarmissing$x)))
+  N_x_miss <- length(x_miss_idx)
+  y_obs <- multivarmissing$y[!is.na(multivarmissing$y)] %>%
+    scale() %>% as.numeric()    
+  y_obs_idx <- array(which(!is.na(multivarmissing$y)))
+  N_y_obs <- length(y_obs_idx)  
+  y_miss_idx <- array(which(is.na(multivarmissing$y)))
+  N_y_miss <- length(y_miss_idx)
+  z_obs <- multivarmissing$z[!is.na(multivarmissing$z)] %>%
+    scale() %>% as.numeric()
+  z_obs_idx <- array(which(!is.na(multivarmissing$z)))
+  N_z_obs <- length(z_obs_idx)
+  z_miss_idx <- array(which(is.na(multivarmissing$z)))
+  N_z_miss <- length(z_miss_idx)
+  alpha_loc <- 0
+  alpha_scale <- 10
+  beta_loc <- rep(0, 3)
+  beta_scale <- c(10, 2.5, 2.5)
+  gamma_loc <- rep(0, 2)
+  gamma_scale <- c(10, 2.5)
+  sigma_x_scale <- 5
+  sigma_y_scale <- 5
+  sigma_z_scale <- 5
+})
+```
 
-		y[i] ~ dnorm(muy[i],tauy);
-		muy[i] <- beta[1] + beta[2]*x[i] + beta[3]*z[i];
-	}
+```{r mod_multivarmissing,cache.extra=tools::md5sum("stan/multivarmissing.stan")}
+mod_multivarmissing <- stan_model("stan/multivarmissing2.stan")
+```
+```{r}
+mod_multivarmissing
+```
 
-	## priors
-	z[1] ~ dunif(-3,6);
+```{r fit_multivarmissing,results='hide'}
+fit_multivarmissing <- 
+  sampling(mod_multivarmissing, data = data_multivarmissing)
+```
+```{r}
+fit_multivarmissing
+```
 
-	gamma[1] ~ dnorm(0.0,.001);
-	gamma[2] ~ dnorm(0.0,.001);
+## Multivariate Normal
 
-	for(j in 1:3){
-		beta[j] ~ dnorm(0.0,.001);
-	}
-	taux ~ dgamma(.01,.01);
-	tauy ~ dgamma(.01,.01);
-	sigmax <- sqrt(1/taux);        ## convert prec to sigmas
-	sigmay <- sqrt(1/tauy);
-}
+```{r data_multivarmissing2}
+data_multivarmissing2 <- within(list(), {
+  N <- nrow(multivarmissing)
+  K <- ncol(multivarmissing)
 
+  mu_loc <- rep(0, 3)
+  mu_scale <- rep(0, 10)
+  Sigma_scale_scale <- 5
+  Sigma_corr_L_eta <- 2
+})
+```
 
+```{r mod_multivarmissing,cache.extra=tools::md5sum("stan/multivarmissing2.stan")}
+mod_multivarmissing2 <- stan_model("stan/multivarmissing2.stan")
+```
+```{r}
+mod_multivarmissing2
+```
 
-initial values:
-list(gamma=c(0,0),beta=c(0,0,0),taux=1,tauy=1)
-
-list(gamma=c(-10,10),beta=c(-10,10,-10),taux=10,tauy=10)
+```{r fit_multivarmissing,results='hide'}
+fit_multivarmissing <- 
+  sampling(mod_multivarmissing2, data = data_multivarmissing2)
+```
+```{r}
+fit_multivarmissing
+```

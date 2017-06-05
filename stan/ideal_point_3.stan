@@ -1,7 +1,7 @@
 // ideal point model
 // identification:
-// - xi ~ hierarchical
-// - except fixed senators
+// - xi ~ normal(0, 1)
+// - signs of xi
 data {
   // number of individuals
   int N;
@@ -16,18 +16,14 @@ data {
   // on items
   real alpha_loc;
   real<lower = 0.> alpha_scale;
-  real beta_loc;
-  real<lower = 0.> beta_scale;
-  // on legislators
-  int N_xi_obs;
-  int idx_xi_obs[N_xi_obs];
-  vector[N_xi_obs] xi_obs;
-  int N_xi_param;
-  int idx_xi_param[N_xi_param];
-  // prior on ideal points
-  real zeta_loc;
-  real<lower = 0.> zeta_scale;
-  real tau_scale;
+  vector[K] beta_loc;
+  vector<lower = 0.>[K] beta_scale;
+  int N_xi_pos;
+  int<lower = 1, upper = N> xi_idx_pos[N_xi_pos];
+  int N_xi_neg;
+  int<lower = 1, upper = N> xi_idx_neg[N_xi_neg];
+  int N_xi_unc;
+  int<lower = 1, upper = N> xi_idx_unc[N_xi_unc];
 }
 parameters {
   // item difficulties
@@ -35,17 +31,17 @@ parameters {
   // item discrimination
   vector[K] beta;
   // unknown ideal points
-  vector[N_xi_param] xi_param;
-  // hyperpriors
-  real<lower = 0.> tau;
-  real<lower = 0.> zeta;
+  vector<lower = 0.>[N_xi_pos] xi_pos;
+  vector<upper = 0.>[N_xi_neg] xi_neg;
+  vector[N_xi_unc] xi_unc;
 }
 transformed parameters {
   // create xi from observed and parameter ideal points
   vector[Y_obs] mu;
   vector[N] xi;
-  xi[idx_xi_param] = xi_param;
-  xi[idx_xi_obs] = xi_obs;
+  xi[xi_idx_neg] = xi_neg;
+  xi[xi_idx_pos] = xi_pos;
+  xi[xi_idx_unc] = xi_unc;
   for (i in 1:Y_obs) {
     mu[i] = alpha[y_idx_vote[i]] + beta[y_idx_vote[i]] * xi[y_idx_leg[i]];
   }
@@ -53,10 +49,9 @@ transformed parameters {
 model {
   alpha ~ normal(alpha_loc, alpha_scale);
   beta ~ normal(beta_loc, beta_scale);
-  xi_param ~ normal(zeta, tau);
-  xi_obs ~ normal(zeta, tau);
-  zeta ~ normal(zeta_loc, zeta_scale);
-  tau ~ cauchy(0., tau_scale);
+  xi_neg ~ normal(0., 1.);
+  xi_pos ~ normal(0., 1.);
+  xi_unc ~ normal(0., 1.);
   y ~ bernoulli_logit(mu);
 }
 generated quantities {
