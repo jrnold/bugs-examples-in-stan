@@ -42,23 +42,24 @@ $$
 \end{aligned}
 $$
 
-```{r uk92,cache.extra=tools::md5sum("data/uk92.rda")}
-(load("data/uk92.rda"))
+```{r UKHouseOfCommons}
+(data("UKHouseOfCommons", package = "pscl"))
+glimpse(UKHouseOfCommons)
 ```
 
-
 ```{r uk92_data}
-uk92_data <- within(dget("data/uk92.R"), {
+uk92_data <- within(list(), {
   y <- as.matrix(dplyr::select(UKHouseOfCommons, y1, y2))
-  X <- model.matrix()
+  X <- model.matrix(~ 0 + y1lag + y2lag + coninc + labinc + libinc, data = UKHouseOfCommons) %>% scale()
   N <- nrow(y)
   K <- ncol(y)
   P <- ncol(X)
-  alpha_location <- rep(0, K)
+  alpha_loc <- rep(0, K)
   alpha_scale <- rep(10, K)
-  beta_location <- matrix(0, K, P)
+  beta_loc <- matrix(0, K, P)
   beta_scale <- matrix(2.5, K, P)
-  Sigma_shape <- 1
+  Sigma_corr_shape <- 2
+  Sigma_scale_scale <- 5
 })
 ```
 
@@ -70,8 +71,13 @@ uk92_mod
 ```
 
 ```{r uk92_fit,results='hide'}
-uk92_fit <- sampling(uk92_mod, data = uk92_data)
+uk92_fit <- sampling(uk92_mod, data = uk92_data, chains = 1)
 ```
 ```{r}
-summary(uk92_fit, par = c("nu", "a", "b", "Sigma"))$summary
+summary(uk92_fit, par = c("nu", "alpha", "beta", "Sigma"))$summary
 ```
+
+## Extensions
+
+Model this as 
+
