@@ -42,7 +42,12 @@ $$
 \end{aligned}
 $$
 
-```{r cache.extra=tools::md5sum("data/uk92.R")}
+```{r uk92,cache.extra=tools::md5sum("data/uk92.rda")}
+(load("data/uk92.rda"))
+```
+
+
+```{r uk92_data}
 uk92_data <- within(dget("data/uk92.R"), {
   y <- as.matrix(dplyr::select(UKHouseOfCommons, y1, y2))
   X <- model.matrix()

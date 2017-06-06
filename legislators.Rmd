@@ -92,7 +92,7 @@ Votes for the 109th Senate is included in the **pscl** package:
 ```{r}
 data("s109", package = "pscl")
 ```
-The `s109` object is not a data frame, so see its `r rdoc("pscl", "s109")` documentation for information about its structure.
+The `s109` object is not a data frame, so see its documentation for information about its structure.
 ```{r}
 s109
 ```
