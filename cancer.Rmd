@@ -1,6 +1,6 @@
 # Cancer: difference in two binomial proportions {#cancer}
 
-```{r cancer_setup,message=FALSE}
+```{r cancer_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```
@@ -47,7 +47,7 @@ cancer_data <- list(
 ```{r results='hide'}
 cancer_mod1 <- stan_model("stan/cancer1.stan")
 ```
-```{r echo=FALSE,results='asis',cache=FALSE}
+```{r echo=FALSE,results='asis'}
 cancer_mod1
 ```
 
@@ -79,7 +79,7 @@ $$
 ```{r cancer_mod2,results='hide'}
 cancer_mod2 <- stan_model("stan/cancer2.stan")
 ```
-```{r echo=FALSE,cache=FALSE,results='asis'}
+```{r echo=FALSE,results='asis'}
 cancer_mod2
 ```
 

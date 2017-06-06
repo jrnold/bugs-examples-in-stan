@@ -1,7 +1,7 @@
 # House of Commons elections: modeling with the multivariate Student-$t$ density {#uk92}
 
 
-```{r uk92_setup,message=FALSE}
+```{r uk92_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```

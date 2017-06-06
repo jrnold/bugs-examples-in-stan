@@ -1,6 +1,6 @@
 # Reagan: linear regression with AR(1) disturbances {#reagan}
 
-```{r reagan_setup,message=FALSE}
+```{r reagan_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```
@@ -27,6 +27,12 @@ $$
 \end{aligned}
 $$
 
+```{r ReaganApproval}
+(load("data/ReaganApproval.rda"))
+ReaganApproval
+```
+
+
 ```{r reagan_data}
 reagan_data <- within(list(), {
   y <- ReaganApproval$app
@@ -50,7 +56,6 @@ mod_regar1 <- stan_model("stan/regar1.stan")
 mod_regar1
 ```
 
-
 ```{r reagan_fit,results='hide'}
 reagan_fit <- sampling(mod_regar1, data = reagan_data)
 ```
@@ -58,4 +63,10 @@ reagan_fit <- sampling(mod_regar1, data = reagan_data)
 ```{r reagan_fit_summary}
 summary(reagan_fit, par = c("alpha", "beta", "theta", "sigma"))$summary
 ```
+
+
+## Cochrane-Orcutt/Prais-Winsten
+
+An AR(1) error model can also be estimated via partial-differencing as 
+in Cochrane-Orcutt/Prais-Winsten estimation.
 

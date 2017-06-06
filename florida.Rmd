@@ -1,6 +1,6 @@
 # Florida: Learning About an Unknown Proportion from Survey Data {#florida}
 
-```{r florida_setup,message=FALSE}
+```{r florida_setup,message=FALSE,cache=FALSE}
 library("rstan")
 ```
 

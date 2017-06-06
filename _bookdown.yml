@@ -25,4 +25,5 @@ rmd_files:
 - genbeetles.Rmd
 - negbin.Rmd
 - multivarmissing.Rmd
+- llg.Rmd
 - references.Rmd

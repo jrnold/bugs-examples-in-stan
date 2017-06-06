@@ -1,6 +1,6 @@
 # Legislators: estimating legislators' ideal points from voting histories (roll call data) {#legislators}
 
-```{r legislators_setup,message=FALSE}
+```{r legislators_setup,message=FALSE,cache=FALSE}
 library("pscl")
 library("tidyverse")
 library("forcats")
@@ -88,7 +88,7 @@ For each of these: Which types of rotation does it solve?
 ## 109th Senate
 
 This example models the voting of the [109th U.S. Senate](https://en.wikipedia.org/wiki/109th_United_States_Congress).
-Votes for the 109th Senate is included in the `r pkg("pscl")` package:
+Votes for the 109th Senate is included in the **pscl** package:
 ```{r}
 data("s109", package = "pscl")
 ```
@@ -131,7 +131,11 @@ s109_vote_data <- as.data.frame(s109$vote.data) %>%
 
 s109_legis_data <- as.data.frame(s109$legis.data) %>%
   rownames_to_column("legislator") %>%
-  mutate(.legis_id = row_number())
+  mutate(.legis_id = row_number(),
+         party = fct_recode(party,
+                            "Democratic" = "D",
+                            "Republican" = "R",
+                            "Independent" = "Indep"))
 
 s109_votes <- s109$votes %>%
   as.data.frame() %>%
@@ -182,8 +186,8 @@ xi <-
   mutate(# set values
          xi = if_else(legislator == "FRIST (R TN)", 1,
                  if_else(legislator == "REID (D NV)", -1, NA_real_)),
-         init = if_else(party == "R", 1,
-                        if_else(party == "D", -1, 0)))
+         init = if_else(party == "Republican", 1,
+                        if_else(party == "Democratic", -1, 0)))
 
 ```
 
@@ -238,17 +242,20 @@ mod_ideal_point_2
 
 
 Extract the ideal point data:
-```{r}
-# ideal_points <- 
-#   bind_cols(s109_legis_data,
-#            as_tibble(summary(mod_sampling, par = "xi")$summary)) %>%
-#   mutate(legislator = fct_reorder(legislator, mean))
+```{r legislator_summary_1}
+legislator_summary_1 <-
+  bind_cols(s109_legis_data,
+           as_tibble(summary(legislators_fit_1, par = "xi")$summary)) %>%
+  mutate(legislator = fct_reorder(legislator, mean))
 ```
 
-```{r}
-# ggplot(ideal_points, aes(x = legislator, y = mean,
-#                          ymin = `2.5%`, ymax = `97.5%`, colour = party)) +
-#   geom_pointrange() +
-#   coord_flip() + 
-#   scale_color_manual(values = c(D = "blue", Indep = "green", R = "red"))
+```{r legislator_plot_1,fig.height=8,fig.width=4,fig.cap="Estimated Ideal Points of the Senators of the 109th Congress"}
+ggplot(legislator_summary_1,
+       aes(x = legislator, y = mean,
+           ymin = `2.5%`, ymax = `97.5%`, colour = party)) +
+  geom_pointrange() +
+  coord_flip() +
+  scale_color_manual(values = c(Democratic = "blue", Independent = "green", Republican = "red")) +
+  labs(y = expression(xi[i]), x = "", colour = "Party") +
+  theme(legend.position = "bottom")
 ```

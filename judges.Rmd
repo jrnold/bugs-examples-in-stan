@@ -1,6 +1,6 @@
 # Judges: estimating the ideological locations of Supreme Court justices {#judges}
 
-```{r judges_setup,message=FALSE}
+```{r judges_setup,message=FALSE,cache=FALSE}
 library("pscl")
 library("tidyverse")
 library("rstan")

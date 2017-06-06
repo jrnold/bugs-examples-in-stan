@@ -3,7 +3,7 @@
 
 This example comes from @Jackman2005a.
 
-```{r campaign_setup,message=FALSE}
+```{r campaign_setup,message=FALSE,cache=FALSE}
 library("rstan")
 library("tidyverse")
 library("lubridate")

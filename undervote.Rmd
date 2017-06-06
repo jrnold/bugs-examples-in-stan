@@ -1,6 +1,6 @@
 # Undervoting for President, by Race: difference in two binomial proportions {#undervote}
 
-```{r undervote_setup,message=FALSE}
+```{r undervote_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```

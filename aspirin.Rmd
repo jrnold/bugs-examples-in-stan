@@ -1,6 +1,6 @@
 # Aspirin: Shrinkage (or "borrowing strength") via hierarchical modeling (aspirin)
 
-```{r aspirin_setup,message=FALSE}
+```{r aspirin_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```

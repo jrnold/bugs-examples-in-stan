@@ -1,5 +1,12 @@
 # Cosponsorship: computing auxiliary quantities from MCMC output {#cosponsorship}
 
+```{r cosponsor_setup,cache=FALSE,message=FALSE}
+library("tidyverse")
+library("rstan")
+library("rstanarm")
+```
+
+
 Typically, MCMC output consists of samples from the posterior density of model parameters.  But note that other quantities can be generated as well, say, imputations for missing data points, predictions, residuals, or goodness-of-fit summary statistics.  In fact, any function of the parameters can be calculated and output.
 
 I demonstrate these ideas in the context of a generalized linear model for binary data.  The specific application is @Krehbiel1995a, a study of legislative behavior.[^cosponsor-datas]
@@ -15,7 +22,7 @@ Seven covariates are used in the analysis:
 - membership of the House Appropriations Committee,
 - membership of the House Budget Committee.
 
-@Krehbiel1995a finds that, conditional on legislators' policy preferences, as measured with the ADA and NTU scores, Democrats were more likely to support H.R. 3266 than Republicans. 
+@Krehbiel1995a finds that, conditional on legislators' policy preferences, as measured with the ADA and NTU scores, Democrats were more likely to support H.R. 3266 than Republicans.
 Seniority is also a key predictor; junior were members more likely to cosponsor this legislation, conditional on the other covariates.
 
 ## Model
@@ -28,32 +35,26 @@ y_i &= \mathsf{Bernoulli}(\mu_i) \\
 $$
 
 Several auxiliary quantities are estimated in the following Stan program:
+the *percent correctly predicted (PCP)*,
+$$
+\mathrm{PCP} = \frac{1}{N} \sum_{i = 1}^N \left( y_i (\pi_i >= 0.5) + (1 - y_i) (\pi_i < 0.5) \right) ,
+$$
+and the expected percent correctly predicted (ePCP)* [@Herron199a],
+$$
+\mathrm{PCP} = \frac{1}{N} \sum_{i = 1}^N \left( y_i \pi_i + (1 - y_i) (1 - \pi_i) \right) .
+$$
 
-- Percent-correctly-predicted (PCP)
-- Expected PCP (ePCP)  @Herron1999a 
-- @Herron1999a also investigated the effect sizes of certain key predictors, by holding other covariates at fixed values and then comparing the predicted probabilities under various hypothetical scenarios. 
+Uncertainty in the parameters, and propagates to uncertainty in these quantities, and thus it is easy to calculate posterior distributions for these values.
 
-Uncertainty in the parameters, and propogates to uncertainty in these qunaties, and thus it is easy to calculate posterior distributions for these values.
-
-```{r}
-a2z <- read_tsv("data/a2z.tab",
-                col_types = cols(
-  cosp = col_integer(),
-  ada = col_integer(),
-  ntu = col_integer(),
-  democrat = col_integer(),
-  firstelected = col_integer(),
-  margin = col_integer(),
-  appromember = col_integer(),
-  budgetmember = col_integer()
-))
+```{r a2z,cache.extra=tools::md5sum("data/a2z.rda")}
+(load("data/a2z.rda"))
 ```
 
-```{r}
+```{r cosponsor_formula}
 cosponsor_formula <- cosp ~ ada + ntu + democrat + firstelected + margin + appromember + budgetmember
 ```
 
-```{r}
+```{r cosponsor_data}
 cosponsor_data <- within(list(), {
   y <- a2z$cosp
   N <- length(y)
@@ -66,33 +67,33 @@ cosponsor_data <- within(list(), {
 })
 ```
 
-```{r results='hide'}
-mod_logit <- stan_model("stan/logit.stan")
+```{r cosposor_mod_logit2,results='hide',cache.extra=tools::md5sum("stan/logit2.stan")}
+mod_logit2 <- stan_model("stan/logit2.stan")
 ```
-```{r}
-mod_logit
-```
-
-Now sample from this model:
-```{r results='hide'}
-cosponsor_fit <- sampling(mod_logit, data = cosponsor_data)
-```
-```{r}
-cosponsor_fit
+```{r echo=FALSE,results='asis'}
+mod_logit2
 ```
 
-This model can be fit using the `r rpkg("rstanarm")` function `r rdoc("rstanarm", "stan_glm")`.
+Sample from this model:
+```{r results='hide'}
+cosponsor_fit <- sampling(mod_logit2, data = cosponsor_data)
+```
+```{r}
+summary(cosponsor_fit, par = c("beta", "alpha", "PCP", "ePCP"))$summary
+```
+
+This model can be fit using the **rstanarm** function `stan_glm`.
 This is a binomial model, so it uses `family = binomial()`:
+```{r cosponsor_fit2,results='hide'}
+cosponsor_fit2 <- stan_glm(cosponsor_formula, data = a2z, family = binomial())
+```
 ```{r}
-cosponsor_fit2 <-
-  stan_glm(cosponsor_formula, 
-         data = a2z,
-         family = binomial())
+cosponsor_fit2
 ```
 
-**TODO** Add these:
 
-- probability of co-sponsorship for a representative member (median x vals)
+
+- probability of co-sponsorship for a representative member (median x values)
   ```
 	## clarify calculations
   ## probability of co-sponsorship for "average" member (median x vals)

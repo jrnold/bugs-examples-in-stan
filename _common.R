@@ -58,3 +58,7 @@ knit_print.stanmodel <- function(x, options) {
   knitr::asis_output(as.character(htmltools::tags$pre(htmltools::tags$code(htmltools::HTML(code_str), class = "stan"))))
 }
 
+# From https://sunlightfoundation.com/2014/03/12/datavizguide/
+PARTY_COLORS <- c("Republican" = "#9A3E25",
+                  "Democratic" = "#156B90",
+                  "Independent" = "#705259")

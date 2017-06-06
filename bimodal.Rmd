@@ -1,6 +1,6 @@
 # Bimodal: Extreme missingness in bivariate normal data {#bimodal}
 
-```{r bimodal_setup,message=FALSE}
+```{r bimodal_setup,message=FALSE,cache=FALSE}
 library("rstan")
 library("tidyverse")
 library("stringr")
@@ -37,7 +37,7 @@ Assume bivariate normality, and that the means of the two variables are both zer
 ```{r bimodal_mod,message = FALSE,results='hide',cache.extra=tools::md5sum("stan/bimodal.stan")}
 bimodal_mod <- stan_model("stan/bimodal.stan")
 ```
-```{r cache=FALSE,echo=FALSE}
+```{r echo=FALSE}
 bimodal_mod
 ```
 

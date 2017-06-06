@@ -1,6 +1,6 @@
 # Generalized Beetles: generalizing link functions for binomial GLMs {#genbeetles}
 
-```{r genbeetles_setup,message=FALSE}
+```{r genbeetles_setup,message=FALSE,cache=FALSE}
 library("rstan")
 library("tidyverse")
 ```
@@ -52,7 +52,7 @@ genbeetles_mod
 To demonstrate the use of MCMC methods in this context, I use the famous beetles data of @Bliss1935a. 
 These data have been extensively used by statisticians in studies generalized link functions [@Prentice1976a; @Stukel1988a], and are used by @SpiegelhalterBestGilks1996a to demonstrate how BUGS handles GLMs for binomial data. @CarlinLouis2000a use these data in an MCMC implementation of the one-parameter generalization used here; they made use of re-parameterizations and problem-specific computer programming to handle the non-conjugacies introduced via the skew parameter $m$.
 
-These data are included with the `r rpkg("VGAM")` package as  `r rpkg("VGAM", "flourbeetle")`:
+These data are included with the **VGAM"** package as  `flourbeetle`:
 ```{r genbeetles_flourbeetle}
 (data("flourbeetle", package = "VGAM"))
 ```
