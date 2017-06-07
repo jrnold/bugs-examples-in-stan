@@ -8,7 +8,8 @@ library("stringr")
 library("rstan")
 ```
 
-Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators.  Political scientists analyze roll call data using the Euclidean spatial voting model: each legislator (i = 1, ..., n) has a preferred policy position (xi, a point in low-dimensional Euclidean space), and each vote (j = 1, ..., m) amounts to a choice between "Aye" and a "Nay" locations, qj  and Yj,  respectively. Legislators are assumed to choose on the basis of utility maximization, with utilities (in one-dimension)
+Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators.[^legislators-src]
+Political scientists analyze roll call data using the Euclidean spatial voting model: each legislator (i = 1, ..., n) has a preferred policy position (xi, a point in low-dimensional Euclidean space), and each vote (j = 1, ..., m) amounts to a choice between "Aye" and a "Nay" locations, qj  and Yj,  respectively. Legislators are assumed to choose on the basis of utility maximization, with utilities (in one-dimension)
 
 In these models, the only observed data are votes, and the analyst wants to 
 model those votes as a function of legislator- ($\xi_i$), and vote-specific ($\alpha_i$, $\beta_i$) parameters.
@@ -259,3 +260,5 @@ ggplot(legislator_summary_1,
   labs(y = expression(xi[i]), x = "", colour = "Party") +
   theme(legend.position = "bottom")
 ```
+
+[^legislators-src]: Example derived from Simon Jackman, "Legislators: estimating legislators' ideal points from voting histories (roll call data)", *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034141/http://jackman.stanford.edu:80/mcmc/legislators.odc).

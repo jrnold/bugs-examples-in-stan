@@ -6,7 +6,24 @@ library("rstan")
 ```
 
 
-The following simple model is drawn from an example in @JohnsonAlbert1999a, using data collected in a @Dorn1954a.  A sample of 86 lung-cancer patients and a sample of 86 controls were questioned about their smoking habits.  The two groups were chosen to represent random samples from a subpopulation of lung-cancer patients and an otherwise similar population of cancer-free individuals.  Of the cancer patients, 83 out of 86 were smokers; among the control group 72 out of 86 were smokers.  The scientific question of interest was to assess the difference between the smoking habits in the two groups.
+Two groups chosen to be random samples from subpopulations of lung-cancer patients and cancer-free individuals.[^cancer]
+The scientific question of interest is the difference in the smoking habits between two groups.
+The results of the survey are:
+```{r cancer}
+cancer <- tribble(
+  ~group, ~n, ~smokers,
+  "Cancer patients", 86, 82,
+  "Control group", 86, 72
+)
+```
+```{r echo=FALSE,results='asis'}
+cancer
+```
+
+[^cancer]: This example is derived from Simon Jackman, "Cancer: difference in two binomial proportions", *BUGS Examples,* 2007-07-24, http://jackman.stanford.edu:80/mcmc/cancer.odc.  [Wayback Machine](https://web-beta.archive.org/web/20070601000000*/http://jackman.stanford.edu:80/mcmc/cancer.odc). This examples comes from @JohnsonAlbert1999a, using data from @Dorn1954a.
+
+
+## Two Sample Binomial Model
 
 In implementing this model, we have just two data points (cancer patients and control group) and a binomial sampling model, in which the population proportions of smokers in each group appear as parameters.  Quantities of interest such as the difference in the population proportions and the log of the odds ratio are computed in the generated quantities section. Uniform priors on the population proportions are used in this example.
 
@@ -35,29 +52,31 @@ The difference between and log odds ratio are defined in the `generated quantiti
 
 ```{r}
 cancer_data <- list(
-  r = c(83, 72),
-  n = c(86, 86),
+  r <- cancer$smokers,
+  n <- cancer$n,
   # beta prior on pi
   p_a = rep(1, 2),
   p_b = rep(1, 2)
 )
 ```
 
-
-```{r results='hide'}
+The Stan model for this is:
+```{r cancer_mod1,results='hide',cache.extra=tools::md5sum("stan/cancer1.stan")}
 cancer_mod1 <- stan_model("stan/cancer1.stan")
 ```
 ```{r echo=FALSE,results='asis'}
 cancer_mod1
 ```
 
-
-```{r results='hide'}
+Now estimate the model:
+```{r cancer_fit1,results='hide'}
 cancer_fit1 <- sampling(cancer_mod1, cancer_data)
 ```
 ```{r}
 cancer_fit1
 ```
+
+## Binomial Logit Model of the Difference
 
 An alternative parameterization directly models the difference in the population proportion.
 
@@ -76,13 +95,14 @@ $$
 \end{aligned}
 $$
 
-```{r cancer_mod2,results='hide'}
+```{r cancer_mod2,results='hide',cache.extra=tools::md5sum("stan/cancer2.stan")}
 cancer_mod2 <- stan_model("stan/cancer2.stan")
 ```
 ```{r echo=FALSE,results='asis'}
 cancer_mod2
 ```
 
+Re-use `r` and `n` values from `cancer_data`, but add the appropriate values for the prior distributions.
 ```{r cancer_data2}
 cancer_data2 <- within(cancer_data, {
   p_a <- p_b <- NULL
@@ -92,9 +112,16 @@ cancer_data2 <- within(cancer_data, {
 })
 ```
 
+Sample from the model:
 ```{r cancer_fit2,results='hide'}
 cancer_fit2 <- sampling(cancer_mod2, cancer_data2)
 ```
 ```{r}
 cancer_fit2
 ```
+
+
+## Questions
+
+1. Expression the Binomial Logit model of the Difference as a regression
+2. What number of success and failures is a `Beta(1,1)` prior equivalent to?

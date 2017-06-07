@@ -6,10 +6,9 @@ library("rstan")
 library("rstanarm")
 ```
 
-
 Typically, MCMC output consists of samples from the posterior density of model parameters.  But note that other quantities can be generated as well, say, imputations for missing data points, predictions, residuals, or goodness-of-fit summary statistics.  In fact, any function of the parameters can be calculated and output.
 
-I demonstrate these ideas in the context of a generalized linear model for binary data.  The specific application is @Krehbiel1995a, a study of legislative behavior.[^cosponsor-datas]
+I demonstrate these ideas in the context of a generalized linear model for binary data.  The specific application is @Krehbiel1995a, a study of legislative behavior.[^cosponsor-datas][^cosponsor-src]
 The response variable is a binary indicator, which is equal to 1 if the member of the U.S. House of Representatives chose to cosponsor bill [H.R. 3266](https://www.congress.gov/bill/103rd-congress/house-bill/3266), and 0 otherwise. Of the 434 legislators for which data is available, 228 legislators cosponsored this bill.
 H.R.3266 was a wide-ranging spending bill designed to circumvent the usual budget-making process, that was considered by the [103rd House of Representatives](https://en.wikipedia.org/wiki/103rd_United_States_Congress) in 1993--1994.
 Seven covariates are used in the analysis:
@@ -122,3 +121,5 @@ cosponsor_fit2
 **TODO** Do latent residuals [@GelmanGoegebeurTuerlinckxEtAl2000a; @AlbertChib1995a] make sense and have any meaning outside of Gibbs sampling? They don't seem useful relative to LOO measures of outliers.
 
 [^cosponsor-data]: Replication data from @Herron2010a.
+
+[^cosponsor-src]: Example derived from Simon Jackman, "Cosponsorship:  computing auxiliary quantities from MCMC output," 2004-05-01, [URL](https://web-beta.archive.org/web/20040501194620/http://jackman.stanford.edu:80/mcmc/kk.odc)

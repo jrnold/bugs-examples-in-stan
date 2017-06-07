@@ -1,24 +1,26 @@
 # Truncation: How does Stan deal with truncation?
 
-See @Stan2016a, Chapter 11 "Truncated or Censored Data" for more on how Stan handles truncation and censoring.
-```{r message=FALSE}
+```{r truncated_setup,message=FALSE}
 library("tidyverse")
 library("rstan")
 ```
 
-
-Assume we have the observations, $y = 1,...,9$, from a Normal population with unknown mean and variance, subject to the constraint that $y < 10$,
+Suppose we observed $y = (1, \dots, 9)$,[^truncated-source]
+```{r}
+y <- 1:9
+```
+These observations are drawn from a population distributed normal with unknown mean ($\mu$) and variance ($\sigma^2$), with the constraint that $y < 10$,
 $$
 \begin{aligned}[t]
-y &\sim \mathsf{Normal}(\mu, \sigma^2) I(-\infty, 10) .
+y_i &\sim \mathsf{Normal}(\mu, \sigma^2) I(-\infty, 10) .
 \end{aligned}
 $$
 
-Ignoring the constraint, the MLEs for the mean and variance are 5 and 6.67; with the constraint taken into account, each observation makes likelihood contribution
+With the censoring taken into account, the log likelihood is 
 $$
-f (y; m, s_2)/F ((k - m)/s),
+\log L(y; \mu, \sigma) = \sum_{i = 1}^n \left( \log \phi(y_i; \mu, \sigma^2) - \log\Phi(y_i; \mu, \sigma^2) \right)
 $$
-where $k$ is the truncation point (in this case, 10), and the MLEs of $m, s_2$  are 5.32 and 8.28.
+where $\phi$ is the normal distribution PDF, and $\Phi$ is the normal distribution $
 
 The posterior of this model is not well identified by the data, so the mean, $\mu$, and scale, $\sigma$, are given informative priors based on the data,
 $$
@@ -27,18 +29,32 @@ $$
 \sigma &\sim \mathsf{HalfCauchy}(0, s_y) .
 \end{aligned}
 $$
-where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$.
+where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$. Alternatively, we could have standardized the data prior to estimation.
 
-```{r truncation_mod,results='hide'}
-truncation_mod <- stan_model("stan/SingleTruncation.stan")
+## Stan Model
+
+See @Stan2016a, Chapter 11 "Truncated or Censored Data" for more on how Stan handles truncation and censoring. 
+In Stan the `T` operator used in sampling statement,
+```
+y ~ distribution(...) T[upper, lower];
+```
+is used to adjust the log-posterior contribution for truncation.
+
+
+```{r truncate_mod,results='hide'}
+truncate_mod <- stan_model("stan/truncated.stan")
 ```
 ```{r echo=FALSE,results='asis',cache=FALSE}
-truncation_mod
+truncate_mod
 ```
 
-```{r truncation_data}
-truncation_data <- within(list(), {
-  y <- 1:9
+
+
+## Estimation
+
+```{r truncate_data}
+truncate_data <- within(list(), {
+  y <- y
   N <- length(y)
   U <- 10
   mu_mean <- mean(y)
@@ -48,12 +64,11 @@ truncation_data <- within(list(), {
 ```
 
 
-
-```{r truncation_fit,results='hide',message=FALSE}
-truncation_fit <- sampling(truncation_mod, data = truncation_data)
+```{r truncate_fit1,results='hide',message=FALSE}
+truncate_fit1 <- sampling(truncate_mod, data = truncate_data)
 ```
 ```{r}
-truncation_fit
+truncate_fit1
 ```
 
 We can compare these results to that of a model in which the truncation is not taken into account:
@@ -65,19 +80,49 @@ y_i &\sim \mathsf{Normal}(\mu, \sigma^2), \\
 \end{aligned}
 $$
 
-```{r truncation_mod2,results='hide'}
-truncation_mod2 <- stan_model("stan/normal.stan")
+```{r truncate_mod2,results='hide'}
+truncate_mod2 <- stan_model("stan/normal.stan")
 ```
 ```{r echo=FALSE,results='asis',cache=FALSE}
-truncation_mod2
+truncate_mod2
 ```
 
-```{r truncation_fit2,results='hide'}
-truncation_fit2 <-
-  sampling(truncation_mod2, data = truncation_data)
+```{r truncate_fit2,results='hide'}
+truncate_fit2 <-
+  sampling(truncate_mod2, data = truncate_data)
 ```
 ```{r}
-truncation_fit2
+truncate_fit2
+```
+
+We can compare the densities for $\mu$ and $\sigma$ in each of these models.
+```{r truncted_plot_density}
+plot_density <- function(par) {
+  bind_rows(
+    tibble(value = rstan::extract(truncate_fit1, par = par)[[1]],
+            model = "truncated"),
+    tibble(value = rstan::extract(truncate_fit2, par = par)[[1]],
+            model = "non-truncated")
+  ) %>%
+    ggplot(aes(x = value, colour = model, fill = model)) +
+    geom_density(alpha = 0.3) +
+    labs(x = eval(bquote(expression(.(as.name(par)))))) +
+    theme(legend.position = "bottom")
+}
+```
+```{r truncate_plot_density_mu,fig.cap="Posterior density of $\\mu$ when estimated with and without truncation"}
+plot_density("mu")
+```
+```{r truncate_plot_density_sigma,fig.cap="Posterior density of $\\sigma$ when estimated with and without truncation"}
+plot_density("sigma")
 ```
 
 
+## Questions
+
+1. How are the densities of $\mu$ and $\sigma$ different under the two models? Why are they different?
+2. Re-estimate the model with improper uniform priors for $\mu$ and $\sigma$. How do the posterior distributions change?
+3. Suppose that the truncation points are unknown. Write a Stan model and estimate. See @Stan2016a, Section 11.2 "Unknown Truncation Points" for how to write such a model. How important is the prior you place on the truncation points? 
+
+[^truncated-source]: This example is derived from Simon Jackman. "Truncation: How does WinBUGS deal with truncation?" *BUGS Examples*, 2007-07-24,
+ [URL](https://web-beta.archive.org/web/20070724034035/http://jackman.stanford.edu:80/mcmc/SingleTruncation.odc).

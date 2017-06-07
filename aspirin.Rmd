@@ -1,25 +1,29 @@
-# Aspirin: Shrinkage (or "borrowing strength") via hierarchical modeling (aspirin)
+# Aspirin: Borrowing Strength via Hierarchical Modeling {#aspirin}
+
 
 ```{r aspirin_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```
 
-
-The following data come from a meta-analysis of heart attack data.  Each observation is the results of a study of survivorship following a heart attack (myocardial infarction). In each study, some victims were given aspirin immediately following their heart attack, while some vicitims were not.  The observed values of y are the differences in mean survivorship observed in each study, with the other piece of data, the standard deviations, reflecting the relative sizes of the two groups in each study (i.e., although the data are binomial, given the large number of observations per study a normal approximation is valid and reduces each study's data to the observed treatement effect and a standard deviation).  The goal of the meta-analysis is to synthesize the six studies, so as to arrive at an overall conclusion regarding the effects of aspirin on survivorship following a heart attack.
-
-This is an extremely simple example of hierarchical modeling.  Via the exchangeability assumption (i.e., the study-specific means have a common prior), the studies "borrow strength" from one another, introducing some bias (each study's mean qi is shrunk back towards the common mean), but with the benefit of gaining precision (smaller variance).  We also gain a better estimate of the overall effect of aspirin on survivorship after heart attack than we would get from naively pooling the studies.
-
-These data and the meta-analysis is discussed at length in @Draper1992a.
-
+The following data come from a meta-analysis of heart attack data [^aspirin-src],
+```{r aspirin}
+aspirin <- 
+  tibble(y = c(2.77, 2.50, 1.84, 2.56, 2.31, -1.15),
+         sd = c(1.65, 1.31, 2.34, 1.67, 1.98, 0.90))
+```
+Each observation is the results of a study of survivorship following a heart attack (myocardial infarction).
+In each study, some victims were given aspirin immediately following their heart attack, while some victims were not.
+The observed values of $y$ are the differences in mean survivorship observed in each study.
+Additionally each study provided a standard deviations, derived from the relative sizes of the two groups in each study.
 $$
 \begin{aligned}[t]
 y_i &\sim \mathsf{Normal}(\theta_i, s_i) , \\
 \theta_i &\sim \mathsf{Normal}(\mu, \tau) ,
 \end{aligned}
 $$
-where $y_i$ is the mean of each study, and $s_i$ is the
-standard deviation for each study.
+where $y_i$ is the mean of each study, and $s_i$ is the standard deviation for each study.
+Weakly informative priors are given to the parameters $\mu$ and $\tau$,
 $$
 \begin{aligned}[t]
 \mu &\sim \mathsf{Normal}(\bar{y}, 10 s_y) , \\
@@ -28,21 +32,27 @@ $$
 $$
 where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$.
 
-## Centered Parameterization
+Although the data are binomial, the sample sizes are large enough in each study that the normal approximation is valid.
+This simplifies the problem by reducing each study's data to the observed treatment effect and a standard deviation. 
+The goal of the meta-analysis is to synthesize the six studies, in order to arrive at an overall estimate of the effects of aspirin on survivorship following a heart attack.
 
+This is a simple example of hierarchical modeling. 
+Via the exchangeability assumption, that the study-specific means have a common prior, the studies "borrow strength" from one another.
+This introducing some bias, since each study's mean mean is shrunk back towards the common mean.
+However, the benefit is gaining precision (smaller variance). 
+We also gain a better estimate of the overall effect of aspirin on survivorship after heart attack than we would get from naively pooling the studies or using the estimate of any one study.
+
+[^aspirin-src]: This example is derived from Simon Jackman, "Aspirin: Shrinkage (or "borrowing strength") via hierarchical modeling", 2007-07-24 [URL](https://web-beta.archive.org/web/20070724034135/http://jackman.stanford.edu/mcmc/aspirin.odc). The data and the meta-analysis is from @Draper1992a.
+
+The Stan model for the above model is:
 ```{r aspirin_mod,results='hide',cache.extra=tools::md5sum("stan/aspirin.stan")}
 aspirin_mod <- stan_model("stan/aspirin.stan")
 ```
-
-```{r results='asis'}
+```{r echo=FALSE,results='asis'}
 aspirin_mod
 ```
 
-```{r aspirin}
-aspirin <- 
-  tibble(y = c(2.77, 2.50, 1.84, 2.56, 2.31, -1.15),
-         sd = c(1.65, 1.31, 2.34, 1.67, 1.98, 0.90))
-```
+
 
 ```{r aspirin_data}
 aspirin_data <- within(list(), {
@@ -64,9 +74,8 @@ aspirin_fit <- sampling(aspirin_mod, data = aspirin_data)
 aspirin_fit
 ```
 
-
 Note that this model is likely to produce divergent transitions.
-When the data are few, there 
+The reasons for this and an alternative parameterization is discussed in the next section.
 
 
 ## Non-centered parameterization
@@ -96,4 +105,3 @@ aspirin_fit2 <- sampling(aspirin_mod2, data = aspirin_data,
 ```{r}
 aspirin_fit2
 ```
-

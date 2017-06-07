@@ -1,41 +1,59 @@
-# Generalized Beetles: generalizing link functions for binomial GLMs {#genbeetles}
+# Generalized Beetles: Generalizing Link Functions for Binomial GLMs {#genbeetles}
 
 ```{r genbeetles_setup,message=FALSE,cache=FALSE}
 library("rstan")
 library("tidyverse")
 ```
 
-GLMs rely on link functions, linking the linear predictors and the response probability, $\pi$. Logit and probit are perhaps the most familiar link functions,
-mapping from the unit probability interval to the real line using the inverse CDFs of the logistic and standard Normal distributions, respectively. The logit and probit link functions have the interesting property that they are symmetric
-about $\pi = 0.5$, and guarantee the effects of $x_i$ on $\pi$ to be greatest when $\pi  = 0.5$. To see this, recall that in GLMs for binomial data the effects of $x_i$ on $\pi$ are not constant, but vary over $\pi$.  For logit and probit, with link functions symmetric around zero, the effect of $x_i$  on $\pi$  is at its greatest when $f(x_i \beta)$ is its maximum, which for logit and probit occurs at $x_i \beta = 0$. In dose-response studies, this means that responsiveness to dose is at its greatest when subjects are on the cusp of a response, at, that is, when $E(\pi) = 0.5$.  In a study of voter turnout, ordinary logit or probit is estimated subject to the constraint that the effects of the covariates are at their greatest for citizens who are indifferent between turning out and abstaining [Nagler1994a]. Furthermore, for logit/probit, these marginal effects diminish in magnitude symmetrically as we move away from $E(\pi) = 0.5$; this symmetry follows from the symmetry of the logistic and normal PDFs/CDFs.
+GLMs rely on link functions, linking the linear predictors and the response probability, $\pi$.[^genbeetles-src]
+Logit and probit are perhaps the most familiar link functions, mapping from the unit probability interval to the real line using the inverse CDFs of the logistic and standard Normal distributions, respectively.
+The logit and probit link functions have the interesting property that they are symmetric
+about $\pi = 0.5$, and guarantee the effects of $x_i$ on $\pi$ to be greatest when $\pi  = 0.5$.
+To see this, recall that in GLMs for binomial data the effects of $x_i$ on $\pi$ are not constant, but vary over $\pi$. 
+For logit and probit, with link functions symmetric around zero, the effect of $x_i$  on $\pi$  is at its greatest when $f(x_i \beta)$ is its maximum, which for logit and probit occurs at $x_i \beta = 0$.
+In dose-response studies, this means that responsiveness to dose is at its greatest when subjects are on the cusp of a response, at, that is, when $E(\pi) = 0.5$.
+In a study of voter turnout, ordinary logit or probit is estimated subject to the constraint that the effects of the covariates are at their greatest for citizens who are indifferent between turning out and abstaining [@Nagler1994a].
+Furthermore, for logit/probit, these marginal effects diminish in magnitude symmetrically as we move away from $E(\pi) = 0.5$.
+This symmetry follows from the symmetry of the logistic and normal PDFs/CDFs.
 
-One can easily envisage situations where the researcher would not want to impose these features of the logit or probit link functions on their data. In many settings, knowledge of exactly where the marginal impact of the covariates is maximized is of tremendous practical importance, with implications for targeting policy interventions, resource allocation, and so on. For example, how to distribute resources for educational or health improvements? Given that the effects of interventions are not constant across a set of baseline probabilities,
-knowing where proposed interventions are likely to have bigger or smaller effects is valuable information for policy-makers. As we have seen, logit/probit constrain these effects to be at their greatest at $E(\pi) = .5$, via their symmetric S-shaped link functions. Ceteris paribus we would prefer to estimate the shape of the link function from the data.
+One can easily envisage situations where the researcher would not want to impose these features of the logit or probit link functions on their data.
+In many settings, knowledge of exactly where the marginal impact of the covariates is maximized is of tremendous practical importance, with implications for targeting policy interventions, resource allocation, and so on. 
+For example, how to distribute resources for educational or health improvements?
+Given that the effects of interventions are not constant across a set of baseline probabilities, knowing where proposed interventions are likely to have bigger or smaller effects is valuable information for policy-makers.
+As we have seen, logit or probit models constrain these effects to be at their greatest whe $E(\pi) = 1/2$, via their symmetric S-shaped link functions.
+Ceteris paribus we would prefer to estimate the shape of the link function from the data.
 
-A relatively straightforward way to let the data be informative as to the shape of the link function is via a simple one-parameter transformation of the logit link [Prentice1976a]:
+A relatively straightforward way to let the data be informative as to the shape of the link function is via a simple one-parameter transformation of the logit link [@Prentice1976a]:
 $$
-\pi = \frac{1}{(1 + \exp(-x_i \beta))^m}
+\pi = \frac{1}{(1 + \exp(-x_i \beta))^\nu}
 $$
-where $m > 0$ is a parameter that skews the logit link. The standard logit model is a special case, where $m = 1$.
+where $\nu > 0$ is a parameter that skews the logit link. The standard logit model is a special case, where $\nu = 1$.
 
-Estimating $m$ and $b$ by maximum likelihood is relatively straightforward, although there is little reason to believe the frequentist sampling distribution for $m$ is likely to be well approximated by the normal in a finite sample. Notice that $m$ enters the model in a highly non-linear fashion, and that different ranges of $m$ imply quite different relationships between the linear predictors and $\pi$.  In Bayesian terms, we can reasonably expect the posterior density of $m$ to be non-normal, and probably log-normal. Likewise, the posterior densities of related quantities of interest such as the LD50 could well be non-normal. Inferences for these quantities could well be misleading if we were to rely only on point estimates and asymptotic normal approximations; instead, a Bayesian approach via MCMC offers a way for us to obtain arbitrarily precise approximations to the posterior densities of these quantities.
-
+Thus the model for the binomial responses, $r_i \in \{0, n_i}$, for $i \in 1, \dots, N$,
 $$
 \begin{aligned}[t]
-r_i &\sim \mathsf{Binomial}(n_i, \pi_i) \\
-\pi_i &= 1 - \frac{1}{(1 + e^{(\alpha + x_i' \beta_i)})^\nu}
+r_i &\sim \mathsf{Binomial}(n_i, \pi_i) , \\
+\pi_i &= 1 - \frac{1}{(1 + e^{(\alpha + x_i' \beta_i)})^\nu} .
 \end{aligned}
 $$
 
-I give $\mu$ a Gamma prior with a of 1.0 (corresponding to the standard logit model), and a standard deviation of 2,
+Estimating $m$ and $b$ by maximum likelihood is relatively straightforward, although there is little reason to believe the frequentist sampling distribution for $m$ is likely to be well approximated by the normal in a finite sample.
+Notice that $m$ enters the model in a highly non-linear fashion, and that different ranges of $m$ imply quite different relationships between the linear predictors and $\pi$. 
+In Bayesian terms, we can reasonably expect the posterior density of $m$ to be non-normal, and probably log-
+Inferences for these quantities could well be misleading if we were to rely only on point estimates and asymptotic normal approximations; instead, a Bayesian approach via MCMC offers a way for us to obtain arbitrarily precise approximations to the posterior densities of these quantities.
+
+The
+
+
+I give $\mu$ a Gamma prior with a mean of 1, corresponding to the standard logit model, and a standard deviation of 2,
 $$
-\nu \sim \mathsf{Gamma}(0.25, 0.25)
+\nu \sim \mathsf{Gamma}(0.25, 0.25) .
 $$
 The regression coefficients are given weakly informative priors,
 $$
 \begin{aligned}[t]
-\alpha &\sim N(0, 10) \\
-\beta &\sim N(0, 2.5)
+\alpha &\sim N(0, 10) , \\
+\beta &\sim N(0, 2.5) .
 \end{aligned}
 $$
 
@@ -77,3 +95,5 @@ genbeetles_fit <- sampling(genbeetles_mod, data = genbeetles_data)
 ```{r}
 genbeetles_fit
 ```
+
+[^genbeetles-src]: This example is derived from Simon Jackman, "Generalized Beetles: generalizing link functions for binomial GLMs", 2005-10-27, [URL](https://web-beta.archive.org/web/20051027084129/http://jackman.stanford.edu:80/mcmc/genbeetles.odc).

@@ -12,7 +12,7 @@ library("rstan")
 (load("data/PoliticalSophistication.rda"))
 ```
 
-As part of a survey of French public opinion , 2,148 respondents were administered a series of 19 items assessing their knowledge of political leaders, political institutions, constitutional provisions, and the policies of the political parties [@GrunbergMayerSniderman2002a].
+As part of a survey of French public opinion , 2,148 respondents were administered a series of 19 items assessing their knowledge of political leaders, political institutions, constitutional provisions, and the policies of the political parties [@GrunbergMayerSniderman2002a].[^sophistication-src]
 Each response is coded "correct" (1) or "incorrect" (0), and is modeled via a two-parameter item-response model, with a logistic link function; each respondent's level of political sophistication is the latent trait.
 
 In addition, at the end of the thirty minute phone interview, the interviewer assigned a score for each respondent's level of political information (based on their impressions of the respondents formed over the course of the entire interview) on a zero to twenty scale. These responses are modeled via a linear regression, with each respondent's latent trait appearing as an unobserved predictor, and an intercept specific to each interviewer (modeled hierarchically in the code below). To uniquely orient the latent trait (higher values corresponding to more political sophistication),  the interviewer ratings are constrained to positively discriminate with respect to the latent trait (see the constraint on the prior for gamma).
@@ -110,5 +110,7 @@ fit_sophistication <- sampling(mod_sophistication, data = data_sophistication, i
 
 ## Questions / Extensions
 
-- An alternative parameterization would place the political sophistication on the same 0-20 scale as `Q20`. 
-- Model Q20 as an ordinal variable instead of a continuous variable.
+1. An alternative parameterization would place the political sophistication on the same 0-20 scale as `Q20`. 
+2. Model Q20 as an ordinal variable instead of a continuous variable.
+
+[^sophistication-src]: Simon Jackman, "Political Sophistication: item-response modeling with mixed data types," *BUGS Examples,* [URL](https://web-beta.archive.org/web/*/http://jackman.stanford.edu:80/mcmc/sophistication2002.odc).

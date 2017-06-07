@@ -5,8 +5,9 @@ library("tidyverse")
 library("rstan")
 ```
 
-
-Ninety-six monthly observations on presidential job approval ratings for Ronald Reagan are modeled via linear regression, with a correction for first-order serial correlation among the disturbances.  Note the marginal model for the first observation, and the conditioning on the lagged observation for months 2 through 96.  A uniform prior over the stationary (-1,1) interval is employed for the residual AR(1) parameter.
+Ninety-six monthly observations on presidential job approval ratings for Ronald Reagan are modeled via linear regression, with a correction for first-order serial correlation among the disturbances.[^reagan]
+Note the marginal model for the first observation, and the conditioning on the lagged observation for months 2 through 96.
+A uniform prior over the stationary (-1,1) interval is employed for the residual AR(1) parameter.
 
 $$
 \begin{aligned}[t]
@@ -70,3 +71,4 @@ summary(reagan_fit, par = c("alpha", "beta", "theta", "sigma"))$summary
 An AR(1) error model can also be estimated via partial-differencing as 
 in Cochrane-Orcutt/Prais-Winsten estimation.
 
+[^reagan]: Example derived from Simon Jackman, "Reagan: linear regression with AR(1) disturbances," *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034151/http://jackman.stanford.edu:80/mcmc/reagan.odc).

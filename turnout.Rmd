@@ -6,30 +6,40 @@ library("rstanarm")
 library("rstan")
 ```
 
-Voter turnout is coded as a binary indicator (`y=1` if voted, `0` otherwise) and related to covariates via a logit model.  The data comprise a random 3,000 observation subset of a much larger data set analyzed by Jonathan Nagler [@Nagler1994a]:
+## Datas
 
+The data comprise the first 2,000 (of 15,000+) observations in the 1992 [American National Election Studies](http://www.electionstudies.org/) (ANES).
+These data are included in the **Zelig** package as `turnout` and analyzed in @KingTomzWittenberg2000a.
+```{r turnout)}
+data("turnout", package = "Zelig")
+glimpse(turnout)
+```
+We will model voting turnout as a function of covariates (age, education, income, race).
+```{r turnout_formula}
+turnout_formula <- vote ~ poly(age, 2) + educate + income + race
+```
+
+
+## Logit Model
+
+Let $y_i \in \{0, 1\}$ be the decision to vote by respondent $i$ for $i \in 1, \dots, n$,
 $$
 \begin{aligned}[t]
-y_i &\sim \mathsf{Bernoulli}(\pi_i) \\
-\pi_i &= \frac{1}{1 + e^{-\eta_i}} \\
-\eta_i &= \alpha + x_i \beta
+y_i &\sim \mathsf{Bernoulli}(\pi_i) , \\
+\pi_i &= \frac{1}{1 + e^{-\eta_i}} , \\
+\eta_i &= \alpha + x_i \beta, 
 \end{aligned}
 $$
-The regression parameters are given weakly informative priors on the logit scale,
+where $x_i$ is a vector of covariates.
+The regression parameters, $\alpha$ and $\beta$, are given weakly informative priors on the logit scale,
 $$
 \begin{aligned}[t]
-\alpha &\sim \mathsf{Normal}(0, 10)\\
-\beta_k &\sim \mathsf{Normal}(0, 2.5)
-\end{aligned}
-$$
-and on the probit scale,
-$$
-\begin{aligned}[t]
-\alpha &\sim \mathsf{Normal}(0, 8) \\
-\beta_k &\sim \mathsf{Normal}(0, 2)
+\alpha &\sim \mathsf{Normal}(0, 16) , \\
+\beta_k &\sim \mathsf{Normal}(0, 4) .
 \end{aligned}
 $$
 
+The logit model in Stan is
 ```{r turnout_mod_logit,results='hide',cache.extra=tools::md5sum("stan/logit.stan")}
 turnout_mod_logit <- stan_model("stan/logit.stan")
 ```
@@ -37,33 +47,19 @@ turnout_mod_logit <- stan_model("stan/logit.stan")
 turnout_mod_logit
 ```
 
-
-```{r turnout,cache.extra=tools::md5sum("data/turnout2005.rda")}
-load("data/turnout2005.rda")
-```
 ```{r turnout_data}
 turnout_data <- within(list(), {
-  N <- nrow(turnout2005)
-  X <- scale(model.matrix(~ 0 + closing * poly(educ, 2) + poly(age, 2) + 
-                          south + govelec, data = turnout2005))
+  N <- nrow(turnout)
+  X <- scale(model.matrix(update(turnout_formula, . ~ 0 + .),
+                                 data = turnout))
   K <- ncol(X)
-  y <- turnout2005$y
-  alpha_mean <- 0
+  y <- turnout$vote
+  alpha_loc <- 0
   alpha_scale <- 10
-  beta_mean <- rep(0, K)
+  beta_loc <- rep(0, K)
   beta_scale <- rep(2.5, K)
 })
 ```
-
-The only difference between and logit model and 
-
-```{r turnout_mod_probit,results='hide',cache.extra=tools::md5sum("stan/probit.stan")}
-turnout_mod_probit <- stan_model("stan/probit.stan")
-```
-```{r results='asis',echo=FALSE}
-turnout_mod_probit
-```
-
 
 ```{r turnout_fit_logit,results='hide'}
 turnout_fit_logit <- sampling(turnout_mod_logit, data = turnout_data)
@@ -72,6 +68,41 @@ turnout_fit_logit <- sampling(turnout_mod_logit, data = turnout_data)
 turnout_fit_logit
 ```
 
+
+
+## Probit Model
+
+The only difference between the logit and probit models are in the link function.
+The probit model uses the normal distribution CDF function instead of the inverse logit.
+$$
+\begin{aligned}[t]
+\pi_i &= \Phi(\eta_i) ,
+\end{aligned}
+$$
+where $\Phi$ is the standard normal distribution CDF.
+The priors for the probit model are adjusted by a facto of 1.6, corresponding to `dnorm(0) / dlogis(0)`,
+$$
+\begin{aligned}[t]
+\alpha &\sim \mathsf{Normal}(0, 16), \\
+\beta_k &\sim \mathsf{Normal}(0, 4) .
+\end{aligned}
+$$
+```{r}
+turnout_data <- within(turnout_data, {
+  alpha_scale <- 16
+  beta_scale <- rep(4, K)
+})
+```
+
+The probit model in Stan is
+```{r turnout_mod_probit,results='hide',cache.extra=tools::md5sum("stan/probit.stan")}
+turnout_mod_probit <- stan_model("stan/probit.stan")
+```
+```{r results='asis',echo=FALSE}
+turnout_mod_probit
+```
+
+Fit the model.
 ```{r turnout_fit_probit,results='hide'}
 turnout_fit_probit <- 
   sampling(turnout_mod_probit,
@@ -81,12 +112,15 @@ turnout_fit_probit <-
 turnout_fit_probit
 ```
 
+
+## rstanarm
+
 These models can also be estimated with the  **rstanarm** function `stan_glm`.
 ```{r turnout_fit_logit2,results='hide'}
 turnout_fit_logit2 <- 
-  stan_glm(y ~ closing * poly(educ, 2) + poly(age, 2) + south + govelec,
-         family = binomial(),
-         data = turnout2005)
+  stan_glm(turnout_formula,
+           family = binomial(),
+           data = turnout)
 ```
 ```{r}
 turnout_fit_logit2
@@ -95,12 +129,12 @@ turnout_fit_logit2
 For the probit model, the priors need to be reduced.
 ```{r turnout_fit_probit2,results='hide'}
 turnout_fit_probit2 <-
-  stan_glm(y ~ closing * poly(educ, 2) + poly(age, 2) + south + govelec,
-         family = binomial(link = "probit"),
-         prior_intercept = normal(location = 0, scale = 8, autoscale = TRUE),
+  stan_glm(turnout_formula,
+           family = binomial(link = "probit"),
+           prior_intercept = normal(location = 0, scale = 8, autoscale = TRUE),
          prior = normal(location = 0, scale = 1.5, autoscale = TRUE),
          init = 0, chains = 1,
-         data = turnout2005)
+         data = turnout)
 ```
 ```{r}
 turnout_fit_probit2
@@ -109,5 +143,8 @@ turnout_fit_probit2
 
 ## Questions {-}
 
-1. Is there any difference in the fit of the probit and logit?
-2. How do these fits compare to using a generalized logit model?
+1. Estimate the posterior distribution of the average marginal effect for each covariate using the methods in @HanmerKalkan2012a.
+1. Estimate the expected percent correctly predicted (ePCP) and percent correctly predicted (PCP) as discussed in the [cosponsorship data](#cosponsor).
+2. Estimate a generalized logit model to allow for asymmetric effects of covariates as described in the [General Beetles](#genbeetles) example and @Nagler1994a. Describe the substantive meaning of this generalization.
+1. Is there any difference in the fit of the probit and logit? Which observations fit better or worse. 
+2. Estimate the model with a Student's $t$ CDF instead of logit or probit. This is called a robit model @Liu2005a. Compare its fit and estimates to those of the logit. Which observations fit better or worse? Describe the substantive meaning of this generalization.

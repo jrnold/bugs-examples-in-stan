@@ -86,3 +86,5 @@ undervote_fit <- sampling(undervote_mod, data = undervote_data)
 ```{r}
 undervote_fit
 ```
+
+- Simon Jackman, "Undervoting for President, by Race: difference in two binomial proportions", *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034102/http://jackman.stanford.edu:80/mcmc/undervote.odc)

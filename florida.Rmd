@@ -1,10 +1,12 @@
 # Florida: Learning About an Unknown Proportion from Survey Data {#florida}
 
 ```{r florida_setup,message=FALSE,cache=FALSE}
+library("tidyverse")
 library("rstan")
 ```
 
-This is an learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign [@Jackman2004a].
+In this example, beliefs about an unknown proportion are updated from new survey data.
+The particular example is using survey update beliefs about support for Bush in Florida in the 2000 presidential election campaign [@Jackman2004a].[^florida-src]
 
 ```{r florida_mod,results='hide',cache.extra=tools::md5sum("stan/florida.stan")}
 florida_mod <- stan_model("stan/florida.stan")
@@ -36,3 +38,5 @@ post_2.5 <- round(summary(florida_fit)$summary["mu", "2.5%"], 1)
 post_97.5 <- round(summary(florida_fit)$summary["mu", "97.5%"], 1)
 ```
 After observing the new poll, the mean for the posterior is `r post_mean`, with a 95% credible interval of `r post_2.5`--`r post_97.5`.
+
+[^florida-src]: This example is derived from  Simon Jackman, "Florida," *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034219/http://jackman.stanford.edu/mcmc/florida.zip).
