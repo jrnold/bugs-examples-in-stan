@@ -7,7 +7,6 @@ library("tidyverse")
 library("rstan")
 ```
 
-
 Does undervoting for the US president differ by race? 
 Intentional undervoting is when a voter chooses not to cast vote for
 an item on a ballot.
@@ -15,13 +14,11 @@ an item on a ballot.
 @TomzHouweling2003a analyze this phenomenon using two surveys:
 
 - Voter News Service (VNS) exit poll for the 1992 election
-- Americn National Election Studies (ANES) (1964-2000)
+- Americn National Election Studies (ANES) for the 1964--2000 elections
 
-Each of these surveys asked voters whether they voted for president,
-as well as the race of the respondents.
-
-Of 6,537 black voters, 26 said they did not vote for president; of 44,531 white voters, 91 said they did not vote for president.
-In the American National Election Studies (1964-2000), of 1,101 black voters, 10 report not voting for president, while 57 of 9,827 white voters report not voting for president.  
+Each of these surveys asked voters whether they voted for president, as well as the race of the respondents.
+The results of these surveys is contained in the `undervote` data frame.
+The column `undervote` is the number of respondents who reported voting but not voting for president.
 
 
 ```r
@@ -144,3 +141,5 @@ undervote_fit
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
 ```
+
+- Simon Jackman, "Undervoting for President, by Race: difference in two binomial proportions", *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034102/http://jackman.stanford.edu:80/mcmc/undervote.odc)

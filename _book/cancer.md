@@ -8,7 +8,27 @@ library("rstan")
 ```
 
 
-The following simple model is drawn from an example in @JohnsonAlbert1999a, using data collected in a @Dorn1954a.  A sample of 86 lung-cancer patients and a sample of 86 controls were questioned about their smoking habits.  The two groups were chosen to represent random samples from a subpopulation of lung-cancer patients and an otherwise similar population of cancer-free individuals.  Of the cancer patients, 83 out of 86 were smokers; among the control group 72 out of 86 were smokers.  The scientific question of interest was to assess the difference between the smoking habits in the two groups.
+Two groups chosen to be random samples from subpopulations of lung-cancer patients and cancer-free individuals.[^cancer]
+The scientific question of interest is the difference in the smoking habits between two groups.
+The results of the survey are:
+
+```r
+cancer <- tribble(
+  ~group, ~n, ~smokers,
+  "Cancer patients", 86, 82,
+  "Control group", 86, 72
+)
+```
+# A tibble: 2 x 3
+            group     n smokers
+            <chr> <dbl>   <dbl>
+1 Cancer patients    86      82
+2   Control group    86      72
+
+[^cancer]: This example is derived from Simon Jackman, "Cancer: difference in two binomial proportions", *BUGS Examples,* 2007-07-24, http://jackman.stanford.edu:80/mcmc/cancer.odc.  [Wayback Machine](https://web-beta.archive.org/web/20070601000000*/http://jackman.stanford.edu:80/mcmc/cancer.odc). This examples comes from @JohnsonAlbert1999a, using data from @Dorn1954a.
+
+
+## Two Sample Binomial Model
 
 In implementing this model, we have just two data points (cancer patients and control group) and a binomial sampling model, in which the population proportions of smokers in each group appear as parameters.  Quantities of interest such as the difference in the population proportions and the log of the odds ratio are computed in the generated quantities section. Uniform priors on the population proportions are used in this example.
 
@@ -38,15 +58,15 @@ The difference between and log odds ratio are defined in the `generated quantiti
 
 ```r
 cancer_data <- list(
-  r = c(83, 72),
-  n = c(86, 86),
+  r <- cancer$smokers,
+  n <- cancer$n,
   # beta prior on pi
   p_a = rep(1, 2),
   p_b = rep(1, 2)
 )
 ```
 
-
+The Stan model for this is:
 
 ```r
 cancer_mod1 <- stan_model("stan/cancer1.stan")
@@ -80,7 +100,7 @@ generated quantities {
 }</code>
 </pre>
 
-
+Now estimate the model:
 
 ```r
 cancer_fit1 <- sampling(cancer_mod1, cancer_data)
@@ -93,13 +113,13 @@ cancer_fit1
 #> post-warmup draws per chain=1000, total post-warmup draws=4000.
 #> 
 #>             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff
-#> p[1]        0.95    0.00 0.02   0.90   0.94   0.96   0.97   0.99  2639
-#> p[2]        0.83    0.00 0.04   0.75   0.81   0.83   0.86   0.90  2863
-#> delta       0.12    0.00 0.04   0.04   0.10   0.12   0.15   0.21  2874
-#> delta_up    1.00    0.00 0.05   1.00   1.00   1.00   1.00   1.00  2947
-#> lambda      1.55    0.01 0.61   0.44   1.14   1.51   1.94   2.84  2290
-#> lambda_up   1.00    0.00 0.05   1.00   1.00   1.00   1.00   1.00  2947
-#> lp__      -57.46    0.03 1.04 -60.25 -57.83 -57.14 -56.73 -56.48  1564
+#> p[1]        0.94    0.00 0.02   0.89   0.93   0.95   0.96   0.98  2857
+#> p[2]        0.83    0.00 0.04   0.75   0.80   0.83   0.86   0.90  3086
+#> delta       0.11    0.00 0.04   0.02   0.08   0.11   0.14   0.20  3023
+#> delta_up    1.00    0.00 0.07   1.00   1.00   1.00   1.00   1.00  3652
+#> lambda      1.30    0.01 0.55   0.25   0.92   1.28   1.64   2.46  2565
+#> lambda_up   1.00    0.00 0.07   1.00   1.00   1.00   1.00   1.00  3652
+#> lp__      -60.37    0.02 1.01 -63.09 -60.74 -60.06 -59.65 -59.40  1706
 #>           Rhat
 #> p[1]         1
 #> p[2]         1
@@ -109,11 +129,13 @@ cancer_fit1
 #> lambda_up    1
 #> lp__         1
 #> 
-#> Samples were drawn using NUTS(diag_e) at Wed May 31 05:17:34 2017.
+#> Samples were drawn using NUTS(diag_e) at Tue Jun  6 22:50:13 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
 ```
+
+## Binomial Logit Model of the Difference
 
 An alternative parameterization directly models the difference in the population proportion.
 
@@ -174,6 +196,7 @@ generated quantities {
 }</code>
 </pre>
 
+Re-use `r` and `n` values from `cancer_data`, but add the appropriate values for the prior distributions.
 
 ```r
 cancer_data2 <- within(cancer_data, {
@@ -184,6 +207,7 @@ cancer_data2 <- within(cancer_data, {
 })
 ```
 
+Sample from the model:
 
 ```r
 cancer_fit2 <- sampling(cancer_mod2, cancer_data2)
@@ -196,15 +220,15 @@ cancer_fit2
 #> post-warmup draws per chain=1000, total post-warmup draws=4000.
 #> 
 #>             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff
-#> a           1.68    0.01 0.29   1.15   1.49   1.67   1.87   2.29  1849
-#> b           1.71    0.01 0.65   0.56   1.27   1.67   2.11   3.07  1945
-#> p[1]        0.96    0.00 0.02   0.91   0.95   0.97   0.98   0.99  2751
-#> p[2]        0.84    0.00 0.04   0.76   0.82   0.84   0.87   0.91  1881
-#> delta       0.12    0.00 0.04   0.04   0.09   0.12   0.15   0.21  1764
-#> delta_up    1.00    0.00 0.04   1.00   1.00   1.00   1.00   1.00  4000
-#> lambda      1.71    0.01 0.65   0.56   1.27   1.67   2.11   3.07  1945
-#> lambda_up   1.00    0.00 0.04   1.00   1.00   1.00   1.00   1.00  4000
-#> lp__      -52.44    0.03 1.01 -55.22 -52.83 -52.13 -51.72 -51.47  1587
+#> a           1.69    0.01 0.29   1.16   1.50   1.69   1.87   2.29  1926
+#> b           1.38    0.01 0.57   0.33   0.99   1.34   1.75   2.57  1725
+#> p[1]        0.95    0.00 0.02   0.90   0.94   0.95   0.97   0.98  2796
+#> p[2]        0.84    0.00 0.04   0.76   0.82   0.84   0.87   0.91  1995
+#> delta       0.11    0.00 0.04   0.03   0.08   0.11   0.14   0.20  1594
+#> delta_up    1.00    0.00 0.07   1.00   1.00   1.00   1.00   1.00  1913
+#> lambda      1.38    0.01 0.57   0.33   0.99   1.34   1.75   2.57  1725
+#> lambda_up   1.00    0.00 0.07   1.00   1.00   1.00   1.00   1.00  1913
+#> lp__      -55.51    0.02 1.00 -58.16 -55.83 -55.19 -54.80 -54.57  1638
 #>           Rhat
 #> a            1
 #> b            1
@@ -216,8 +240,14 @@ cancer_fit2
 #> lambda_up    1
 #> lp__         1
 #> 
-#> Samples were drawn using NUTS(diag_e) at Wed May 31 05:18:31 2017.
+#> Samples were drawn using NUTS(diag_e) at Tue Jun  6 22:50:17 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
 ```
+
+
+## Questions
+
+1. Expression the Binomial Logit model of the Difference as a regression
+2. What number of success and failures is a `Beta(1,1)` prior equivalent to?

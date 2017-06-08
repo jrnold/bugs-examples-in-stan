@@ -7,7 +7,7 @@ library("tidyverse")
 
 The following program implements a regression model of economic growth among 16 OECD countries, 1971-1984 [@Western1998a, @AlvarezGarrettLange1991a].[^corporatism-src]
 The model is hierarchical in that it specifies country-specific coefficients for the following predictors: lagged growth, demand, import price movements, export price movements, leftist government and an intercept.
-The magnitudes of the country-specific coefficients are conditional on (time-invariant) extent of labor organization within each country; these regression relationships constitute the 2nd level of the model.
+The magnitudes of the country-specific coefficients are conditional on (time-invariant) extent of labor organization within each country; these regression relationships constitute the second level of the model.
 
 The data come from N=16 countries, and T=14 years (1971:1984) with K=6 covariates at the lowest ("micro") level of the hierarchy, and J=2 covariates (an intercept and the labor organization variable) at the 2nd level.
 

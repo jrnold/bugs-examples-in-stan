@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -26,16 +25,15 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2017-05-31">
+<meta name="date" content="2017-06-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="bimodal.html">
+<link rel="prev" href="unidentified.html">
 <link rel="next" href="truncation-how-does-stan-deal-with-truncation.html">
-
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -103,30 +102,73 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
 <li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
-<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
-<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a><ul>
-<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
-<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
-<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
-<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
-<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
-<li class="chapter" data-level="10" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</a><ul>
-<li class="chapter" data-level="" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#datas"><i class="fa fa-check"></i><b>5.1</b> Datas</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate t density</a></li>
-<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
-<li class="chapter" data-level="13" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</a><ul>
-<li class="chapter" data-level="13.1" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#data"><i class="fa fa-check"></i><b>13.1</b> data</a></li>
-<li class="chapter" data-level="13.2" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#initial-values"><i class="fa fa-check"></i><b>13.2</b> initial values</a></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</a></li>
-<li class="chapter" data-level="15" data-path="bimodal.html"><a href="bimodal.html"><i class="fa fa-check"></i><b>15</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
-<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
-<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
-<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
-<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-1"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-2"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-3"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-2"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-4"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: over-parameterization of normal mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-3"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-5"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-4"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -146,30 +188,198 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="engines-right-censored-failure-times" class="section level1">
-<h1><span class="header-section-number">16</span> Engines: right-censored failure times</h1>
-<p>Forty motors were tested at various operating temperatures, and failure times were noted; 23 of the motors had not failed at the end of the observational period (i.e., the failure times for these observations are right-censored) <span class="citation">(Tanner <a href="#ref-Tanner1996a">1996</a>)</span>. Substantive interest is in the regression of failure times on operating temperature; the statistical issue is how to obtain estimates of the regression parameters given the right-censoring.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list</span>(<span class="dt">y=</span><span class="kw">c</span>(<span class="fl">3.2464985807958</span>, <span class="fl">3.44279322593977</span>, <span class="fl">3.53706314278162</span>, <span class="fl">3.54924855685406</span>, <span class="fl">3.57749179983722</span>, <span class="fl">3.68663626926229</span>, <span class="fl">3.71566914240099</span>, <span class="fl">2.61066016308988</span>, <span class="fl">2.61066016308988</span>, <span class="fl">3.12839926871781</span>, <span class="fl">3.12839926871781</span>, <span class="fl">3.15836249209525</span>, <span class="fl">2.61066016308988</span>, <span class="fl">2.61066016308988</span>, <span class="fl">2.70243053644553</span>, <span class="fl">2.70243053644553</span>, <span class="fl">2.70243053644553</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="ot">NA</span>), <span class="dt">x=</span><span class="kw">c</span>(<span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.36294896030246</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.25631768953069</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.15889464594128</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>, <span class="fl">2.02757502027575</span>), <span class="dt">cens=</span><span class="kw">c</span>(<span class="fl">3.2464985807958</span>, <span class="fl">3.44279322593977</span>, <span class="fl">3.53706314278162</span>, <span class="fl">3.54924855685406</span>, <span class="fl">3.57749179983722</span>, <span class="fl">3.68663626926229</span>, <span class="fl">3.71566914240099</span>, <span class="fl">2.61066016308988</span>, <span class="fl">2.61066016308988</span>, <span class="fl">3.12839926871781</span>, <span class="fl">3.12839926871781</span>, <span class="fl">3.15836249209525</span>, <span class="fl">2.61066016308988</span>, <span class="fl">2.61066016308988</span>, <span class="fl">2.70243053644553</span>, <span class="fl">2.70243053644553</span>, <span class="fl">2.70243053644553</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.90655051910145</span>, <span class="fl">3.73623709890473</span>, <span class="fl">3.73623709890473</span>, <span class="fl">3.73623709890473</span>, <span class="fl">3.22530928172586</span>, <span class="fl">3.22530928172586</span>, <span class="fl">3.22530928172586</span>, <span class="fl">3.22530928172586</span>, <span class="fl">3.22530928172586</span>, <span class="fl">2.72263392253381</span>, <span class="fl">2.72263392253381</span>, <span class="fl">2.72263392253381</span>, <span class="fl">2.72263392253381</span>, <span class="fl">2.72263392253381</span>), <span class="dt">N.OK=</span><span class="dv">17</span>, <span class="dt">N=</span><span class="dv">40</span>)
-<span class="co">#&gt; $y</span>
-<span class="co">#&gt;  [1] 3.25 3.44 3.54 3.55 3.58 3.69 3.72 2.61 2.61 3.13 3.13 3.16 2.61 2.61</span>
-<span class="co">#&gt; [15] 2.70 2.70 2.70   NA   NA   NA   NA   NA   NA   NA   NA   NA   NA   NA</span>
-<span class="co">#&gt; [29]   NA   NA   NA   NA   NA   NA   NA   NA   NA   NA   NA   NA</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $x</span>
-<span class="co">#&gt;  [1] 2.26 2.26 2.26 2.26 2.26 2.26 2.26 2.16 2.16 2.16 2.16 2.16 2.03 2.03</span>
-<span class="co">#&gt; [15] 2.03 2.03 2.03 2.36 2.36 2.36 2.36 2.36 2.36 2.36 2.36 2.36 2.36 2.26</span>
-<span class="co">#&gt; [29] 2.26 2.26 2.16 2.16 2.16 2.16 2.16 2.03 2.03 2.03 2.03 2.03</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $cens</span>
-<span class="co">#&gt;  [1] 3.25 3.44 3.54 3.55 3.58 3.69 3.72 2.61 2.61 3.13 3.13 3.16 2.61 2.61</span>
-<span class="co">#&gt; [15] 2.70 2.70 2.70 3.91 3.91 3.91 3.91 3.91 3.91 3.91 3.91 3.91 3.91 3.74</span>
-<span class="co">#&gt; [29] 3.74 3.74 3.23 3.23 3.23 3.23 3.23 2.72 2.72 2.72 2.72 2.72</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $N.OK</span>
-<span class="co">#&gt; [1] 17</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $N</span>
-<span class="co">#&gt; [1] 40</span></code></pre></div>
+<h1><span class="header-section-number">17</span> Engines: right-censored failure times</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
+<div id="data-3" class="section level2">
+<h2><span class="header-section-number">17.1</span> Data</h2>
+<p>The data are 40 engines tested at various operating temptures, with the the failure time if the engine failed, or the last time of the observational period if it had not <span class="citation">(Tanner <a href="#ref-Tanner1996a">1996</a>)</span>.<a href="#fn14" class="footnoteRef" id="fnref14"><sup>14</sup></a> Of the 40 engines, 23 did not fail in their observational periods.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;data/engines.rda&quot;</span>)
+<span class="kw">glimpse</span>(engines)
+<span class="co">#&gt; Observations: 40</span>
+<span class="co">#&gt; Variables: 3</span>
+<span class="co">#&gt; $ y        &lt;dbl&gt; 3.25, 3.44, 3.54, 3.55, 3.58, 3.69, 3.72, 2.61, 2.61,...</span>
+<span class="co">#&gt; $ x        &lt;dbl&gt; 2.26, 2.26, 2.26, 2.26, 2.26, 2.26, 2.26, 2.16, 2.16,...</span>
+<span class="co">#&gt; $ censored &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS...</span></code></pre></div>
+</div>
+<div id="model-3" class="section level2">
+<h2><span class="header-section-number">17.2</span> Model</h2>
+<p>Let <span class="math inline">\(y^*\)</span> be the failure time of engine <span class="math inline">\(i\)</span>. The failure times are modeled as a regression with normal errors, <span class="math display">\[
+\begin{aligned}[t]
+y^*_i &amp;\sim \mathsf{Normal}(\mu_i, \sigma) , \\
+\mu_i &amp;= \alpha + \beta x_i .
+\end{aligned}
+\]</span> However, the failure times are not always observed. In some cases, only the last observation time is known, meaning that all is known is <span class="math inline">\(y^*_i &gt; y_i\)</span>. Let <span class="math inline">\(L\)</span> be the set of censored observation. <span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;\sim \mathsf{Normal}(\mu_i, \sigma) &amp; i \notin L, \\
+y^*_i &amp;\sim \mathsf{Normal}(\mu_i, \sigma) U(y_i, \infty) &amp; i \in L, \\
+\mu_i &amp;= \alpha + \beta x_i .
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}[t]
+\log L(y_i, \dots, y_N | \alpha, \beta, \sigma) &amp;=  \sum_{i \notin L} \log \mathsf{Normal}(y_i; \mu_i, \Sigma) \\
+&amp;\quad + \sum_{i \in L} \log \int_{y_i}^{\infty} \mathsf{Normal}(y^*; \mu_i, \Sigma) d\,y^* ,
+\end{aligned}
+\]</span> where <span class="math display">\[
+\mu_i = \alpha + \beta x .
+\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_engines &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/engines.stan&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_engines</code></pre></div>
+<pre>
+  <code class="stan">data {
+  // number of observations
+  int<lower = 0> N;
+  // observed data
+  int<lower = 0, upper = N> N_obs;
+  vector[N_obs] y_obs;
+  // censored data
+  int<lower = 0, upper = N> N_cens;
+  vector[N_cens] y_cens;
+  // covariates
+  int<lower = 0> K;
+  matrix[N_obs, K] X_obs;
+  matrix[N_cens, K] X_cens;
+  // priors
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+  vector[K] beta_loc;
+  vector<lower = 0.>[K] beta_scale;
+  real<lower = 0.> sigma_scale;
+}
+parameters {
+  real alpha;
+  vector[K] beta;
+  real<lower = 0.> sigma;
+}
+transformed parameters {
+  vector[N_obs] mu_obs;
+  vector[N_cens] mu_cens;
+  mu_obs = alpha + X_obs * beta;
+  mu_cens = alpha + X_cens * beta;
+}
+model {
+  sigma ~ cauchy(0, sigma_scale);
+  alpha ~ normal(alpha_loc, alpha_scale);
+  beta ~ normal(beta_loc, beta_scale);
+  y_obs ~ normal(mu_obs, sigma);
+  target += normal_lccdf(y_cens | mu_cens, sigma);
+}</code>
+</pre>
+</div>
+<div id="estimation-2" class="section level2">
+<h2><span class="header-section-number">17.3</span> Estimation</h2>
+<p>For the input data to the Stan model, the observations that are observed and censored have to be provided in separate vectors.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">X &lt;-<span class="st"> </span><span class="kw">scale</span>(engines<span class="op">$</span>x)
 
+engines_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(engines)
+  <span class="co"># observed obs</span>
+  y_obs &lt;-<span class="st"> </span>engines<span class="op">$</span>y[<span class="op">!</span>engines<span class="op">$</span>censored]
+  N_obs &lt;-<span class="st"> </span><span class="kw">length</span>(y_obs)
+  X_obs &lt;-<span class="st"> </span>X[<span class="op">!</span>engines<span class="op">$</span>censored, , drop =<span class="st"> </span><span class="ot">FALSE</span>]
+  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X_obs)
+  <span class="co"># censored obs</span>
+  y_cens &lt;-<span class="st"> </span>engines<span class="op">$</span>y[engines<span class="op">$</span>censored]  
+  N_cens &lt;-<span class="st"> </span><span class="kw">length</span>(y_cens)
+  X_cens &lt;-<span class="st"> </span>X[engines<span class="op">$</span>censored, , drop =<span class="st"> </span><span class="ot">FALSE</span>]
+  <span class="co"># priors</span>
+  <span class="co"># use the mean and sd of y to roughly scale the weakly informative</span>
+  <span class="co"># priors -- these don&#39;t account for  need to exact</span>
+  alpha_loc &lt;-<span class="st"> </span><span class="kw">mean</span>(engines<span class="op">$</span>y)
+  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(engines<span class="op">$</span>y)
+  beta_loc &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dv">0</span>)
+  beta_scale &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(engines<span class="op">$</span>y))
+  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y_obs)
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sampling</span>(mod_engines, <span class="dt">data =</span> engines_data,
+         <span class="dt">chains =</span> <span class="dv">1</span>, <span class="dt">init =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">alpha =</span> <span class="kw">mean</span>(engines<span class="op">$</span>y))))
+<span class="co">#&gt; </span>
+<span class="co">#&gt; SAMPLING FOR MODEL &#39;engines&#39; NOW (CHAIN 1).</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Gradient evaluation took 4e-05 seconds</span>
+<span class="co">#&gt; 1000 transitions using 10 leapfrog steps per transition would take 0.4 seconds.</span>
+<span class="co">#&gt; Adjust your expectations accordingly!</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Iteration:    1 / 2000 [  0%]  (Warmup)</span>
+<span class="co">#&gt; Iteration:  200 / 2000 [ 10%]  (Warmup)</span>
+<span class="co">#&gt; Iteration:  400 / 2000 [ 20%]  (Warmup)</span>
+<span class="co">#&gt; Iteration:  600 / 2000 [ 30%]  (Warmup)</span>
+<span class="co">#&gt; Iteration:  800 / 2000 [ 40%]  (Warmup)</span>
+<span class="co">#&gt; Iteration: 1000 / 2000 [ 50%]  (Warmup)</span>
+<span class="co">#&gt; Iteration: 1001 / 2000 [ 50%]  (Sampling)</span>
+<span class="co">#&gt; Iteration: 1200 / 2000 [ 60%]  (Sampling)</span>
+<span class="co">#&gt; Iteration: 1400 / 2000 [ 70%]  (Sampling)</span>
+<span class="co">#&gt; Iteration: 1600 / 2000 [ 80%]  (Sampling)</span>
+<span class="co">#&gt; Iteration: 1800 / 2000 [ 90%]  (Sampling)</span>
+<span class="co">#&gt; Iteration: 2000 / 2000 [100%]  (Sampling)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Elapsed Time: 0.067124 seconds (Warm-up)</span>
+<span class="co">#&gt;                0.061251 seconds (Sampling)</span>
+<span class="co">#&gt;                0.128375 seconds (Total)</span>
+<span class="co">#&gt; The following numerical problems occurred the indicated number of times on chain 1</span>
+<span class="co">#&gt;                                                                                  count</span>
+<span class="co">#&gt; Exception thrown at line 36: normal_lpdf: Scale parameter is 0, but must be &gt; 0!     1</span>
+<span class="co">#&gt; When a numerical problem occurs, the Hamiltonian proposal gets rejected.</span>
+<span class="co">#&gt; See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected</span>
+<span class="co">#&gt; If the number in the &#39;count&#39; column is small, there is no need to ask about this message on stan-users.</span>
+<span class="co">#&gt; Inference for Stan model: engines.</span>
+<span class="co">#&gt; 1 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=1000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;              mean se_mean   sd  2.5%   25%   50%  75% 97.5% n_eff Rhat</span>
+<span class="co">#&gt; alpha        3.51    0.00 0.07  3.38  3.45  3.50 3.55  3.66   413 1.01</span>
+<span class="co">#&gt; beta[1]      0.55    0.00 0.07  0.43  0.51  0.55 0.59  0.70   462 1.00</span>
+<span class="co">#&gt; sigma        0.31    0.00 0.07  0.21  0.26  0.30 0.34  0.46   316 1.00</span>
+<span class="co">#&gt; mu_obs[1]    3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_obs[2]    3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_obs[3]    3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_obs[4]    3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_obs[5]    3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_obs[6]    3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_obs[7]    3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_obs[8]    3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_obs[9]    3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_obs[10]   3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_obs[11]   3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_obs[12]   3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_obs[13]   2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_obs[14]   2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_obs[15]   2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_obs[16]   2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_obs[17]   2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_cens[1]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[2]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[3]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[4]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[5]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[6]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[7]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[8]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[9]   4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[10]  4.22    0.01 0.13  4.00  4.13  4.21 4.29  4.52   369 1.01</span>
+<span class="co">#&gt; mu_cens[11]  3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_cens[12]  3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_cens[13]  3.75    0.00 0.09  3.61  3.69  3.74 3.80  3.95   371 1.01</span>
+<span class="co">#&gt; mu_cens[14]  3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_cens[15]  3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_cens[16]  3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_cens[17]  3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_cens[18]  3.32    0.00 0.07  3.20  3.27  3.31 3.36  3.47   494 1.00</span>
+<span class="co">#&gt; mu_cens[19]  2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_cens[20]  2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_cens[21]  2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_cens[22]  2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; mu_cens[23]  2.74    0.00 0.10  2.54  2.67  2.73 2.79  2.96   660 1.00</span>
+<span class="co">#&gt; lp__        -0.46    0.08 1.40 -3.89 -1.09 -0.09 0.56  1.08   325 1.00</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed Jun  7 20:47:27 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+
+</div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
@@ -177,14 +387,21 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Tanner, Martin A. 1996. <em>Tools for Statistical Inference</em>. Springer.</p>
 </div>
 </div>
+<div class="footnotes">
+<hr />
+<ol start="14">
+<li id="fn14"><p>This example is derived from Simon Jackman, “Engines: right-censored failure times - the I(,) construct contrasted with other approaches”, 2007-07-24, <a href="https://web-beta.archive.org/web/20070724034205/http://jackman.stanford.edu:80/mcmc/engines.odc">URL</a><a href="engines-right-censored-failure-times.html#fnref14">↩</a></p></li>
+</ol>
+</div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="bimodal.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="truncation-how-does-stan-deal-with-truncation.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="unidentified.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="truncation-how-does-stan-deal-with-truncation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -227,7 +444,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

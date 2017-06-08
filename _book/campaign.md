@@ -2,9 +2,6 @@
 # Pooling the Polls Over an Election Campaign {#campaign}
 
 
-This example comes from @Jackman2005a.
-
-
 ```r
 library("rstan")
 library("tidyverse")
@@ -13,14 +10,38 @@ library("stringr")
 library("pscl")
 ```
 
-House of Representatives - "first preferences""
+This is an example of pooling polls (public opinion surveys) over time to estimate public opinion.
+This example comes from @Jackman2005a and @Jackman2009a, it uses Australian polls of political party preferences between the 2004 and 2007 Australian general elections.
+This model is similar to, and a simplified form of the polling aggregation methods recently and most notably used by FiveThirtyEight, HuffingtonPost, DailyKos, NYTimes Upshot and others in US elections [@Linzer2013a].
 
-- https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_(House_of_Representatives)
-- https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election
+## Data
 
+The data for Australian 
 
 ```r
 data("AustralianElectionPolling", package = "pscl")
+glimpse(AustralianElectionPolling)
+#> Observations: 239
+#> Variables: 14
+#> $ ALP         <dbl> 39.5, 39.0, 38.0, 36.0, 33.0, 36.5, 39.0, 37.0, 34...
+#> $ Lib         <dbl> 44.5, 44.0, 46.0, 46.5, 47.0, 45.5, 46.0, 47.0, 52...
+#> $ Nat         <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+#> $ Green       <dbl> 8.5, 8.5, 6.0, 9.0, 8.0, 9.5, 6.0, 7.5, 8.0, 7.0, ...
+#> $ FamilyFirst <dbl> 2.0, 1.5, 0.0, 2.5, 0.0, 2.0, 0.0, 2.0, 0.0, 0.0, ...
+#> $ Dems        <dbl> 2.0, 2.0, 0.0, 1.5, 0.0, 1.5, 0.0, 1.5, 2.0, 0.0, ...
+#> $ OneNation   <dbl> 1.0, 1.0, 0.0, 1.0, 0.0, 1.5, 0.0, 1.0, 1.0, 0.0, ...
+#> $ DK          <dbl> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
+#> $ sampleSize  <dbl> 1451, 2090, 1150, 1451, 1130, 2136, 1132, 2010, 14...
+#> $ org         <fctr> Morgan, F2F, Morgan, F2F, Newspoll, Morgan, F2F, ...
+#> $ startDate   <date> 2004-10-30, 2004-11-13, 2004-11-19, 2004-11-27, 2...
+#> $ endDate     <date> 2004-11-07, 2004-11-21, 2004-11-21, 2004-12-05, 2...
+#> $ source      <chr> "", "http://www.roymorgan.com/news/polls/2004/3808...
+#> $ remark      <chr> "", "face-to-face", "", "face-to-face", "", "face-...
+```
+
+The election result data for the House of Representatives: "first preferences".[^auselecsrc]
+
+```r
 elections <-
   list(
     `2007` = list(
@@ -46,7 +67,10 @@ elections <-
       sampleSize = 11715132      
     )
   )
+```
 
+
+```r
 START_DATE <- elections[["2004"]][["date"]]
   
 AustralianElectionPolling <-
@@ -58,29 +82,9 @@ AustralianElectionPolling <-
   
 ```
 
-For House effects assume mean zero and a standard deviation of 7.5. The standard deviation corresponds
-to house effects with a 95% confidence interval of between -15 and 15 (which would be large).
+## Model
 
-It is expected that most polling movements are $\pm 2$ percentage points. This implies an average scale of
-
-
-```r
-campaign_data <- within(list(), {
-  y <- AustralianElectionPolling$ALP
-  s <- AustralianElectionPolling$ALP_se
-  time <- AustralianElectionPolling$time
-  house <- AustralianElectionPolling$pollster
-  H <- max(AustralianElectionPolling$pollster)
-  N <- length(y)
-  T <- as.integer(difftime(elections[["2007"]][["date"]], elections[["2004"]][["date"]], units = "days")) + 1
-  xi_init <- elections[["2004"]][["ALP"]]
-  xi_final <- elections[["2007"]][["ALP"]]
-  delta_loc <- 0
-  tau_scale <- sd(y)
-  zeta_scale <- 5
-})
-```
-
+The Stan model is:
 
 ```r
 campaign_mod <- stan_model("stan/campaign.stan")
@@ -137,6 +141,30 @@ model {
 }</code>
 </pre>
 
+For House effects assume mean zero and a standard deviation of 7.5. The standard deviation corresponds to house effects with a 95% confidence interval of between -15 and 15 (which would be large).
+
+It is expected that most polling movements are $\pm 2$ percentage points.
+
+
+## Estimation
+
+
+```r
+campaign_data <- within(list(), {
+  y <- AustralianElectionPolling$ALP
+  s <- AustralianElectionPolling$ALP_se
+  time <- AustralianElectionPolling$time
+  house <- AustralianElectionPolling$pollster
+  H <- max(AustralianElectionPolling$pollster)
+  N <- length(y)
+  T <- as.integer(difftime(elections[["2007"]][["date"]], elections[["2004"]][["date"]], units = "days")) + 1
+  xi_init <- elections[["2004"]][["ALP"]]
+  xi_final <- elections[["2007"]][["ALP"]]
+  delta_loc <- 0
+  tau_scale <- sd(y)
+  zeta_scale <- 5
+})
+```
 
 
 ```r
@@ -5228,13 +5256,13 @@ campaign_fit
 #> mu[239]       1000 1.00
 #> lp__           371 1.00
 #> 
-#> Samples were drawn using NUTS(diag_e) at Wed May 31 08:39:16 2017.
+#> Samples were drawn using NUTS(diag_e) at Wed Jun  7 09:58:29 2017.
 #> For each parameter, n_eff is a crude measure of effective sample size,
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
 ```
 
-
+Plot the posterior distribution of the share of the Liberals
 
 ```r
 xi <- summary(campaign_fit, par = "xi")$summary %>%
@@ -5252,3 +5280,19 @@ ggplot() +
 
 <img src="campaign_files/figure-html/campaign_plot_xi-1.png" width="70%" style="display: block; margin: auto;" />
 
+
+## Questions
+
+1. Which polling firm is the most biased? Do any polling firms have 95 percent credible intervals 
+2. This is a retrospective model. How would you turn this into a forecasting model? How would you evaluate its performance?
+3. Model this with a logit transformed output. Do your results change? Would you have expected the results to change much?
+4. Model this with all parties and a multinomial response
+5. Model this with a varying-slope model
+6. Adjust the model to (1) allow for outliers in polls (2) allow for sudden changes in sentiment in the polling average
+7. Currently the only effect of polling firms is through their bias. How would you alter the model to allow some polling firms to have more variable polls? How is this similar to weighting different firms differently?
+8. Why is the constraint that the "house effects" are on average zero necessary? What would happen if you let it be anything?
+5. It is known that the polls can be systematically biased in elections, meaning that the average of polls can differ from the true result beyond what is implied by sampling uncertainty. How would you incorporate that into the model?
+#. Instead of fixing $\xi_1$ and $\xi_T$, we could treat elections as another public opinion survey. What values of $y$, $s$, and $\delta$ would you give to eletions? Model and compare the results to the original method.
+
+
+[^auselecsrc]: Sources: [2007](https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_(House_of_Representatives)), [2004](https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election).

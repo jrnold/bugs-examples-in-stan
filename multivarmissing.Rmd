@@ -1,11 +1,14 @@
 # Multivariate Missing Data {#multivarmissing}
 
-```{r multivarmissing,message=FALSE}
+$$
+\DeclareMathOperator{diag}{diag}
+$$
+```{r multivarmissing_setup,message=FALSE}
 library("tidyverse")
 library("rstan")
 ```
 
-This example shows how to impute missing data. See @Stan2016a, Chapter 10 "Missing Data & Partially Known Parameters" for more discussion.
+This example shows how to impute missing data. See @Stan2016a, Chapter 10 "Missing Data & Partially Known Parameters" for more discussion.[^multivarmissing-src]
 
 Consider a data set of 10 observations on 3 variables
 Only one of the variables, $z$, is completely observed.
@@ -33,6 +36,7 @@ These are combined in the `transformed parameters` block, and modeled.
 
 We use $z$ to predict $x$,
 and $z$ and $x$ (both observed and imputed) to impute $y$.
+
 $$
 \begin{aligned}[t]
 x_i &\sim \mathsf{Normal}(\mu_{x,i}, \sigma_x) \\
@@ -103,11 +107,29 @@ fit_multivarmissing
 
 ## Multivariate Normal
 
+Alternatively, $x$, $y$, and $z$ could be modeled as coming from a multivariate normal distribution.
+$$
+\begin{bmatrix}
+x_i \\
+y_i \\
+z_i
+\end{bmatrix} \sim 
+\mathsf{Normal}(\mu, \Sigma)
+$$
+where $\mu$ and $\Sigma$ are given weakly informative priors,
+$$
+\begin{aligned}[t]
+\mu_{i,k} &\sim \mathsf{Normal}(0, 10) & k \in \{1, 2, 3\}, \\
+\Sigma &= \diag{\sigma} R \diag{sigma}, \\
+\sigma &\sim \mathsf{HalfCauchy}(0, 5), \\
+R &\sim \mathsf{LkjCorr}(2) .
+\end{aligned}
+$$
+
 ```{r data_multivarmissing2}
 data_multivarmissing2 <- within(list(), {
   N <- nrow(multivarmissing)
   K <- ncol(multivarmissing)
-
   mu_loc <- rep(0, 3)
   mu_scale <- rep(0, 10)
   Sigma_scale_scale <- 5
@@ -115,17 +137,19 @@ data_multivarmissing2 <- within(list(), {
 })
 ```
 
-```{r mod_multivarmissing,cache.extra=tools::md5sum("stan/multivarmissing2.stan")}
+```{r mod_multivarmissing2,cache.extra=tools::md5sum("stan/multivarmissing2.stan")}
 mod_multivarmissing2 <- stan_model("stan/multivarmissing2.stan")
 ```
 ```{r}
 mod_multivarmissing2
 ```
 
-```{r fit_multivarmissing,results='hide'}
+```{r fit_multivarmissing2,results='hide'}
 fit_multivarmissing <- 
   sampling(mod_multivarmissing2, data = data_multivarmissing2)
 ```
 ```{r}
 fit_multivarmissing
 ```
+
+[^multivarmissing-src]: This example is derived from Simon Jackan, "Multivariate Missing Data," 2002-06-18, [URL](https://web-beta.archive.org/web/20020618183148/http://jackman.stanford.edu:80/mcmc/multivarmissing.odc).

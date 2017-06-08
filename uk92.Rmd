@@ -6,10 +6,8 @@ library("tidyverse")
 library("rstan")
 ```
 
-
-
 The data for this example consist of constituency vote proportions from the 1992 United Kingdom House of Commons election.
-These data come from @KatzKing1999a, were re-analyzed @TomzTuckerWittenberg2002.[^uk92-source] 
+These data come from @KatzKing1999a, were re-analyzed @TomzTuckerWittenberg2002a.[^uk92-source] 
 This data is included in the **pscl** package as `UKHouseOfCommons`:
 ```{r UKHoseOfCommons}
 (data("UKHouseOfCommons", package = "pscl"))
@@ -82,10 +80,9 @@ summary(uk92_fit, par = c("nu", "alpha", "beta", "Sigma"))$summary
 
 ## Questions
 
-- Given this model replicate some of the results in @KatzKing199a.
+- Given this model replicate some of the results in @KatzKing1999a.
 - Model the data using a multivariate normal model instead. How do the results differ? Which fits the data better? What does the value of $\nu$ from the multivariate Student t model tell you about the plausibility of the multivariate normal distribution?
-- @TomzTuckerWittenberg2002 suggest using seemingly unrelated regressions (SUR). Model the data with SUR. How does it compare in results and speed?
+- @TomzTuckerWittenberg2002a suggest using seemingly unrelated regressions (SUR). Model the data with SUR. How does it compare in results and speed?
 - Could you model this using a multinomial model with the data provided? What data would you need?
 
 [^uk92-source]: Example derived from Simon Jackman, "House of Commons elections: modeling with the multivariate t density." *BUGS Examples* [URL](https://web-beta.archive.org/web/20070724034125/http://jackman.stanford.edu/mcmc/92.odc). Some language copied from the original.
-

@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -26,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2017-05-31">
+<meta name="date" content="2017-06-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,7 +34,6 @@
   
 <link rel="prev" href="sophistication.html">
 <link rel="next" href="judges.html">
-
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -103,30 +102,73 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
 <li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
-<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
-<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a><ul>
-<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
-<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
-<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
-<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
-<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
-<li class="chapter" data-level="10" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</a><ul>
-<li class="chapter" data-level="" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#datas"><i class="fa fa-check"></i><b>5.1</b> Datas</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate t density</a></li>
-<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
-<li class="chapter" data-level="13" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</a><ul>
-<li class="chapter" data-level="13.1" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#data"><i class="fa fa-check"></i><b>13.1</b> data</a></li>
-<li class="chapter" data-level="13.2" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#initial-values"><i class="fa fa-check"></i><b>13.2</b> initial values</a></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</a></li>
-<li class="chapter" data-level="15" data-path="bimodal.html"><a href="bimodal.html"><i class="fa fa-check"></i><b>15</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
-<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
-<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
-<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
-<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-1"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-2"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-3"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-2"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-4"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: over-parameterization of normal mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-3"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-5"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-4"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -146,67 +188,417 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="legislators" class="section level1">
-<h1><span class="header-section-number">8</span> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<h1><span class="header-section-number">9</span> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;pscl&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;forcats&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;stringr&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
-<p>Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators. Political scientists analyze roll call data using the Euclidean spatial voting model: each legislator (<span class="math inline">\(i = 1, \dots, n\)</span>) has a preferred policy position (<span class="math inline">\(\xi\)</span>, a point in low-dimensional Euclidean space), and each vote (<span class="math inline">\(j = 1, \dots, m\)</span>) amounts to a choice between an “Aye” (<span class="math inline">\(\psi_y\)</span>) and a “Nay” location (<span class="math inline">\(q_j\)</span>) respectively. Legislators are assumed to choose on the basis of utility maximization, with utilities (in one-dimension), <span class="math display">\[
+<p>Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators.<a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a> Political scientists analyze roll call data using the Euclidean spatial voting model: each legislator (i = 1, …, n) has a preferred policy position (xi, a point in low-dimensional Euclidean space), and each vote (j = 1, …, m) amounts to a choice between “Aye” and a “Nay” locations, qj and Yj, respectively. Legislators are assumed to choose on the basis of utility maximization, with utilities (in one-dimension)</p>
+<p>In these models, the only observed data are votes, and the analyst wants to model those votes as a function of legislator- (<span class="math inline">\(\xi_i\)</span>), and vote-specific (<span class="math inline">\(\alpha_i\)</span>, <span class="math inline">\(\beta_i\)</span>) parameters. The vote of legislator <span class="math inline">\(i\)</span> on roll-call <span class="math inline">\(j\)</span> (<span class="math inline">\(y_{i,j}\)</span>) is a function of a the legislator’s ideal point (<span class="math inline">\(\xi_i\)</span>), the vote’s cutpoint (<span class="math inline">\(\alpha_j\)</span>), and the vote’s discrimination (<span class="math inline">\(\beta_j\)</span>): <span class="math display">\[
 \begin{aligned}[t]
-U_i (q_j) &amp;= -(\xi_i - q_j)^2 + \nu_{i,j} , \\ 
-U_i (\psi_j) &amp;= -(\xi_i - \psi_j)^2 + \omega_{i,j} ,
-\end{aligned}
-\]</span> where <span class="math inline">\(\nu_{i,j}\)</span> and <span class="math inline">\(\omega_{i,j}\)</span> are iid disturbances. The utility differential <span class="math inline">\(y_{i,j}^* = U_i(q_j) - U_i(\psi_j)\)</span> is observed only in terms of sign. Assuming of utility maximization, the legislator votes “Nay” when <span class="math inline">\(y_{i,j}^* &lt; 0\)</span>, and “Yea” when <span class="math inline">\(y_{i,j}^* &gt; 0\)</span>. Simple algebra yields a hierarchical binary response model in which the legislators’ ideal points appear as unobserved covariates: i.e., <span class="math display">\[
-y_{i,j}^* = \xi_i \beta_{j} - \alpha_j + \epsilon_{i,j}
-\]</span> where the <span class="math inline">\(\alpha_j\)</span> and <span class="math inline">\(\beta_j\)</span> are functions of the vote-specific parameters <span class="math inline">\(q_j\)</span> and <span class="math inline">\(\psi_j\)</span>. Subject to identifying restrictions, the legislators’ preferred positions can be estimated from the roll call data, via a logit or probit model. In addition, with one-dimensional models, the “Yea” and “Nay” locations can be estimated In higher dimensions, only the hyperplane separating the “Aye” and “Nay” locations can be recovered.</p>
-<p>There is an extremely close correspondence between the statistical analysis of roll call data and item-response (IRT) models used in educational testing. A two-parameter item-response model is equivalent to the statistical operationalization of the model described above, with the unobserved ideal point taking the part of the latent trait, and the item-discrimination parameters tapping ideological discrimination. <span class="citation">Johnson and Albert (<a href="#ref-JohnsonAlbert1999a">1999</a>)</span> show that the two parameter IRT model is well suited to estimation and inference via Bayesian simulation. The probability of an “Aye” vote is the probability that <span class="math inline">\(y_{i,j}^* &gt; 0\)</span>, if <span class="math inline">\(\nu_{i,j}\)</span> and <span class="math inline">\(\omega_{i,j}\)</span> have Type-1 extreme value distributions, then <span class="math display">\[
-\begin{aligned}[t]
-y_{i,j} &amp;\sim \mathsf{Bernoulli}(\pi_{i,j}) \\
-\mathsf{Logit}(\pi_{i,j}) &amp;= \xi_i \beta_j - \alpha_j
+y_{i,j} &amp;\sim \mathsf{Bernoulli}(\pi_i) \\
+\pi_i &amp;= \frac{1}{1 + \exp(-\mu_{i,j})} \\
+\mu_{i,j} &amp;= \beta_j \xi_i - \alpha_j
 \end{aligned}
 \]</span></p>
-<p>In the implementation below, an iid <span class="math inline">\(\mathsf{Normal}(0,1)\)</span> prior is used for the unobserved ideal points; vague normal priors are used for the <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\alpha\)</span> parameters. For identification, two legislators are constrained to have fixed ideal points: here I set the ideal point of a legislator known to be liberal to -1.0, and the ideal point of a conservative to 1.0. Alternatively, we might employ restrictions or tight priors on particular <span class="math inline">\(\beta\)</span> parameters.</p>
-<p>The following example uses data from the 106th U.S. Senate, which sat from January 1997 through October 1998, with n = 102 legislators. Unanimous roll calls were dropped from the analysis. …</p>
-<ul>
-<li><span class="citation">J. H. Albert (<a href="#ref-Albert1992a">1992</a>)</span></li>
-<li><span class="citation">Albert and Chib (<a href="#ref-AlbertChib1993a">1993</a>)</span></li>
-<li><span class="citation">Clinton, Jackman, and Rivers (<a href="#ref-ClintonJackmanRivers2004a">2004</a>)</span></li>
-<li><span class="citation">Enelow and Hinich (<a href="#ref-EnelowHinich1984a">1984</a>)</span></li>
-<li><span class="citation">Jackman (<a href="#ref-Jackman2000a">2000</a>)</span></li>
-<li><span class="citation">Jackman (<a href="#ref-Jackman2001a">2001</a>)</span></li>
-<li><span class="citation">Johnson and Albert (<a href="#ref-JohnsonAlbert1999a">1999</a>)</span></li>
-<li><span class="citation">Londregan (<a href="#ref-Londregan2007a">2007</a>)</span></li>
-<li><span class="citation">Poole and Rosenthal (<a href="#ref-PooleRosenthal2000a">2000</a>)</span></li>
-</ul>
+<div id="identification" class="section level2">
+<h2><span class="header-section-number">9.1</span> Identification</h2>
+<p>Ideal points (like many latent space models) are unidentified. In particular, there are three types of invariance:</p>
+<ol style="list-style-type: decimal">
+<li>Additive Aliasing</li>
+<li>Multiplicative Ailising</li>
+<li>Rotation (Reflection) Invariance</li>
+</ol>
+<p>Scale invariance: <span class="math display">\[
+\begin{aligned}[t]
+\mu_{i,j} &amp;= \alpha_j + \beta_j \xi_i \\
+         &amp;= \alpha_j + \left(\frac{\beta_j}{c}\right) \left(\xi_i c \right) \\
+         &amp;= \alpha_j + \beta^*_j \xi^*_i
+\end{aligned}
+\]</span></p>
+<p>Addition invariance: <span class="math display">\[
+\begin{aligned}[t]
+\mu_{i,j} &amp;= \alpha_j + \beta_j \xi_i \\
+          &amp;= \alpha_j - \beta_j c + \beta_j c + \beta_j \xi_i \\
+         &amp;= (\alpha_j - \beta_j c) + \beta_j (\xi_i + c) \\
+         &amp;= \alpha_j^* + \beta_j \xi^*_i
+\end{aligned}
+\]</span></p>
+<p>Rotation invariance: <span class="math display">\[
+\begin{aligned}[t]
+\mu_{i,j} &amp;= \alpha_j + \beta_j \xi_i \\
+          &amp;= \alpha_j  + \beta_j (-1) (-1) \xi_i \\
+          &amp;= \alpha_j  + (-\beta_j) (-\xi_i) \\          
+          &amp;= \alpha_j + \beta_j^* \xi^*_i
+\end{aligned}
+\]</span></p>
+<p>Example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">xi &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)
+alpha &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>)
+beta &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>)
+y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="dv">3</span>, <span class="dv">4</span>)
+k &lt;-<span class="st"> </span><span class="dv">1</span>
 
+<span class="kw">list</span>(<span class="kw">sum</span>(<span class="kw">plogis</span>(y <span class="op">-</span><span class="st"> </span>(alpha <span class="op">+</span><span class="st"> </span>beta <span class="op">%o%</span><span class="st"> </span>xi))),
+     <span class="kw">sum</span>(<span class="kw">plogis</span>(y <span class="op">-</span><span class="st"> </span>(alpha <span class="op">+</span><span class="st"> </span><span class="op">-</span>beta <span class="op">%o%</span><span class="st"> </span><span class="op">-</span>xi))),
+     <span class="kw">sum</span>(<span class="kw">plogis</span>(y <span class="op">-</span><span class="st"> </span>((alpha <span class="op">-</span><span class="st"> </span>beta <span class="op">*</span><span class="st"> </span>k) <span class="op">+</span><span class="st"> </span>beta <span class="op">%o%</span><span class="st"> </span>(xi <span class="op">+</span><span class="st"> </span>k)))),
+     <span class="kw">sum</span>(<span class="kw">plogis</span>(y <span class="op">-</span><span class="st"> </span>((alpha <span class="op">+</span><span class="st"> </span>(beta <span class="op">/</span><span class="st"> </span>k) <span class="op">%o%</span><span class="st"> </span>(xi <span class="op">*</span><span class="st"> </span>k))))))
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [1] 7.5</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; [1] 7.5</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; [1] 7.5</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[4]]</span>
+<span class="co">#&gt; [1] 7.5</span></code></pre></div>
+<p>For each of these: Which types of rotation does it solve?</p>
+<ol style="list-style-type: decimal">
+<li>Fix one element of <span class="math inline">\(\beta\)</span>.</li>
+<li>Fix one element of <span class="math inline">\(\xi\)</span>.</li>
+<li>Fix one element of <span class="math inline">\(\alpha\)</span>.</li>
+<li>Fix two elements of <span class="math inline">\(\alpha\)</span>.</li>
+<li>Fix two elements of <span class="math inline">\(\xi\)</span>.</li>
+<li>Fix two elements of <span class="math inline">\(\beta\)</span>.</li>
+</ol>
+</div>
+<div id="th-senate" class="section level2">
+<h2><span class="header-section-number">9.2</span> 109th Senate</h2>
+<p>This example models the voting of the <a href="https://en.wikipedia.org/wiki/109th_United_States_Congress">109th U.S. Senate</a>. Votes for the 109th Senate is included in the <strong>pscl</strong> package:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;s109&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>)</code></pre></div>
+<p>The <code>s109</code> object is not a data frame, so see its documentation for information about its structure.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s109
+<span class="co">#&gt; Description:  109th U.S. Senate </span>
+<span class="co">#&gt; Source:       ftp://voteview.com/dtaord/sen109kh.ord </span>
+<span class="co">#&gt; Number of Legislators:    102 </span>
+<span class="co">#&gt; Number of Votes:  645 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Using the following codes to represent roll call votes:</span>
+<span class="co">#&gt; Yea:      1 2 3 </span>
+<span class="co">#&gt; Nay:      4 5 6 </span>
+<span class="co">#&gt; Abstentions:  7 8 9 </span>
+<span class="co">#&gt; Not In Legislature:   0 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Legislator-specific variables:</span>
+<span class="co">#&gt; [1] &quot;state&quot;      &quot;icpsrState&quot; &quot;cd&quot;         &quot;icpsrLegis&quot; &quot;party&quot;     </span>
+<span class="co">#&gt; [6] &quot;partyCode&quot; </span>
+<span class="co">#&gt; Vote-specific variables:</span>
+<span class="co">#&gt; [1] &quot;date&quot;        &quot;session&quot;     &quot;number&quot;      &quot;bill&quot;        &quot;question&quot;   </span>
+<span class="co">#&gt; [6] &quot;result&quot;      &quot;description&quot; &quot;yeatotal&quot;    &quot;naytotal&quot;   </span>
+<span class="co">#&gt; Detailed information is available via the summary function.</span></code></pre></div>
+<p>This data includes all <a href="https://en.wikipedia.org/wiki/Voting_methods_in_deliberative_assemblies">roll-call</a> votes, votes in which the responses of the senators are recorded.</p>
+<p>For simplicity, the ideal point model uses binary responses, but the <code>s109</code> data includes multiple <a href="http://voteview.com/senate109.htm">codes</a> for respones to roll-calls.</p>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">0</td>
+<td align="left">not a member</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">Yea</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">Paired Yea</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">Announced Yea,</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">Announced Nay</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="left">Paired Nay</td>
+</tr>
+<tr class="odd">
+<td align="left">6</td>
+<td align="left">Nay</td>
+</tr>
+<tr class="even">
+<td align="left">7</td>
+<td align="left">Present (some Congresses, also not used some Congresses)</td>
+</tr>
+<tr class="odd">
+<td align="left">8</td>
+<td align="left">Present (some Congresses, also not used some Congresses)</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">Nay</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">Not Voting</td>
+</tr>
+</tbody>
+</table>
+<p>In the data processing, we will aggregate the respones into “Yes”, “No”, and missing values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s109_vote_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(s109<span class="op">$</span>vote.data) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rollcall =</span> <span class="kw">paste</span>(session, number, <span class="dt">sep =</span> <span class="st">&quot;-&quot;</span>),
+         <span class="dt">passed =</span> result <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Confirmed&quot;</span>, <span class="st">&quot;Agreed To&quot;</span>, <span class="st">&quot;Passed&quot;</span>),
+         <span class="dt">pct_yea =</span> yeatotal <span class="op">/</span><span class="st"> </span>(yeatotal <span class="op">+</span><span class="st"> </span>naytotal),
+         <span class="dt">unanimous =</span> pct_yea <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),
+         <span class="dt">lopsided =</span> pct_yea <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.35</span> <span class="op">|</span><span class="st"> </span>pct_yea <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.65</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>unanimous) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.rollcall_id =</span> <span class="kw">row_number</span>())
+
+s109_legis_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(s109<span class="op">$</span>legis.data) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="st">&quot;legislator&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.legis_id =</span> <span class="kw">row_number</span>(),
+         <span class="dt">party =</span> <span class="kw">fct_recode</span>(party,
+                            <span class="st">&quot;Democratic&quot;</span> =<span class="st"> &quot;D&quot;</span>,
+                            <span class="st">&quot;Republican&quot;</span> =<span class="st"> &quot;R&quot;</span>,
+                            <span class="st">&quot;Independent&quot;</span> =<span class="st"> &quot;Indep&quot;</span>))
+
+s109_votes &lt;-<span class="st"> </span>s109<span class="op">$</span>votes <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="st">&quot;legislator&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">gather</span>(rollcall, vote, <span class="op">-</span>legislator) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co"># recode to Yea (TRUE), Nay (FALSE), or missing</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">yea =</span> <span class="ot">NA</span>,
+         <span class="dt">yea =</span> <span class="kw">if_else</span>(vote <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="ot">TRUE</span>, yea),
+         <span class="dt">yea =</span> <span class="kw">if_else</span>(vote <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>), <span class="ot">FALSE</span>, yea)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(yea)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">inner_join</span>(dplyr<span class="op">::</span><span class="kw">select</span>(s109_vote_data, rollcall, .rollcall_id), <span class="dt">by =</span> <span class="st">&quot;rollcall&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">inner_join</span>(dplyr<span class="op">::</span><span class="kw">select</span>(s109_legis_data, legislator, party, .legis_id), <span class="dt">by =</span> <span class="st">&quot;legislator&quot;</span>)</code></pre></div>
+</div>
+<div id="identification-by-fixing-legislators-ideal-points" class="section level2">
+<h2><span class="header-section-number">9.3</span> Identification by Fixing Legislator’s Ideal Points</h2>
+<p>Identification of latent state models can be challenging. The first method for identifying ideal point models is to fix the values of two legislators. These can be arbitrary, but if they are chosen along the ideological dimension of interest it can help the substantive interpretation.</p>
+<p>Since we  know, or expect, that the primary ideological dimension is Liberal-Conservative <span class="citation">(Poole and Rosenthal <a href="#ref-PooleRosenthal2000a">2000</a>)</span>, I’ll fix the ideal points of the two party leaders in that congress. In the 109th Congress, the Republican party was the majority party and <a href="https://en.wikipedia.org/wiki/Bill_Frist">Bill Frist</a> (Tennessee) was the majority (Republican) leader, and <a href="https://en.wikipedia.org/wiki/Harry_Reid">Harry Reid</a> (Nevada) wad the minority (Democratic) leader: <span class="math display">\[
+\begin{aligned}[t]
+\xi_\text{FRIST (R TN)} &amp; = 1 \\
+\xi_\text{REID (D NV)} &amp; = -1
+\end{aligned}
+\]</span></p>
+<p>For all of those give a weakly informative prior to the ideal points, and item difficulty and discrimination parameters, <span class="math display">\[
+\begin{aligned}[t]
+\xi_{i} &amp;\sim \mathsf{Normal}(\zeta, \tau) \\
+\zeta &amp;\sim \mathsf{Normal}(0., 10) \\
+\tau &amp;\sim \mathsf{HalfCauchy}(0., 5) \\
+\alpha_{j} &amp;\sim \mathsf{Normal}(0, 10) \\
+\beta_{j} &amp;\sim \mathsf{Normal}(0, 2.5) &amp;&amp; j \in 1, \dots, J
+\end{aligned}
+\]</span></p>
+<p>Create a data frame with the fixed values for identification and initial values for the legislators</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">xi &lt;-
+<span class="st">  </span>s109_legis_data <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="co"># set values</span>
+         <span class="dt">xi =</span> <span class="kw">if_else</span>(legislator <span class="op">==</span><span class="st"> &quot;FRIST (R TN)&quot;</span>, <span class="dv">1</span>,
+                 <span class="kw">if_else</span>(legislator <span class="op">==</span><span class="st"> &quot;REID (D NV)&quot;</span>, <span class="op">-</span><span class="dv">1</span>, <span class="ot">NA_real_</span>)),
+         <span class="dt">init =</span> <span class="kw">if_else</span>(party <span class="op">==</span><span class="st"> &quot;Republican&quot;</span>, <span class="dv">1</span>,
+                        <span class="kw">if_else</span>(party <span class="op">==</span><span class="st"> &quot;Democratic&quot;</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>)))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">legislators_data_<span class="dv">1</span> &lt;-
+<span class="st">  </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+    y &lt;-<span class="st"> </span><span class="kw">as.integer</span>(s109_votes<span class="op">$</span>yea)
+    y_idx_leg &lt;-<span class="st"> </span><span class="kw">as.integer</span>(s109_votes<span class="op">$</span>.legis_id)
+    y_idx_vote &lt;-<span class="st"> </span><span class="kw">as.integer</span>(s109_votes<span class="op">$</span>.rollcall_id)
+    Y_obs &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+    N &lt;-<span class="st"> </span><span class="kw">max</span>(s109_votes<span class="op">$</span>.legis_id)
+    K &lt;-<span class="st"> </span><span class="kw">max</span>(s109_votes<span class="op">$</span>.rollcall_id)
+    <span class="co"># priors</span>
+    alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span>
+    alpha_scale &lt;-<span class="st"> </span><span class="dv">5</span>
+    beta_loc &lt;-<span class="st"> </span><span class="dv">0</span>
+    beta_scale &lt;-<span class="st"> </span><span class="fl">2.5</span>
+    N_xi_obs &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(xi<span class="op">$</span>xi))
+    idx_xi_obs &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(xi<span class="op">$</span>xi))
+    xi_obs &lt;-<span class="st"> </span>xi<span class="op">$</span>xi[<span class="op">!</span><span class="kw">is.na</span>(xi<span class="op">$</span>xi)]
+    N_xi_param &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">is.na</span>(xi<span class="op">$</span>xi))
+    idx_xi_param &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">is.na</span>(xi<span class="op">$</span>xi))
+    tau_scale &lt;-<span class="st"> </span><span class="dv">5</span>
+    zeta_loc &lt;-<span class="st"> </span><span class="dv">0</span>
+    zeta_scale &lt;-<span class="st"> </span><span class="dv">10</span>
+  })</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">legislators_init_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">list</span>(
+  <span class="kw">list</span>(<span class="dt">xi_param =</span> xi<span class="op">$</span>init[<span class="kw">is.na</span>(xi<span class="op">$</span>xi)])
+)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_ideal_point_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/ideal_point_2.stan&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_ideal_point_<span class="dv">2</span></code></pre></div>
+<pre>
+  <code class="stan">// ideal point model
+// identification:
+// - xi ~ hierarchical
+// - except fixed senators
+data {
+  // number of individuals
+  int N;
+  // number of items
+  int K;
+  // observed votes
+  int<lower = 0, upper = N * K> Y_obs;
+  int y_idx_leg[Y_obs];
+  int y_idx_vote[Y_obs];
+  int y[Y_obs];
+  // priors
+  // on items
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+  real beta_loc;
+  real<lower = 0.> beta_scale;
+  // on legislators
+  int N_xi_obs;
+  int idx_xi_obs[N_xi_obs];
+  vector[N_xi_obs] xi_obs;
+  int N_xi_param;
+  int idx_xi_param[N_xi_param];
+  // prior on ideal points
+  real zeta_loc;
+  real<lower = 0.> zeta_scale;
+  real tau_scale;
+}
+parameters {
+  // item difficulties
+  vector[K] alpha;
+  // item discrimination
+  vector[K] beta;
+  // unknown ideal points
+  vector[N_xi_param] xi_param;
+  // hyperpriors
+  real<lower = 0.> tau;
+  real<lower = 0.> zeta;
+}
+transformed parameters {
+  // create xi from observed and parameter ideal points
+  vector[Y_obs] mu;
+  vector[N] xi;
+  xi[idx_xi_param] = xi_param;
+  xi[idx_xi_obs] = xi_obs;
+  for (i in 1:Y_obs) {
+    mu[i] = alpha[y_idx_vote[i]] + beta[y_idx_vote[i]] * xi[y_idx_leg[i]];
+  }
+}
+model {
+  alpha ~ normal(alpha_loc, alpha_scale);
+  beta ~ normal(beta_loc, beta_scale);
+  xi_param ~ normal(zeta, tau);
+  xi_obs ~ normal(zeta, tau);
+  zeta ~ normal(zeta_loc, zeta_scale);
+  tau ~ cauchy(0., tau_scale);
+  y ~ bernoulli_logit(mu);
+}
+generated quantities {
+  vector[Y_obs] log_lik;
+  for (i in 1:Y_obs) {
+    log_lik[i] = bernoulli_logit_lpmf(y[i] | mu[i]);
+  }
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">legislators_fit_<span class="dv">1</span> &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">sampling</span>(mod_ideal_point_<span class="dv">2</span>, <span class="dt">data =</span> legislators_data_<span class="dv">1</span>,
+           <span class="dt">chains =</span> <span class="dv">1</span>, <span class="dt">iter =</span> <span class="dv">500</span>,
+           <span class="dt">init =</span> legislators_init_<span class="dv">1</span>,
+           <span class="dt">refresh =</span> <span class="dv">100</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_ideal_point_<span class="dv">2</span></code></pre></div>
+<pre>
+  <code class="stan">// ideal point model
+// identification:
+// - xi ~ hierarchical
+// - except fixed senators
+data {
+  // number of individuals
+  int N;
+  // number of items
+  int K;
+  // observed votes
+  int<lower = 0, upper = N * K> Y_obs;
+  int y_idx_leg[Y_obs];
+  int y_idx_vote[Y_obs];
+  int y[Y_obs];
+  // priors
+  // on items
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+  real beta_loc;
+  real<lower = 0.> beta_scale;
+  // on legislators
+  int N_xi_obs;
+  int idx_xi_obs[N_xi_obs];
+  vector[N_xi_obs] xi_obs;
+  int N_xi_param;
+  int idx_xi_param[N_xi_param];
+  // prior on ideal points
+  real zeta_loc;
+  real<lower = 0.> zeta_scale;
+  real tau_scale;
+}
+parameters {
+  // item difficulties
+  vector[K] alpha;
+  // item discrimination
+  vector[K] beta;
+  // unknown ideal points
+  vector[N_xi_param] xi_param;
+  // hyperpriors
+  real<lower = 0.> tau;
+  real<lower = 0.> zeta;
+}
+transformed parameters {
+  // create xi from observed and parameter ideal points
+  vector[Y_obs] mu;
+  vector[N] xi;
+  xi[idx_xi_param] = xi_param;
+  xi[idx_xi_obs] = xi_obs;
+  for (i in 1:Y_obs) {
+    mu[i] = alpha[y_idx_vote[i]] + beta[y_idx_vote[i]] * xi[y_idx_leg[i]];
+  }
+}
+model {
+  alpha ~ normal(alpha_loc, alpha_scale);
+  beta ~ normal(beta_loc, beta_scale);
+  xi_param ~ normal(zeta, tau);
+  xi_obs ~ normal(zeta, tau);
+  zeta ~ normal(zeta_loc, zeta_scale);
+  tau ~ cauchy(0., tau_scale);
+  y ~ bernoulli_logit(mu);
+}
+generated quantities {
+  vector[Y_obs] log_lik;
+  for (i in 1:Y_obs) {
+    log_lik[i] = bernoulli_logit_lpmf(y[i] | mu[i]);
+  }
+}</code>
+</pre>
+<p>Extract the ideal point data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">legislator_summary_<span class="dv">1</span> &lt;-
+<span class="st">  </span><span class="kw">bind_cols</span>(s109_legis_data,
+           <span class="kw">as_tibble</span>(<span class="kw">summary</span>(legislators_fit_<span class="dv">1</span>, <span class="dt">par =</span> <span class="st">&quot;xi&quot;</span>)<span class="op">$</span>summary)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">legislator =</span> <span class="kw">fct_reorder</span>(legislator, mean))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(legislator_summary_<span class="dv">1</span>,
+       <span class="kw">aes</span>(<span class="dt">x =</span> legislator, <span class="dt">y =</span> mean,
+           <span class="dt">ymin =</span> <span class="st">`</span><span class="dt">2.5%</span><span class="st">`</span>, <span class="dt">ymax =</span> <span class="st">`</span><span class="dt">97.5%</span><span class="st">`</span>, <span class="dt">colour =</span> party)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_pointrange</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_color_manual</span>(<span class="dt">values =</span> <span class="kw">c</span>(<span class="dt">Democratic =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">Independent =</span> <span class="st">&quot;green&quot;</span>, <span class="dt">Republican =</span> <span class="st">&quot;red&quot;</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="kw">expression</span>(xi[i]), <span class="dt">x =</span> <span class="st">&quot;&quot;</span>, <span class="dt">colour =</span> <span class="st">&quot;Party&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="legislators_files/figure-html/legislator_plot_1-1.png" alt="Estimated Ideal Points of the Senators of the 109th Congress" width="70%" />
+<p class="caption">
+Estimated Ideal Points of the Senators of the 109th Congress
+</p>
+</div>
+
+</div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
-<div id="ref-JohnsonAlbert1999a">
-<p>Johnson, Valen E., and James H. Albert. 1999. <em>Ordinal Data Modeling</em>. Springer-Verlag. doi:<a href="https://doi.org/10.1007/b98832">10.1007/b98832</a>.</p>
-</div>
-<div id="ref-Albert1992a">
-<p>Albert, J. H. 1992. “Bayesian Estimation of Normal Ogive Item Response Curves Using Gibbs Sampling.” <em>Journal of Educational and Behavioral Statistics</em> 17 (3). American Educational Research Association (AERA): 251–69. doi:<a href="https://doi.org/10.3102/10769986017003251">10.3102/10769986017003251</a>.</p>
-</div>
-<div id="ref-AlbertChib1993a">
-<p>Albert, James H., and Siddhartha Chib. 1993. “Bayesian Analysis of Binary and Polychotomous Response Data.” <em>Journal of the American Statistical Association</em> 88 (422). Informa UK Limited: 669–79. doi:<a href="https://doi.org/10.1080/01621459.1993.10476321">10.1080/01621459.1993.10476321</a>.</p>
-</div>
-<div id="ref-ClintonJackmanRivers2004a">
-<p>Clinton, Joshua, Simon Jackman, and Douglas Rivers. 2004. “The Statistical Analysis of Roll Call Data.” <em>American Political Science Review</em> 98 (02). Cambridge University Press (CUP): 355–70. doi:<a href="https://doi.org/10.1017/s0003055404001194">10.1017/s0003055404001194</a>.</p>
-</div>
-<div id="ref-EnelowHinich1984a">
-<p>Enelow, J.M., and M.J. Hinich. 1984. <em>The Spatial Theory of Voting: An Introduction</em>. Cambridge University Press. <a href="https://books.google.com/books?id=lXY6AAAAIAAJ" class="uri">https://books.google.com/books?id=lXY6AAAAIAAJ</a>.</p>
-</div>
-<div id="ref-Jackman2000a">
-<p>Jackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” <em>Political Analysis</em> 8 (4). [Oxford University Press, Society for Political Methodology]: 307–32. <a href="http://www.jstor.org/stable/25791616" class="uri">http://www.jstor.org/stable/25791616</a>.</p>
-</div>
-<div id="ref-Jackman2001a">
-<p>Jackman, Simon. 2001. “Multidimensional Analysis of Roll Call Data via Bayesian Simulation: Identification, Estimation, Inference, and Model Checking.” <em>Political Analysis</em> 9 (3). [Oxford University Press, Society for Political Methodology]: 227–41. <a href="http://www.jstor.org/stable/25791646" class="uri">http://www.jstor.org/stable/25791646</a>.</p>
-</div>
-<div id="ref-Londregan2007a">
-<p>Londregan, J.B. 2007. <em>Legislative Institutions and Ideology in Chile</em>. Political Economy of Instituti. Cambridge University Press. <a href="https://books.google.com/books?id=WpXHHYf7lJoC" class="uri">https://books.google.com/books?id=WpXHHYf7lJoC</a>.</p>
-</div>
 <div id="ref-PooleRosenthal2000a">
 <p>Poole, Keith T., and Howard Rosenthal. 2000. <em>Congress: A Political-Economic History of Roll Call Voting</em>. Oxford University Press.</p>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="7">
+<li id="fn7"><p>Example derived from Simon Jackman, “Legislators: estimating legislators’ ideal points from voting histories (roll call data)”, <em>BUGS Examples,</em> 2007-07-24, <a href="https://web-beta.archive.org/web/20070724034141/http://jackman.stanford.edu:80/mcmc/legislators.odc">URL</a>.<a href="legislators.html#fnref7">↩</a></p></li>
+</ol>
 </div>
             </section>
 
@@ -214,8 +606,9 @@ y_{i,j} &amp;\sim \mathsf{Bernoulli}(\pi_{i,j}) \\
         </div>
       </div>
 <a href="sophistication.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="judges.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="judges.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -258,7 +651,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

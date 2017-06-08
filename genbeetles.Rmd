@@ -42,8 +42,6 @@ Notice that $m$ enters the model in a highly non-linear fashion, and that differ
 In Bayesian terms, we can reasonably expect the posterior density of $m$ to be non-normal, and probably log-
 Inferences for these quantities could well be misleading if we were to rely only on point estimates and asymptotic normal approximations; instead, a Bayesian approach via MCMC offers a way for us to obtain arbitrarily precise approximations to the posterior densities of these quantities.
 
-The
-
 
 I give $\mu$ a Gamma prior with a mean of 1, corresponding to the standard logit model, and a standard deviation of 2,
 $$
@@ -79,12 +77,11 @@ These data are included with the **VGAM"** package as  `flourbeetle`:
 ```{r genbeetles_data}
 genbeetles_data <- 
   within(list(), {
-    y <- flourbeetle$killed
-    N <- length(y)
+    r <- flourbeetle$killed
+    N <- length(r)
     n <- flourbeetle$exposed
-    X <- as.matrix(flourbeetle$logdose) %>%
-      scale()
-    K <- ncol(X)
+    x <- as.matrix(flourbeetle$logdose) %>%
+      scale() %>% as.numeric()
   })
 ```
 

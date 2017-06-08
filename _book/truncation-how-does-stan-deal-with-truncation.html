@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -26,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2017-05-31">
+<meta name="date" content="2017-06-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,7 +34,6 @@
   
 <link rel="prev" href="engines-right-censored-failure-times.html">
 <link rel="next" href="genbeetles.html">
-
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -103,30 +102,73 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
 <li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
-<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
-<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a><ul>
-<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
-<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
-<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
-<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
-<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
-<li class="chapter" data-level="10" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</a><ul>
-<li class="chapter" data-level="" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#datas"><i class="fa fa-check"></i><b>5.1</b> Datas</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate t density</a></li>
-<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
-<li class="chapter" data-level="13" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</a><ul>
-<li class="chapter" data-level="13.1" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#data"><i class="fa fa-check"></i><b>13.1</b> data</a></li>
-<li class="chapter" data-level="13.2" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#initial-values"><i class="fa fa-check"></i><b>13.2</b> initial values</a></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</a></li>
-<li class="chapter" data-level="15" data-path="bimodal.html"><a href="bimodal.html"><i class="fa fa-check"></i><b>15</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
-<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
-<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
-<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
-<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-1"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-2"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-3"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-2"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-4"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: over-parameterization of normal mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-3"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-5"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-4"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -146,25 +188,31 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="truncation-how-does-stan-deal-with-truncation" class="section level1">
-<h1><span class="header-section-number">17</span> Truncation: How does Stan deal with truncation?</h1>
-<p>See <span class="citation">Stan Development Team (<a href="#ref-Stan2016a">2016</a>)</span>, Chapter 11 “Truncated or Censored Data” for more on how Stan handles truncation and censoring.</p>
+<h1><span class="header-section-number">18</span> Truncation: How does Stan deal with truncation?</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
-<p>Assume we have the observations, <span class="math inline">\(y = 1,...,9\)</span>, from a Normal population with unknown mean and variance, subject to the constraint that <span class="math inline">\(y &lt; 10\)</span>, <span class="math display">\[
+<p>Suppose we observed <span class="math inline">\(y = (1, \dots, 9)\)</span>,<a href="#fn15" class="footnoteRef" id="fnref15"><sup>15</sup></a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">9</span></code></pre></div>
+<p>These observations are drawn from a population distributed normal with unknown mean (<span class="math inline">\(\mu\)</span>) and variance (<span class="math inline">\(\sigma^2\)</span>), with the constraint that <span class="math inline">\(y &lt; 10\)</span>, <span class="math display">\[
 \begin{aligned}[t]
-y &amp;\sim \mathsf{Normal}(\mu, \sigma^2) I(-\infty, 10) .
+y_i &amp;\sim \mathsf{Normal}(\mu, \sigma^2) I(-\infty, 10) .
 \end{aligned}
 \]</span></p>
-<p>Ignoring the constraint, the MLEs for the mean and variance are 5 and 6.67; with the constraint taken into account, each observation makes likelihood contribution <span class="math display">\[
-f (y; m, s_2)/F ((k - m)/s),
-\]</span> where <span class="math inline">\(k\)</span> is the truncation point (in this case, 10), and the MLEs of <span class="math inline">\(m, s_2\)</span> are 5.32 and 8.28.</p>
+<p>With the censoring taken into account, the log likelihood is <span class="math display">\[
+\log L(y; \mu, \sigma) = \sum_{i = 1}^n \left( \log \phi(y_i; \mu, \sigma^2) - \log\Phi(y_i; \mu, \sigma^2) \right)
+\]</span> where <span class="math inline">\(\phi\)</span> is the normal distribution PDF, and <span class="math inline">\(\Phi\)</span> is the normal distribution $</p>
 <p>The posterior of this model is not well identified by the data, so the mean, <span class="math inline">\(\mu\)</span>, and scale, <span class="math inline">\(\sigma\)</span>, are given informative priors based on the data, <span class="math display">\[
 \begin{aligned}[t]
 \mu &amp;\sim \mathsf{Normal}(\bar{y}, s_y) ,\\
 \sigma &amp;\sim \mathsf{HalfCauchy}(0, s_y) .
 \end{aligned}
-\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of <span class="math inline">\(y\)</span>, and <span class="math inline">\(s_y\)</span> is the standard deviation of <span class="math inline">\(y\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/SingleTruncation.stan&quot;</span>)</code></pre></div>
+\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of <span class="math inline">\(y\)</span>, and <span class="math inline">\(s_y\)</span> is the standard deviation of <span class="math inline">\(y\)</span>. Alternatively, we could have standardized the data prior to estimation.</p>
+<div id="stan-model" class="section level2">
+<h2><span class="header-section-number">18.1</span> Stan Model</h2>
+<p>See <span class="citation">Stan Development Team (<a href="#ref-Stan2016a">2016</a>)</span>, Chapter 11 “Truncated or Censored Data” for more on how Stan handles truncation and censoring. In Stan the <code>T</code> operator used in sampling statement,</p>
+<pre><code>y ~ distribution(...) T[upper, lower];</code></pre>
+<p>is used to adjust the log-posterior contribution for truncation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncate_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/truncated.stan&quot;</span>)</code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -186,17 +234,20 @@ model {
   }
 }</code>
 </pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">9</span>
+</div>
+<div id="estimation-3" class="section level2">
+<h2><span class="header-section-number">18.2</span> Estimation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncate_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>y
   N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
   U &lt;-<span class="st"> </span><span class="dv">10</span>
   mu_mean &lt;-<span class="st"> </span><span class="kw">mean</span>(y)
   mu_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
   sigma_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
 })</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(truncation_mod, <span class="dt">data =</span> truncation_data)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit
-<span class="co">#&gt; Inference for Stan model: SingleTruncation.</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncate_fit1 &lt;-<span class="st"> </span><span class="kw">sampling</span>(truncate_mod, <span class="dt">data =</span> truncate_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncate_fit1
+<span class="co">#&gt; Inference for Stan model: truncated.</span>
 <span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
 <span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
 <span class="co">#&gt; </span>
@@ -205,7 +256,7 @@ model {
 <span class="co">#&gt; sigma   3.76    0.04 1.39   1.97   2.80   3.46   4.40   7.20  1250    1</span>
 <span class="co">#&gt; lp__  -13.54    0.03 1.08 -16.30 -13.99 -13.22 -12.75 -12.44  1258    1</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 08:42:27 2017.</span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Tue Jun  6 23:42:17 2017.</span>
 <span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
 <span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
 <span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
@@ -216,7 +267,7 @@ y_i &amp;\sim \mathsf{Normal}(\mu, \sigma^2), \\
 \sigma &amp;\sim \mathsf{HalfCauchy}(0, s_y) .
 \end{aligned}
 \]</span></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/normal.stan&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncate_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/normal.stan&quot;</span>)</code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -235,9 +286,9 @@ model {
   y ~ normal(mu, sigma);
 }</code>
 </pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit2 &lt;-
-<span class="st">  </span><span class="kw">sampling</span>(truncation_mod2, <span class="dt">data =</span> truncation_data)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncation_fit2
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncate_fit2 &lt;-
+<span class="st">  </span><span class="kw">sampling</span>(truncate_mod2, <span class="dt">data =</span> truncate_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">truncate_fit2
 <span class="co">#&gt; Inference for Stan model: normal.</span>
 <span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
 <span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
@@ -247,11 +298,47 @@ model {
 <span class="co">#&gt; sigma   2.97    0.02 0.79   1.87   2.42   2.82   3.33   4.96  1836    1</span>
 <span class="co">#&gt; lp__  -13.77    0.03 1.05 -16.69 -14.16 -13.45 -13.03 -12.75  1265    1</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 08:42:30 2017.</span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Tue Jun  6 23:42:20 2017.</span>
 <span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
 <span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
 <span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+<p>We can compare the densities for <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> in each of these models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot_density &lt;-<span class="st"> </span><span class="cf">function</span>(par) {
+  <span class="kw">bind_rows</span>(
+    <span class="kw">tibble</span>(<span class="dt">value =</span> rstan<span class="op">::</span><span class="kw">extract</span>(truncate_fit1, <span class="dt">par =</span> par)[[<span class="dv">1</span>]],
+            <span class="dt">model =</span> <span class="st">&quot;truncated&quot;</span>),
+    <span class="kw">tibble</span>(<span class="dt">value =</span> rstan<span class="op">::</span><span class="kw">extract</span>(truncate_fit2, <span class="dt">par =</span> par)[[<span class="dv">1</span>]],
+            <span class="dt">model =</span> <span class="st">&quot;non-truncated&quot;</span>)
+  ) <span class="op">%&gt;%</span>
+<span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">colour =</span> model, <span class="dt">fill =</span> model)) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_density</span>(<span class="dt">alpha =</span> <span class="fl">0.3</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">eval</span>(<span class="kw">bquote</span>(<span class="kw">expression</span>(.(<span class="kw">as.name</span>(par)))))) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_density</span>(<span class="st">&quot;mu&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="truncated_files/figure-html/truncate_plot_density_mu-1.png" alt="Posterior density of $\mu$ when estimated with and without truncation" width="70%" />
+<p class="caption">
+Posterior density of <span class="math inline">\(\mu\)</span> when estimated with and without truncation
+</p>
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_density</span>(<span class="st">&quot;sigma&quot;</span>)</code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="truncated_files/figure-html/truncate_plot_density_sigma-1.png" alt="Posterior density of $\sigma$ when estimated with and without truncation" width="70%" />
+<p class="caption">
+Posterior density of <span class="math inline">\(\sigma\)</span> when estimated with and without truncation
+</p>
+</div>
+</div>
+<div id="questions-5" class="section level2">
+<h2><span class="header-section-number">18.3</span> Questions</h2>
+<ol style="list-style-type: decimal">
+<li>How are the densities of <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> different under the two models? Why are they different?</li>
+<li>Re-estimate the model with improper uniform priors for <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>. How do the posterior distributions change?</li>
+<li>Suppose that the truncation points are unknown. Write a Stan model and estimate. See <span class="citation">Stan Development Team (<a href="#ref-Stan2016a">2016</a>)</span>, Section 11.2 “Unknown Truncation Points” for how to write such a model. How important is the prior you place on the truncation points?</li>
+</ol>
 
+</div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
@@ -259,14 +346,21 @@ model {
 <p>Stan Development Team. 2016. <em>Stan Modeling Language Users Guide and Reference Manual, Version 2.14.0</em>. <a href="https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf" class="uri">https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf</a>.</p>
 </div>
 </div>
+<div class="footnotes">
+<hr />
+<ol start="15">
+<li id="fn15"><p>This example is derived from Simon Jackman. “Truncation: How does WinBUGS deal with truncation?” <em>BUGS Examples</em>, 2007-07-24, <a href="https://web-beta.archive.org/web/20070724034035/http://jackman.stanford.edu:80/mcmc/SingleTruncation.odc">URL</a>.<a href="truncation-how-does-stan-deal-with-truncation.html#fnref15">↩</a></p></li>
+</ol>
+</div>
             </section>
 
           </div>
         </div>
       </div>
 <a href="engines-right-censored-failure-times.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="genbeetles.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="genbeetles.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -309,7 +403,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

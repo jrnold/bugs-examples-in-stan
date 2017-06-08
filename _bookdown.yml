@@ -17,7 +17,7 @@ rmd_files:
 - campaign.Rmd
 - aspirin.Rmd
 - corporatism.Rmd
-- bimodal.Rmd
+# - bimodal.Rmd
 - unidentified.Rmd
 - engines.Rmd
 - truncated.Rmd
@@ -25,5 +25,4 @@ rmd_files:
 - genbeetles.Rmd
 - negbin.Rmd
 - multivarmissing.Rmd
-- llg.Rmd
 - references.Rmd

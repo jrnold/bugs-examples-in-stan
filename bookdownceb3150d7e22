@@ -86,5 +86,3 @@ bimodal_fit <- sampling(bimodal_mod, data = bimodal_data,
 bimodal_fit
 ```
 
-
-This example is derived from Simon Jackman, "Bimodal: Extreme missingness in bivariate normal data", [URL](https://web-beta.archive.org/web/20070724034055/http://jackman.stanford.edu:80/mcmc/bimodal.odc).

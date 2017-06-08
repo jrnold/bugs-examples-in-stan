@@ -5,7 +5,7 @@ library("tidyverse")
 library("rstan")
 ```
 
-Outlying data points can distort estimates of location, such as means or regression coefficients.
+Outlying data points can distort estimates of location, such as means or regression coefficients.[^resistant-src]
 Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers).
 A popular alternative to normal errors in regression analyses is the Student's $t$ density, with an unknown degrees of freedom parameter.
 For low degrees of freedom, the Student's $t$ distribution has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases.
@@ -85,3 +85,5 @@ summary(resistant_fit, par = c("nu", "sigma", "beta", "tau"))$summary
 ## Questions {-}
 
 1. How does using the Student-t distribution compare to using a normal distribution for the errors?
+
+[^resistant-src]: Example derived from Simon Jackman, "Resistant: Outlier-resistant regression via the t distribution," 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034107/http://jackman.stanford.edu:80/mcmc/resistant.odc).

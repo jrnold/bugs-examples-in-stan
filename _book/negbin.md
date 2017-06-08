@@ -9,6 +9,7 @@ library("rstanarm")
 ```
 
 The data  are  from the 1990 United States Census for the city of St. Louis, Missouri for Census Tracts, and from records of the St. Louis City Metropolitan Police Department for the years 1980 through 1994. For each Census Tract (with a population), N=111, an observation includes
+
 - the median household income in 1990
 - the percentage unemployed (base of labor force)
 - a count of the number of homicide incidents.
@@ -121,7 +122,7 @@ summary(negbin_fit, par = c("alpha", "beta", "phi"))$summary
 #> phi     1.001
 ```
 
-We could also fit the model using the **[rstanarm](https://cran.r-project.org/package=rstanarm)** function [rstanarm](https://www.rdocumentation.org/packages/rstanarm/topics/stan_glm.nb),
+We could also fit the model using the **rstanarm** function `stan_glm.nb` (or `stan_glm`):
 
 ```r
 negbin_fit2 <- stan_glm.nb(i8094 ~ pcunemp9 + incrs, data = st_louis_census)
@@ -149,3 +150,6 @@ negbin_fit2
 #> ------
 #> For info on the priors used see help('prior_summary.stanreg').
 ```
+
+
+Example derived from Simon Jackman, "negative binomial using the ones trick with log link", 2005-10-27, [URL](https://web-beta.archive.org/web/20051027082311/http://jackman.stanford.edu:80/mcmc/negbineg.odc).

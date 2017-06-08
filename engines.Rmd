@@ -1,8 +1,95 @@
 # Engines: right-censored failure times
 
-Forty motors were tested at various operating temperatures, and failure times were noted; 23 of the motors had not failed at the end of the observational period (i.e., the failure times for these observations are right-censored) [@Tanner1996a]. Substantive interest is in the regression of failure times on operating temperature; the statistical issue is how to obtain estimates of the regression parameters given the right-censoring.
-
-```{r}
-list(y=c(3.2464985807958, 3.44279322593977, 3.53706314278162, 3.54924855685406, 3.57749179983722, 3.68663626926229, 3.71566914240099, 2.61066016308988, 2.61066016308988, 3.12839926871781, 3.12839926871781, 3.15836249209525, 2.61066016308988, 2.61066016308988, 2.70243053644553, 2.70243053644553, 2.70243053644553, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA), x=c(2.25631768953069, 2.25631768953069, 2.25631768953069, 2.25631768953069, 2.25631768953069, 2.25631768953069, 2.25631768953069, 2.15889464594128, 2.15889464594128, 2.15889464594128, 2.15889464594128, 2.15889464594128, 2.02757502027575, 2.02757502027575, 2.02757502027575, 2.02757502027575, 2.02757502027575, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.36294896030246, 2.25631768953069, 2.25631768953069, 2.25631768953069, 2.15889464594128, 2.15889464594128, 2.15889464594128, 2.15889464594128, 2.15889464594128, 2.02757502027575, 2.02757502027575, 2.02757502027575, 2.02757502027575, 2.02757502027575), cens=c(3.2464985807958, 3.44279322593977, 3.53706314278162, 3.54924855685406, 3.57749179983722, 3.68663626926229, 3.71566914240099, 2.61066016308988, 2.61066016308988, 3.12839926871781, 3.12839926871781, 3.15836249209525, 2.61066016308988, 2.61066016308988, 2.70243053644553, 2.70243053644553, 2.70243053644553, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.90655051910145, 3.73623709890473, 3.73623709890473, 3.73623709890473, 3.22530928172586, 3.22530928172586, 3.22530928172586, 3.22530928172586, 3.22530928172586, 2.72263392253381, 2.72263392253381, 2.72263392253381, 2.72263392253381, 2.72263392253381), N.OK=17, N=40)
+```{r engines_setup,message=FALSE}
+library("tidyverse")
+library("rstan")
 ```
 
+
+## Data
+
+The data are 40 engines tested at various operating temptures, with the the failure time if the engine failed, or the last time of the observational period if it had not [@Tanner1996a].[^engines-src]
+Of the 40 engines, 23 did not fail in their observational periods.
+```{r engines,cache.extra=tools::md5sum("data/engines.rda")}
+load("data/engines.rda")
+glimpse(engines)
+```
+
+
+## Model
+
+Let $y^*$ be the failure time of engine $i$.
+The failure times are modeled as a regression with normal errors,
+$$
+\begin{aligned}[t]
+y^*_i &\sim \mathsf{Normal}(\mu_i, \sigma) , \\
+\mu_i &= \alpha + \beta x_i .
+\end{aligned}
+$$
+However, the failure times are not always observed.
+In some cases, only the last observation time is known, meaning that all is known is $y^*_i > y_i$.
+Let $L$ be the set of censored observation.
+$$
+\begin{aligned}[t]
+y_i &\sim \mathsf{Normal}(\mu_i, \sigma) & i \notin L, \\
+y^*_i &\sim \mathsf{Normal}(\mu_i, \sigma) U(y_i, \infty) & i \in L, \\
+\mu_i &= \alpha + \beta x_i .
+\end{aligned}
+$$
+
+
+$$
+\begin{aligned}[t]
+\log L(y_i, \dots, y_N | \alpha, \beta, \sigma) &=  \sum_{i \notin L} \log \mathsf{Normal}(y_i; \mu_i, \Sigma) \\
+&\quad + \sum_{i \in L} \log \int_{y_i}^{\infty} \mathsf{Normal}(y^*; \mu_i, \Sigma) d\,y^* ,
+\end{aligned}
+$$
+where
+$$
+\mu_i = \alpha + \beta x .
+$$
+
+```{r mod_engines,results='hide',cache.extra=tools::md5sum("data/engines.stan")}
+mod_engines <- stan_model("stan/engines.stan")
+```
+```{r results='asis'}
+mod_engines
+```
+
+
+## Estimation
+
+For the input data to the Stan model, the observations that are observed and censored have to be provided in separate vectors.
+```{r }
+X <- scale(engines$x)
+
+engines_data <- within(list(), {
+  N <- nrow(engines)
+  # observed obs
+  y_obs <- engines$y[!engines$censored]
+  N_obs <- length(y_obs)
+  X_obs <- X[!engines$censored, , drop = FALSE]
+  K <- ncol(X_obs)
+  # censored obs
+  y_cens <- engines$y[engines$censored]  
+  N_cens <- length(y_cens)
+  X_cens <- X[engines$censored, , drop = FALSE]
+  # priors
+  # use the mean and sd of y to roughly scale the weakly informative
+  # priors -- these don't account for  need to exact
+  alpha_loc <- mean(engines$y)
+  alpha_scale <- 10 * sd(engines$y)
+  beta_loc <- array(0)
+  beta_scale <- array(2.5 * sd(engines$y))
+  sigma_scale <- 5 * sd(y_obs)
+})
+```
+
+```{r}
+sampling(mod_engines, data = engines_data,
+         chains = 1, init = list(list(alpha = mean(engines$y))))
+```
+
+
+[^engines-src]: This example is derived from Simon Jackman, "Engines: right-censored failure times - the I(,) construct contrasted with other approaches", 2007-07-24,
+[URL](https://web-beta.archive.org/web/20070724034205/http://jackman.stanford.edu:80/mcmc/engines.odc)

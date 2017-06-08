@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -26,16 +25,15 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2017-05-31">
+<meta name="date" content="2017-06-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="cancer.html">
+<link rel="prev" href="a-tibble-2-x-3.html">
 <link rel="next" href="turnout.html">
-
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -103,30 +102,73 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
 <li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
-<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
-<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a><ul>
-<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
-<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
-<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
-<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
-<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
-<li class="chapter" data-level="10" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</a><ul>
-<li class="chapter" data-level="" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#datas"><i class="fa fa-check"></i><b>5.1</b> Datas</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate t density</a></li>
-<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
-<li class="chapter" data-level="13" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</a><ul>
-<li class="chapter" data-level="13.1" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#data"><i class="fa fa-check"></i><b>13.1</b> data</a></li>
-<li class="chapter" data-level="13.2" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#initial-values"><i class="fa fa-check"></i><b>13.2</b> initial values</a></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</a></li>
-<li class="chapter" data-level="15" data-path="bimodal.html"><a href="bimodal.html"><i class="fa fa-check"></i><b>15</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
-<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
-<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
-<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
-<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-1"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-2"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-3"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-2"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-4"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: over-parameterization of normal mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-3"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-5"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-4"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -146,9 +188,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="florida" class="section level1">
-<h1><span class="header-section-number">3</span> Florida: Learning About an Unknown Proportion from Survey Data</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
-<p>This is an learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign <span class="citation">(Jackman <a href="#ref-Jackman2004a">2004</a>)</span>.</p>
+<h1><span class="header-section-number">4</span> Florida: Learning About an Unknown Proportion from Survey Data</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
+<p>In this example, beliefs about an unknown proportion are updated from new survey data. The particular example is using survey update beliefs about support for Bush in Florida in the 2000 presidential election campaign <span class="citation">(Jackman <a href="#ref-Jackman2004a">2004</a>)</span>.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">florida_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/florida.stan&quot;</span>)</code></pre></div>
 <pre>
   <code class="stan">data {
@@ -195,14 +238,21 @@ model {
 <p>Jackman, Simon. 2004. “Bayesian Analysis for Political Research.” <em>Annual Review of Political Science</em> 7 (1). Annual Reviews: 483–505. doi:<a href="https://doi.org/10.1146/annurev.polisci.7.012003.104706">10.1146/annurev.polisci.7.012003.104706</a>.</p>
 </div>
 </div>
+<div class="footnotes">
+<hr />
+<ol start="2">
+<li id="fn2"><p>This example is derived from Simon Jackman, “Florida,” <em>BUGS Examples,</em> 2007-07-24, <a href="https://web-beta.archive.org/web/20070724034219/http://jackman.stanford.edu/mcmc/florida.zip">URL</a>.<a href="florida.html#fnref2">↩</a></p></li>
+</ol>
+</div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="cancer.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="turnout.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="a-tibble-2-x-3.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="turnout.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -245,7 +295,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

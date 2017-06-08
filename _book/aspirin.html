@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="multivarmissing.html">
-
+<link rel="prev" href="campaign.html">
+<link rel="next" href="corporatism.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -187,143 +187,211 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
+<div id="aspirin" class="section level1">
+<h1><span class="header-section-number">14</span> Aspirin: Borrowing Strength via Hierarchical Modeling</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
+<p>The following data come from a meta-analysis of heart attack data,<a href="#fn12" class="footnoteRef" id="fnref12"><sup>12</sup></a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin &lt;-<span class="st"> </span>
+<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">y =</span> <span class="kw">c</span>(<span class="fl">2.77</span>, <span class="fl">2.50</span>, <span class="fl">1.84</span>, <span class="fl">2.56</span>, <span class="fl">2.31</span>, <span class="op">-</span><span class="fl">1.15</span>),
+         <span class="dt">sd =</span> <span class="kw">c</span>(<span class="fl">1.65</span>, <span class="fl">1.31</span>, <span class="fl">2.34</span>, <span class="fl">1.67</span>, <span class="fl">1.98</span>, <span class="fl">0.90</span>))</code></pre></div>
+<p>Each observation is the results of a study of survivorship following a heart attack (myocardial infarction). In each study, some victims were given aspirin immediately following their heart attack, while some victims were not. The observed values of <span class="math inline">\(y\)</span> are the differences in mean survivorship observed in each study. Additionally each study provided a standard deviations, derived from the relative sizes of the two groups in each study. <span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;\sim \mathsf{Normal}(\theta_i, s_i) , \\
+\theta_i &amp;\sim \mathsf{Normal}(\mu, \tau) ,
+\end{aligned}
+\]</span> where <span class="math inline">\(y_i\)</span> is the mean of each study, and <span class="math inline">\(s_i\)</span> is the standard deviation for each study. Weakly informative priors are given to the parameters <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\tau\)</span>, <span class="math display">\[
+\begin{aligned}[t]
+\mu &amp;\sim \mathsf{Normal}(\bar{y}, 10 s_y) , \\
+\tau &amp;\sim \mathsf{HalfCauchy}(0, 5 s_y) ,
+\end{aligned}
+\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of <span class="math inline">\(y\)</span>, and <span class="math inline">\(s_y\)</span> is the standard deviation of <span class="math inline">\(y\)</span>.</p>
+<p>Although the data are binomial, the sample sizes are large enough in each study that the normal approximation is valid. This simplifies the problem by reducing each study’s data to the observed treatment effect and a standard deviation. The goal of the meta-analysis is to synthesize the six studies, in order to arrive at an overall estimate of the effects of aspirin on survivorship following a heart attack.</p>
+<p>This is a simple example of hierarchical modeling. Via the exchangeability assumption, that the study-specific means have a common prior, the studies “borrow strength” from one another. This introducing some bias, since each study’s mean mean is shrunk back towards the common mean. However, the benefit is gaining precision (smaller variance). We also gain a better estimate of the overall effect of aspirin on survivorship after heart attack than we would get from naively pooling the studies or using the estimate of any one study.</p>
+<p>The Stan model for the above model is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/aspirin.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  vector[N] y;
+  vector[N] s;
+  real mu_loc;
+  real<lower = 0.> mu_scale;
+  real<lower = 0.> tau_scale;
+  real<lower = 0.> tau_df;
+}
+parameters {
+  vector[N] theta;
+  real mu;
+  real<lower = 0.> tau;
+}
+model {
+  mu ~ normal(mu_loc, mu_scale);
+  tau ~ student_t(tau_df, 0., tau_scale);
+  theta ~ normal(mu, tau);
+  y ~ normal(theta, s);
+}
+generated quantities {
+  vector[N] shrinkage;
+  {
+    real tau2;
+    tau2 = pow(tau, 2.);
+    for (i in 1:N) {
+      real v;
+      v = pow(s[i], 2);
+      shrinkage[i] = v / (v + tau2);
+    }
+  }
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>aspirin<span class="op">$</span>y
+  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(aspirin)
+  s &lt;-<span class="st"> </span>aspirin<span class="op">$</span>sd
+  mu_loc &lt;-<span class="st"> </span><span class="kw">mean</span>(y)
+  mu_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
+  tau_scale &lt;-<span class="st"> </span><span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
+  tau_df &lt;-<span class="st"> </span><span class="dv">4</span>
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(aspirin_mod, <span class="dt">data =</span> aspirin_data)
+<span class="co">#&gt; Warning: There were 39 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span>
+<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
+<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_fit
+<span class="co">#&gt; Inference for Stan model: aspirin.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;               mean se_mean   sd   2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
+<span class="co">#&gt; theta[1]      2.07    0.03 1.27  -0.25  1.21  1.98  2.88  4.72  2115 1.00</span>
+<span class="co">#&gt; theta[2]      2.03    0.02 1.11  -0.14  1.28  2.00  2.81  4.25  2038 1.00</span>
+<span class="co">#&gt; theta[3]      1.60    0.03 1.51  -1.29  0.62  1.56  2.56  4.73  2948 1.00</span>
+<span class="co">#&gt; theta[4]      1.99    0.03 1.27  -0.42  1.12  1.92  2.84  4.57  2350 1.00</span>
+<span class="co">#&gt; theta[5]      1.82    0.03 1.34  -0.82  0.94  1.79  2.69  4.51  2746 1.00</span>
+<span class="co">#&gt; theta[6]     -0.43    0.03 0.92  -2.25 -1.04 -0.44  0.20  1.36   732 1.00</span>
+<span class="co">#&gt; mu            1.51    0.02 1.04  -0.42  0.85  1.48  2.13  3.64  1758 1.00</span>
+<span class="co">#&gt; tau           1.80    0.03 0.97   0.47  1.13  1.62  2.27  4.22   807 1.00</span>
+<span class="co">#&gt; shrinkage[1]  0.52    0.01 0.22   0.13  0.35  0.51  0.68  0.92   570 1.01</span>
+<span class="co">#&gt; shrinkage[2]  0.42    0.01 0.22   0.09  0.25  0.40  0.57  0.88   448 1.01</span>
+<span class="co">#&gt; shrinkage[3]  0.65    0.01 0.20   0.24  0.51  0.68  0.81  0.96   714 1.00</span>
+<span class="co">#&gt; shrinkage[4]  0.52    0.01 0.22   0.14  0.35  0.52  0.68  0.93   575 1.01</span>
+<span class="co">#&gt; shrinkage[5]  0.59    0.01 0.21   0.18  0.43  0.60  0.75  0.95   640 1.00</span>
+<span class="co">#&gt; shrinkage[6]  0.29    0.01 0.20   0.04  0.14  0.24  0.39  0.78   332 1.01</span>
+<span class="co">#&gt; lp__         -7.52    0.12 2.61 -13.12 -9.09 -7.39 -5.78 -2.64   448 1.00</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Tue Jun  6 23:38:43 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+<p>Note that this model is likely to produce divergent transitions. The reasons for this and an alternative parameterization is discussed in the next section.</p>
+<div id="non-centered-parameterization" class="section level2">
+<h2><span class="header-section-number">14.1</span> Non-centered parameterization</h2>
+<p>For few data, when there are not many groups, or when inter-group variation is high, it can be more efficient to use the non-centered parameterization. See <span class="citation">Stan Development Team (<a href="#ref-Stan2016a">2016</a>, 331)</span> and <span class="citation">Betancourt and Girolami (<a href="#ref-BetancourtGirolami2013a">2013</a>)</span> for a more detailed discussion of this.</p>
+<p>The non-centered parameterization is <span class="math display">\[
+\begin{aligned}[t]
+\theta_i^* &amp;\sim \mathsf{Normal}(0, 1) , \\
+\theta_i &amp;= \tau \theta^*_i + \mu .
+\end{aligned}
+\]</span></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/aspirin2.stan&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_mod2</code></pre></div>
+<pre>
+  <code class="stan">data {
+  int N;
+  vector[N] y;
+  vector[N] s;
+  real mu_loc;
+  real<lower = 0.> mu_scale;
+  real<lower = 0.> tau_scale;
+  real<lower = 0.> tau_df;
+}
+parameters {
+  vector[N] theta_raw;
+  real mu;
+  real<lower = 0.> tau;
+}
+transformed parameters {
+  vector[N] theta;
+  theta = tau * theta_raw + mu;
+}
+model {
+  mu ~ normal(mu_loc, mu_scale);
+  tau ~ student_t(tau_df, 0., tau_scale);
+  theta_raw ~ normal(0., 1.);
+  y ~ normal(theta, s);
+}
+generated quantities {
+  vector[N] shrinkage;
+  {
+    real tau2;
+    tau2 = pow(tau, 2.);
+    for (i in 1:N) {
+      real v;
+      v = pow(s[i], 2);
+      shrinkage[i] = v / (v + tau2);
+    }
+  }
+}</code>
+</pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(aspirin_mod2, <span class="dt">data =</span> aspirin_data,
+                        <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.99</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aspirin_fit2
+<span class="co">#&gt; Inference for Stan model: aspirin2.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;               mean se_mean   sd   2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
+<span class="co">#&gt; theta_raw[1]  0.30    0.01 0.80  -1.27 -0.23  0.30  0.83  1.85  3096    1</span>
+<span class="co">#&gt; theta_raw[2]  0.31    0.02 0.73  -1.11 -0.16  0.31  0.78  1.80  2214    1</span>
+<span class="co">#&gt; theta_raw[3]  0.02    0.01 0.87  -1.63 -0.56  0.01  0.60  1.74  3497    1</span>
+<span class="co">#&gt; theta_raw[4]  0.27    0.02 0.78  -1.27 -0.24  0.29  0.79  1.86  2479    1</span>
+<span class="co">#&gt; theta_raw[5]  0.15    0.02 0.80  -1.43 -0.38  0.14  0.71  1.71  2600    1</span>
+<span class="co">#&gt; theta_raw[6] -1.16    0.02 0.76  -2.69 -1.64 -1.16 -0.68  0.27  1670    1</span>
+<span class="co">#&gt; mu            1.52    0.03 1.01  -0.41  0.87  1.46  2.10  3.71  1287    1</span>
+<span class="co">#&gt; tau           1.69    0.03 0.97   0.20  1.03  1.54  2.17  4.08  1276    1</span>
+<span class="co">#&gt; theta[1]      2.02    0.02 1.29  -0.33  1.11  1.93  2.83  4.85  4000    1</span>
+<span class="co">#&gt; theta[2]      2.00    0.02 1.08  -0.03  1.24  1.97  2.72  4.18  4000    1</span>
+<span class="co">#&gt; theta[3]      1.54    0.03 1.49  -1.36  0.62  1.49  2.47  4.55  3434    1</span>
+<span class="co">#&gt; theta[4]      1.96    0.02 1.28  -0.34  1.07  1.86  2.77  4.70  4000    1</span>
+<span class="co">#&gt; theta[5]      1.78    0.02 1.34  -0.64  0.84  1.70  2.64  4.68  4000    1</span>
+<span class="co">#&gt; theta[6]     -0.34    0.01 0.94  -2.21 -0.97 -0.34  0.32  1.44  4000    1</span>
+<span class="co">#&gt; shrinkage[1]  0.54    0.01 0.23   0.14  0.37  0.54  0.72  0.98  1274    1</span>
+<span class="co">#&gt; shrinkage[2]  0.46    0.01 0.24   0.09  0.27  0.42  0.62  0.98  1189    1</span>
+<span class="co">#&gt; shrinkage[3]  0.68    0.01 0.20   0.25  0.54  0.70  0.84  0.99  1322    1</span>
+<span class="co">#&gt; shrinkage[4]  0.55    0.01 0.23   0.14  0.37  0.54  0.73  0.99  1276    1</span>
+<span class="co">#&gt; shrinkage[5]  0.62    0.01 0.22   0.19  0.45  0.62  0.79  0.99  1302    1</span>
+<span class="co">#&gt; shrinkage[6]  0.32    0.01 0.23   0.05  0.15  0.26  0.43  0.95  1076    1</span>
+<span class="co">#&gt; lp__         -5.16    0.08 2.57 -11.25 -6.61 -4.77 -3.28 -1.23   969    1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Tue Jun  6 23:39:42 2017.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
 
+</div>
+</div>
+<h3>References</h3>
 <div id="refs" class="references">
-<div>
-<p>Aitchison, J. 1982. “The Statistical Analysis of Compositional Data.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 44 (2). [Royal Statistical Society, Wiley]: 139–77. <a href="http://www.jstor.org/stable/2345821" class="uri">http://www.jstor.org/stable/2345821</a>.</p>
-</div>
-<div>
-<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP): 747–69. doi:<a href="https://doi.org/10.1093/biomet/82.4.747">10.1093/biomet/82.4.747</a>.</p>
-</div>
-<div>
-<p>Alvarez, R. Michael, Geoffrey Garrett, and Peter Lange. 1991. “Government Partisanship, Labor Organization, and Macroeconomic Performance.” <em>The American Political Science Review</em> 85 (2). [American Political Science Association, Cambridge University Press]: 539–56. <a href="http://www.jstor.org/stable/1963174" class="uri">http://www.jstor.org/stable/1963174</a>.</p>
-</div>
-<div>
-<p>Betancourt, M. J., and Mark Girolami. 2013. “Hamiltonian Monte Carlo for Hierarchical Models,” December. <a href="http://arxiv.org/abs/1312.0906v1" class="uri">http://arxiv.org/abs/1312.0906v1</a>.</p>
-</div>
-<div>
-<p>Bliss, C. I. 1935. “The Calculation of the Dosage-Mortality Curve.” <em>Annals of Applied Biology</em> 22 (1). Wiley-Blackwell: 134–67. doi:<a href="https://doi.org/10.1111/j.1744-7348.1935.tb07713.x">10.1111/j.1744-7348.1935.tb07713.x</a>.</p>
-</div>
-<div>
-<p>Carlin, Bradley P., and Thomas A. Louis. 2000. <em>Bayes and Empirical Bayes Methods for Data Analysis</em>. 2nd ed. Chapman; Hall/CRC.</p>
-</div>
-<div>
-<p>Dorn, Harold F. 1954. “The Relationship of Cancer of the Lung and the Use of Tobacco.” <em>The American Statistician</em> 8 (5). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 7–13. <a href="http://www.jstor.org/stable/2681545" class="uri">http://www.jstor.org/stable/2681545</a>.</p>
-</div>
-<div>
-<p>Draper, IDavid. 1992. <em>Combining Information: Statistical Issues and Opportunities for Research</em>. Contemporary Statistics. National Academy Press. <a href="https://books.google.com/books?id=l0ArAAAAYAAJ" class="uri">https://books.google.com/books?id=l0ArAAAAYAAJ</a>.</p>
-</div>
-<div>
-<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell: 247–68. doi:<a href="https://doi.org/10.1111/1467-9876.00190">10.1111/1467-9876.00190</a>.</p>
-</div>
-<div>
-<p>Grunberg, Gérard, Nonna Mayer, and Paul M. Sniderman. 2002. <em>La Démocratie à L’épreuve : Une Nouvelle Approche de L’opinion Des Français</em>. Fnsp - Presse de la.</p>
-</div>
-<div>
-<p>Hanmer, Michael J., and Kerem Ozan Kalkan. 2012. “Behind the Curve: Clarifying the Best Approach to Calculating Predicted Probabilities and Marginal Effects from Limited Dependent Variable Models.” <em>American Journal of Political Science</em> 57 (1). Wiley-Blackwell: 263–77. doi:<a href="https://doi.org/10.1111/j.1540-5907.2012.00602.x">10.1111/j.1540-5907.2012.00602.x</a>.</p>
-</div>
-<div>
-<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP): 83–98. doi:<a href="https://doi.org/10.1093/oxfordjournals.pan.a029806">10.1093/oxfordjournals.pan.a029806</a>.</p>
-</div>
-<div>
-<p>———. 2010. “Replication Data for: Post-Estimation Uncertainty in Limited Dependent Variable Models.” Harvard Dataverse. doi:<a href="https://doi.org/1902.1/11199">1902.1/11199</a>.</p>
-</div>
-<div>
-<p>Jackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” <em>Political Analysis</em> 8 (4). [Oxford University Press, Society for Political Methodology]: 307–32. <a href="http://www.jstor.org/stable/25791616" class="uri">http://www.jstor.org/stable/25791616</a>.</p>
-</div>
-<div>
-<p>———. 2004. “Bayesian Analysis for Political Research.” <em>Annual Review of Political Science</em> 7 (1). Annual Reviews: 483–505. doi:<a href="https://doi.org/10.1146/annurev.polisci.7.012003.104706">10.1146/annurev.polisci.7.012003.104706</a>.</p>
-</div>
-<div>
-<p>———. 2005. “Pooling the Polls over an Election Campaign.” <em>Australian Journal of Political Science</em> 40 (4). Informa UK Limited: 499–517. doi:<a href="https://doi.org/10.1080/10361140500302472">10.1080/10361140500302472</a>.</p>
-</div>
-<div>
-<p>———. 2009. <em>Bayesian Analysis for the Social Sciences</em>. John Wiley; Sons Ltd.</p>
-</div>
-<div>
-<p>Johnson, Valen E., and James H. Albert. 1999. <em>Ordinal Data Modeling</em>. Springer-Verlag. doi:<a href="https://doi.org/10.1007/b98832">10.1007/b98832</a>.</p>
-</div>
-<div>
-<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited: 52–66. doi:<a href="https://doi.org/10.1198/jbes.2009.07145">10.1198/jbes.2009.07145</a>.</p>
-</div>
-<div>
-<p>Katz, Jonathan N., and Gary King. 1999. “A Statistical Model for Multiparty Electoral Data.” <em>American Political Science Review</em> 93 (01). Cambridge University Press (CUP): 15–32. doi:<a href="https://doi.org/10.2307/2585758">10.2307/2585758</a>.</p>
-</div>
-<div>
-<p>King, Gary, Michael Tomz, and Jason Wittenberg. 2000. “Making the Most of Statistical Analyses: Improving Interpretation and Presentation.” <em>American Journal of Political Science</em> 44 (2). [Midwest Political Science Association, Wiley]: 347–61. <a href="http://www.jstor.org/stable/2669316" class="uri">http://www.jstor.org/stable/2669316</a>.</p>
-</div>
-<div>
-<p>Krehbiel, Keith. 1995. “Cosponsors and Wafflers from a to Z.” <em>American Journal of Political Science</em> 39 (4). JSTOR: 906. doi:<a href="https://doi.org/10.2307/2111662">10.2307/2111662</a>.</p>
-</div>
-<div>
-<p>Linzer, Drew A. 2013. “Dynamic Bayesian Forecasting of Presidential Elections in the States.” <em>Journal of the American Statistical Association</em> 108 (501): 124–34. doi:<a href="https://doi.org/10.1080/01621459.2012.737735">10.1080/01621459.2012.737735</a>.</p>
-</div>
-<div>
-<p>Liu, Chuanhai. 2005. “Robit Regression: A Simple Robust Alternative to Logistic and Probit Regression.” In <em>Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives</em>, 227–38. John Wiley &amp; Sons, Ltd. doi:<a href="https://doi.org/10.1002/0470090456.ch21">10.1002/0470090456.ch21</a>.</p>
-</div>
-<div>
-<p>Nagler, Jonathan. 1994. “Scobit: An Alternative Estimator to Logit and Probit.” <em>American Journal of Political Science</em> 38 (1). [Midwest Political Science Association, Wiley]: 230–55. <a href="http://www.jstor.org/stable/2111343" class="uri">http://www.jstor.org/stable/2111343</a>.</p>
-</div>
-<div>
-<p>Poole, Keith T., and Howard Rosenthal. 2000. <em>Congress: A Political-Economic History of Roll Call Voting</em>. Oxford University Press.</p>
-</div>
-<div>
-<p>Prentice, Ross L. 1976. “A Generalization of the Probit and Logit Methods for Dose Response Curves.” <em>Biometrics</em> 32 (4). [Wiley, International Biometric Society]: 761–68. <a href="http://www.jstor.org/stable/2529262" class="uri">http://www.jstor.org/stable/2529262</a>.</p>
-</div>
-<div>
-<p>Spiegelhalter, D. J., A. Thomas N. Best, and W. R. Gilks. 1996. “BUGS: Bayesian Inference Using Gibbs Sampling, Version 0.5.”</p>
-</div>
-<div>
+<div id="ref-Stan2016a">
 <p>Stan Development Team. 2016. <em>Stan Modeling Language Users Guide and Reference Manual, Version 2.14.0</em>. <a href="https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf" class="uri">https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf</a>.</p>
 </div>
-<div>
-<p>Stukel, Therese A. 1988. “Generalized Logistic Models.” <em>Journal of the American Statistical Association</em> 83 (402). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 426–31. <a href="http://www.jstor.org/stable/2288858" class="uri">http://www.jstor.org/stable/2288858</a>.</p>
-</div>
-<div>
-<p>Tanner, Martin A. 1996. <em>Tools for Statistical Inference</em>. Springer.</p>
-</div>
-<div>
-<p>Tomz, Michael, and Robert P. Van Houweling. 2003. “How Does Voting Equipment Affect the Racial Gap in Voided Ballots?” <em>American Journal of Political Science</em> 47 (1). Wiley-Blackwell: 46–60. doi:<a href="https://doi.org/10.1111/1540-5907.00004">10.1111/1540-5907.00004</a>.</p>
-</div>
-<div>
-<p>Tomz, Michael, Joshua A. Tucker, and Jason Wittenberg. 2002. “An Easy and Accurate Regression Model for Multiparty Electoral Data.” <em>Political Analysis</em> 10 (1). [Oxford University Press, Society for Political Methodology]: 66–83. <a href="http://www.jstor.org/stable/25791665" class="uri">http://www.jstor.org/stable/25791665</a>.</p>
-</div>
-<div>
-<p>Western, Bruce. 1998. “Causal Heterogeneity in Comparative Research: A Bayesian Hierarchical Modelling Approach.” <em>American Journal of Political Science</em> 42 (4). [Midwest Political Science Association, Wiley]: 1233–59. doi:<a href="https://doi.org/10.2307/2991856">10.2307/2991856</a>.</p>
+<div id="ref-BetancourtGirolami2013a">
+<p>Betancourt, M. J., and Mark Girolami. 2013. “Hamiltonian Monte Carlo for Hierarchical Models,” December. <a href="http://arxiv.org/abs/1312.0906v1" class="uri">http://arxiv.org/abs/1312.0906v1</a>.</p>
 </div>
 </div>
+<div class="footnotes">
+<hr />
+<ol start="12">
+<li id="fn12"><p>This example is derived from Simon Jackman, “Aspirin: Shrinkage (or”borrowing strength“) via hierarchical modeling”, 2007-07-24 <a href="https://web-beta.archive.org/web/20070724034135/http://jackman.stanford.edu/mcmc/aspirin.odc">URL</a>. The data and the meta-analysis is from <span class="citation">Draper (<a href="#ref-Draper1992a">1992</a>)</span>.<a href="aspirin.html#fnref12">↩</a></p></li>
+</ol>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="multivarmissing.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="campaign.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="corporatism.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

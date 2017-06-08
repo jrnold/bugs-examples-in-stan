@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -26,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2017-05-31">
+<meta name="date" content="2017-06-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,8 +33,7 @@
   
   
 <link rel="prev" href="undervote.html">
-<link rel="next" href="florida.html">
-
+<link rel="next" href="a-tibble-2-x-3.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -103,30 +102,73 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
 <li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
-<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
-<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a><ul>
-<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
-<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
-<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
-<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
-<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
-<li class="chapter" data-level="10" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</a><ul>
-<li class="chapter" data-level="" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#datas"><i class="fa fa-check"></i><b>5.1</b> Datas</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate t density</a></li>
-<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
-<li class="chapter" data-level="13" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</a><ul>
-<li class="chapter" data-level="13.1" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#data"><i class="fa fa-check"></i><b>13.1</b> data</a></li>
-<li class="chapter" data-level="13.2" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#initial-values"><i class="fa fa-check"></i><b>13.2</b> initial values</a></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</a></li>
-<li class="chapter" data-level="15" data-path="bimodal.html"><a href="bimodal.html"><i class="fa fa-check"></i><b>15</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
-<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
-<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
-<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
-<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-1"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-2"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-3"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-2"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-4"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: over-parameterization of normal mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-3"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-5"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-4"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -149,184 +191,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">2</span> Cancer: difference in two binomial proportions</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre></div>
-<p>The following simple model is drawn from an example in <span class="citation">Johnson and Albert (<a href="#ref-JohnsonAlbert1999a">1999</a>)</span>, using data collected in a <span class="citation">Dorn (<a href="#ref-Dorn1954a">1954</a>)</span>. A sample of 86 lung-cancer patients and a sample of 86 controls were questioned about their smoking habits. The two groups were chosen to represent random samples from a subpopulation of lung-cancer patients and an otherwise similar population of cancer-free individuals. Of the cancer patients, 83 out of 86 were smokers; among the control group 72 out of 86 were smokers. The scientific question of interest was to assess the difference between the smoking habits in the two groups.</p>
-<p>In implementing this model, we have just two data points (cancer patients and control group) and a binomial sampling model, in which the population proportions of smokers in each group appear as parameters. Quantities of interest such as the difference in the population proportions and the log of the odds ratio are computed in the generated quantities section. Uniform priors on the population proportions are used in this example.</p>
-<p><span class="math display">\[
-\begin{aligned}[t]
-r_i &amp;\sim \mathsf{Binomial}(n_i, \pi_i)
-\end{aligned}
-\]</span> Additionally the difference, <span class="math display">\[
-\delta = \pi_1 - \pi_2 ,
-\]</span> and the log-odds ratio, <span class="math display">\[
-\lambda = \log\left(\frac{\pi_1}{1 - \pi_1}\right) - \log \left( \frac{\pi_2}{1 - \pi_2} \right) ,
-\]</span></p>
-<p>It places uniform priors (Beta priors) are placed on <span class="math inline">\(\pi\)</span>, <span class="math display">\[
-\begin{aligned}
-\pi_i &amp;\sim \mathsf{Beta}(1, 1)
-\end{aligned}
-\]</span></p>
-<p>The difference between and log odds ratio are defined in the <code>generated quantities</code> block.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_data &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">r =</span> <span class="kw">c</span>(<span class="dv">83</span>, <span class="dv">72</span>),
-  <span class="dt">n =</span> <span class="kw">c</span>(<span class="dv">86</span>, <span class="dv">86</span>),
-  <span class="co"># beta prior on pi</span>
-  <span class="dt">p_a =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">2</span>),
-  <span class="dt">p_b =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">2</span>)
+<p>Two groups chosen to be random samples from subpopulations of lung-cancer patients and cancer-free individuals.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> The scientific question of interest is the difference in the smoking habits between two groups. The results of the survey are:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer &lt;-<span class="st"> </span><span class="kw">tribble</span>(
+  <span class="op">~</span>group, <span class="op">~</span>n, <span class="op">~</span>smokers,
+  <span class="st">&quot;Cancer patients&quot;</span>, <span class="dv">86</span>, <span class="dv">82</span>,
+  <span class="st">&quot;Control group&quot;</span>, <span class="dv">86</span>, <span class="dv">72</span>
 )</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_mod1 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/cancer1.stan&quot;</span>)</code></pre></div>
-<pre>
-  <code class="stan">data {
-  int<lower = 0> r[2];
-  int<lower = 1> n[2];
-  // param for beta prior on p
-  vector<lower = 0.>[2] p_a;
-  vector<lower = 0.>[2] p_b;
-}
-parameters {
-  vector<lower = 0., upper = 1.>[2] p;
-}
-model {
-  p ~ beta(p_a, p_b);
-  r ~ binomial(n, p);
-}
-generated quantities {
-  real delta;
-  int delta_up;
-  real lambda;
-  int lambda_up;
-
-  delta = p[1] - p[2];
-  delta_up = delta > 0;
-  lambda = logit(p[1]) - logit(p[2]);
-  lambda_up = lambda > 0;
-
-}</code>
-</pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_fit1 &lt;-<span class="st"> </span><span class="kw">sampling</span>(cancer_mod1, cancer_data)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_fit1
-<span class="co">#&gt; Inference for Stan model: cancer1.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff</span>
-<span class="co">#&gt; p[1]        0.95    0.00 0.02   0.90   0.94   0.96   0.97   0.99  2639</span>
-<span class="co">#&gt; p[2]        0.83    0.00 0.04   0.75   0.81   0.83   0.86   0.90  2863</span>
-<span class="co">#&gt; delta       0.12    0.00 0.04   0.04   0.10   0.12   0.15   0.21  2874</span>
-<span class="co">#&gt; delta_up    1.00    0.00 0.05   1.00   1.00   1.00   1.00   1.00  2947</span>
-<span class="co">#&gt; lambda      1.55    0.01 0.61   0.44   1.14   1.51   1.94   2.84  2290</span>
-<span class="co">#&gt; lambda_up   1.00    0.00 0.05   1.00   1.00   1.00   1.00   1.00  2947</span>
-<span class="co">#&gt; lp__      -57.46    0.03 1.04 -60.25 -57.83 -57.14 -56.73 -56.48  1564</span>
-<span class="co">#&gt;           Rhat</span>
-<span class="co">#&gt; p[1]         1</span>
-<span class="co">#&gt; p[2]         1</span>
-<span class="co">#&gt; delta        1</span>
-<span class="co">#&gt; delta_up     1</span>
-<span class="co">#&gt; lambda       1</span>
-<span class="co">#&gt; lambda_up    1</span>
-<span class="co">#&gt; lp__         1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 05:17:34 2017.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
-<p>An alternative parameterization directly models the difference in the population proportion.</p>
-<p><span class="math display">\[
-\begin{aligned}[t]
-r_i &amp;\sim \mathsf{Binomial}(n_i, \pi_i) \\
-\pi_1 &amp;= \frac{1}{1 + \exp(-(\alpha + \beta)} \\
-\pi_2 &amp;= \frac{1}{1 + \exp(-\alpha))}
-\end{aligned}
-\]</span> The parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are given weakly informative priors on the log-odds scale, <span class="math display">\[
-\begin{aligned}
-\alpha &amp;\sim N(0, 10)\\
-\beta &amp;\sim N(0, 2.5)
-\end{aligned}
-\]</span></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/cancer2.stan&quot;</span>)</code></pre></div>
-<pre>
-  <code class="stan">data {
-  int<lower = 0> r[2];
-  int<lower = 1> n[2];
-  // param for beta prior on p
-  real a_loc;
-  real<lower = 0.> a_scale;
-  real b_loc;
-  real<lower = 0.> b_scale;
-}
-parameters {
-  real a;
-  real b;
-}
-transformed parameters {
-  vector<lower = 0., upper = 1.>[2] p;
-  p[1] = inv_logit(a + b);
-  p[2] = inv_logit(a);
-}
-model {
-  a ~ normal(a_loc, a_scale);
-  b ~ normal(a_loc, b_scale);
-  r ~ binomial(n, p);
-}
-generated quantities {
-  real delta;
-  int delta_up;
-  real lambda;
-  int lambda_up;
-
-  delta = p[1] - p[2];
-  delta_up = delta > 0;
-  lambda = logit(p[1]) - logit(p[2]);
-  lambda_up = lambda > 0;
-
-}</code>
-</pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_data2 &lt;-<span class="st"> </span><span class="kw">within</span>(cancer_data, {
-  p_a &lt;-<span class="st"> </span>p_b &lt;-<span class="st"> </span><span class="ot">NULL</span>
-  a_loc &lt;-<span class="st"> </span>b_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  a_scale &lt;-<span class="st"> </span><span class="dv">10</span>
-  b_scale &lt;-<span class="st"> </span><span class="fl">2.5</span>
-})</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(cancer_mod2, cancer_data2)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cancer_fit2
-<span class="co">#&gt; Inference for Stan model: cancer2.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff</span>
-<span class="co">#&gt; a           1.68    0.01 0.29   1.15   1.49   1.67   1.87   2.29  1849</span>
-<span class="co">#&gt; b           1.71    0.01 0.65   0.56   1.27   1.67   2.11   3.07  1945</span>
-<span class="co">#&gt; p[1]        0.96    0.00 0.02   0.91   0.95   0.97   0.98   0.99  2751</span>
-<span class="co">#&gt; p[2]        0.84    0.00 0.04   0.76   0.82   0.84   0.87   0.91  1881</span>
-<span class="co">#&gt; delta       0.12    0.00 0.04   0.04   0.09   0.12   0.15   0.21  1764</span>
-<span class="co">#&gt; delta_up    1.00    0.00 0.04   1.00   1.00   1.00   1.00   1.00  4000</span>
-<span class="co">#&gt; lambda      1.71    0.01 0.65   0.56   1.27   1.67   2.11   3.07  1945</span>
-<span class="co">#&gt; lambda_up   1.00    0.00 0.04   1.00   1.00   1.00   1.00   1.00  4000</span>
-<span class="co">#&gt; lp__      -52.44    0.03 1.01 -55.22 -52.83 -52.13 -51.72 -51.47  1587</span>
-<span class="co">#&gt;           Rhat</span>
-<span class="co">#&gt; a            1</span>
-<span class="co">#&gt; b            1</span>
-<span class="co">#&gt; p[1]         1</span>
-<span class="co">#&gt; p[2]         1</span>
-<span class="co">#&gt; delta        1</span>
-<span class="co">#&gt; delta_up     1</span>
-<span class="co">#&gt; lambda       1</span>
-<span class="co">#&gt; lambda_up    1</span>
-<span class="co">#&gt; lp__         1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 05:18:31 2017.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
-
 </div>
-<h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-JohnsonAlbert1999a">
-<p>Johnson, Valen E., and James H. Albert. 1999. <em>Ordinal Data Modeling</em>. Springer-Verlag. doi:<a href="https://doi.org/10.1007/b98832">10.1007/b98832</a>.</p>
-</div>
-<div id="ref-Dorn1954a">
-<p>Dorn, Harold F. 1954. “The Relationship of Cancer of the Lung and the Use of Tobacco.” <em>The American Statistician</em> 8 (5). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 7–13. <a href="http://www.jstor.org/stable/2681545" class="uri">http://www.jstor.org/stable/2681545</a>.</p>
-</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>This example is derived from Simon Jackman, “Cancer: difference in two binomial proportions”, <em>BUGS Examples,</em> 2007-07-24, <a href="http://jackman.stanford.edu:80/mcmc/cancer.odc" class="uri">http://jackman.stanford.edu:80/mcmc/cancer.odc</a>. <a href="https://web-beta.archive.org/web/20070601000000*/http://jackman.stanford.edu:80/mcmc/cancer.odc">Wayback Machine</a>. This examples comes from <span class="citation">Johnson and Albert (<a href="#ref-JohnsonAlbert1999a">1999</a>)</span>, using data from <span class="citation">Dorn (<a href="#ref-Dorn1954a">1954</a>)</span>.<a href="cancer.html#fnref1">↩</a></p></li>
+</ol>
 </div>
             </section>
 
@@ -334,8 +210,9 @@ generated quantities {
         </div>
       </div>
 <a href="undervote.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="florida.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="a-tibble-2-x-3.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -378,7 +255,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

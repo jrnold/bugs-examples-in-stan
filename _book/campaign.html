@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -26,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2017-05-31">
+<meta name="date" content="2017-06-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,8 +33,7 @@
   
   
 <link rel="prev" href="uk92.html">
-<link rel="next" href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html">
-
+<link rel="next" href="aspirin.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -103,30 +102,73 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
 <li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
-<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
-<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a><ul>
-<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
-<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
-<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
-<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
-<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
-<li class="chapter" data-level="10" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution (#resistant)</a><ul>
-<li class="chapter" data-level="" data-path="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html"><a href="resistant-outlier-resistant-regression-via-the-students-t-distribution-resistant.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#datas"><i class="fa fa-check"></i><b>5.1</b> Datas</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate t density</a></li>
-<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
-<li class="chapter" data-level="13" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Shrinkage (or “borrowing strength”) via hierarchical modeling (aspirin)</a><ul>
-<li class="chapter" data-level="13.1" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#data"><i class="fa fa-check"></i><b>13.1</b> data</a></li>
-<li class="chapter" data-level="13.2" data-path="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html"><a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html#initial-values"><i class="fa fa-check"></i><b>13.2</b> initial values</a></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> “Corporatism: hierarchical or”multi-level&quot; model for economic growth in 16 OECD countries&quot;</a></li>
-<li class="chapter" data-level="15" data-path="bimodal.html"><a href="bimodal.html"><i class="fa fa-check"></i><b>15</b> Bimodal: Extreme missingness in bivariate normal data</a></li>
-<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
-<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
-<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: generalizing link functions for binomial GLMs</a></li>
-<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-1"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-2"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-3"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-2"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-4"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: over-parameterization of normal mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-3"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-5"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-4"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -146,20 +188,36 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="campaign" class="section level1">
-<h1><span class="header-section-number">12</span> Pooling the Polls Over an Election Campaign</h1>
-<p>This example comes from <span class="citation">(<span class="citeproc-not-found" data-reference-id="Jackman2005a"><strong>???</strong></span>)</span>.</p>
+<h1><span class="header-section-number">13</span> Pooling the Polls Over an Election Campaign</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;lubridate&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;stringr&quot;</span>)
 <span class="kw">library</span>(<span class="st">&quot;pscl&quot;</span>)</code></pre></div>
-<p>House of Representatives - “first preferences”&quot;</p>
-<ul>
-<li><a href="https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_(House_of_Representatives)" class="uri">https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_(House_of_Representatives)</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election" class="uri">https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election</a></li>
-</ul>
+<p>This is an example of pooling polls (public opinion surveys) over time to estimate public opinion. This example comes from <span class="citation">Jackman (<a href="#ref-Jackman2005a">2005</a>)</span> and <span class="citation">Jackman (<a href="#ref-Jackman2009a">2009</a>)</span>, it uses Australian polls of political party preferences between the 2004 and 2007 Australian general elections. This model is similar to, and a simplified form of the polling aggregation methods recently and most notably used by FiveThirtyEight, HuffingtonPost, DailyKos, NYTimes Upshot and others in US elections <span class="citation">(Linzer <a href="#ref-Linzer2013a">2013</a>)</span>.</p>
+<div id="data-2" class="section level2">
+<h2><span class="header-section-number">13.1</span> Data</h2>
+<p>The data for Australian</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;AustralianElectionPolling&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>)
-elections &lt;-
+<span class="kw">glimpse</span>(AustralianElectionPolling)
+<span class="co">#&gt; Observations: 239</span>
+<span class="co">#&gt; Variables: 14</span>
+<span class="co">#&gt; $ ALP         &lt;dbl&gt; 39.5, 39.0, 38.0, 36.0, 33.0, 36.5, 39.0, 37.0, 34...</span>
+<span class="co">#&gt; $ Lib         &lt;dbl&gt; 44.5, 44.0, 46.0, 46.5, 47.0, 45.5, 46.0, 47.0, 52...</span>
+<span class="co">#&gt; $ Nat         &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...</span>
+<span class="co">#&gt; $ Green       &lt;dbl&gt; 8.5, 8.5, 6.0, 9.0, 8.0, 9.5, 6.0, 7.5, 8.0, 7.0, ...</span>
+<span class="co">#&gt; $ FamilyFirst &lt;dbl&gt; 2.0, 1.5, 0.0, 2.5, 0.0, 2.0, 0.0, 2.0, 0.0, 0.0, ...</span>
+<span class="co">#&gt; $ Dems        &lt;dbl&gt; 2.0, 2.0, 0.0, 1.5, 0.0, 1.5, 0.0, 1.5, 2.0, 0.0, ...</span>
+<span class="co">#&gt; $ OneNation   &lt;dbl&gt; 1.0, 1.0, 0.0, 1.0, 0.0, 1.5, 0.0, 1.0, 1.0, 0.0, ...</span>
+<span class="co">#&gt; $ DK          &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...</span>
+<span class="co">#&gt; $ sampleSize  &lt;dbl&gt; 1451, 2090, 1150, 1451, 1130, 2136, 1132, 2010, 14...</span>
+<span class="co">#&gt; $ org         &lt;fctr&gt; Morgan, F2F, Morgan, F2F, Newspoll, Morgan, F2F, ...</span>
+<span class="co">#&gt; $ startDate   &lt;date&gt; 2004-10-30, 2004-11-13, 2004-11-19, 2004-11-27, 2...</span>
+<span class="co">#&gt; $ endDate     &lt;date&gt; 2004-11-07, 2004-11-21, 2004-11-21, 2004-12-05, 2...</span>
+<span class="co">#&gt; $ source      &lt;chr&gt; &quot;&quot;, &quot;http://www.roymorgan.com/news/polls/2004/3808...</span>
+<span class="co">#&gt; $ remark      &lt;chr&gt; &quot;&quot;, &quot;face-to-face&quot;, &quot;&quot;, &quot;face-to-face&quot;, &quot;&quot;, &quot;face-...</span></code></pre></div>
+<p>The election result data for the House of Representatives: “first preferences.”<a href="#fn11" class="footnoteRef" id="fnref11"><sup>11</sup></a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">elections &lt;-
 <span class="st">  </span><span class="kw">list</span>(
     <span class="st">`</span><span class="dt">2007</span><span class="st">`</span> =<span class="st"> </span><span class="kw">list</span>(
       <span class="dt">date =</span> <span class="kw">ymd</span>(<span class="dv">20071124</span>),
@@ -183,9 +241,8 @@ elections &lt;-
       <span class="dt">OneNation =</span> <span class="fl">1.2</span>,
       <span class="dt">sampleSize =</span> <span class="dv">11715132</span>      
     )
-  )
-
-START_DATE &lt;-<span class="st"> </span>elections[[<span class="st">&quot;2004&quot;</span>]][[<span class="st">&quot;date&quot;</span>]]
+  )</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">START_DATE &lt;-<span class="st"> </span>elections[[<span class="st">&quot;2004&quot;</span>]][[<span class="st">&quot;date&quot;</span>]]
   
 AustralianElectionPolling &lt;-
 <span class="st">  </span>AustralianElectionPolling <span class="op">%&gt;%</span>
@@ -194,22 +251,10 @@ AustralianElectionPolling &lt;-
          <span class="dt">time =</span> <span class="kw">as.integer</span>(<span class="kw">difftime</span>(midDate, START_DATE, <span class="dt">units =</span> <span class="st">&quot;days&quot;</span>)) <span class="op">+</span><span class="st"> </span>1L,
          <span class="dt">pollster =</span> <span class="kw">as.integer</span>(<span class="kw">factor</span>(org)))
   </code></pre></div>
-<p>For House effects assume mean zero and a standard deviation of 7.5. The standard deviation corresponds to house effects with a 95% confidence interval of between -15 and 15 (which would be large).</p>
-<p>It is expected that most polling movements are <span class="math inline">\(\pm 2\)</span> percentage points. This implies an average scale of</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">campaign_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>ALP
-  s &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>ALP_se
-  time &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>time
-  house &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>pollster
-  H &lt;-<span class="st"> </span><span class="kw">max</span>(AustralianElectionPolling<span class="op">$</span>pollster)
-  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
-  T &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="kw">difftime</span>(elections[[<span class="st">&quot;2007&quot;</span>]][[<span class="st">&quot;date&quot;</span>]], elections[[<span class="st">&quot;2004&quot;</span>]][[<span class="st">&quot;date&quot;</span>]], <span class="dt">units =</span> <span class="st">&quot;days&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
-  xi_init &lt;-<span class="st"> </span>elections[[<span class="st">&quot;2004&quot;</span>]][[<span class="st">&quot;ALP&quot;</span>]]
-  xi_final &lt;-<span class="st"> </span>elections[[<span class="st">&quot;2007&quot;</span>]][[<span class="st">&quot;ALP&quot;</span>]]
-  delta_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  tau_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
-  zeta_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-})</code></pre></div>
+</div>
+<div id="model-2" class="section level2">
+<h2><span class="header-section-number">13.2</span> Model</h2>
+<p>The Stan model is:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">campaign_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/campaign.stan&quot;</span>)</code></pre></div>
 <pre>
   <code class="stan">// polling model
@@ -262,6 +307,25 @@ model {
   y ~ normal(mu, s);
 }</code>
 </pre>
+<p>For House effects assume mean zero and a standard deviation of 7.5. The standard deviation corresponds to house effects with a 95% confidence interval of between -15 and 15 (which would be large).</p>
+<p>It is expected that most polling movements are <span class="math inline">\(\pm 2\)</span> percentage points.</p>
+</div>
+<div id="estimation-1" class="section level2">
+<h2><span class="header-section-number">13.3</span> Estimation</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">campaign_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>ALP
+  s &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>ALP_se
+  time &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>time
+  house &lt;-<span class="st"> </span>AustralianElectionPolling<span class="op">$</span>pollster
+  H &lt;-<span class="st"> </span><span class="kw">max</span>(AustralianElectionPolling<span class="op">$</span>pollster)
+  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+  T &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="kw">difftime</span>(elections[[<span class="st">&quot;2007&quot;</span>]][[<span class="st">&quot;date&quot;</span>]], elections[[<span class="st">&quot;2004&quot;</span>]][[<span class="st">&quot;date&quot;</span>]], <span class="dt">units =</span> <span class="st">&quot;days&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
+  xi_init &lt;-<span class="st"> </span>elections[[<span class="st">&quot;2004&quot;</span>]][[<span class="st">&quot;ALP&quot;</span>]]
+  xi_final &lt;-<span class="st"> </span>elections[[<span class="st">&quot;2007&quot;</span>]][[<span class="st">&quot;ALP&quot;</span>]]
+  delta_loc &lt;-<span class="st"> </span><span class="dv">0</span>
+  tau_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
+  zeta_scale &lt;-<span class="st"> </span><span class="dv">5</span>
+})</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">campaign_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(campaign_mod, <span class="dt">data =</span> campaign_data,
                          <span class="dt">chains =</span> <span class="dv">1</span>,
                          <span class="dt">init =</span> <span class="kw">list</span>(<span class="kw">list</span>(<span class="dt">xi =</span> <span class="kw">rep</span>(<span class="kw">mean</span>(campaign_data<span class="op">$</span>y), campaign_data<span class="op">$</span>N))))
@@ -5347,10 +5411,11 @@ model {
 <span class="co">#&gt; mu[239]       1000 1.00</span>
 <span class="co">#&gt; lp__           371 1.00</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed May 31 08:39:16 2017.</span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Wed Jun  7 09:58:29 2017.</span>
 <span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
 <span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
 <span class="co">#&gt; convergence, Rhat=1).</span></code></pre></div>
+<p>Plot the posterior distribution of the share of the Liberals</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">xi &lt;-<span class="st"> </span><span class="kw">summary</span>(campaign_fit, <span class="dt">par =</span> <span class="st">&quot;xi&quot;</span>)<span class="op">$</span>summary <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="st">&quot;parameter&quot;</span>) <span class="op">%&gt;%</span>
@@ -5363,7 +5428,41 @@ model {
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> AustralianElectionPolling,
              <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> midDate, <span class="dt">y =</span> ALP, <span class="dt">colour =</span> org))</code></pre></div>
 <p><img src="campaign_files/figure-html/campaign_plot_xi-1.png" width="70%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="questions-4" class="section level2">
+<h2><span class="header-section-number">13.4</span> Questions</h2>
+<ol style="list-style-type: decimal">
+<li>Which polling firm is the most biased? Do any polling firms have 95 percent credible intervals</li>
+<li>This is a retrospective model. How would you turn this into a forecasting model? How would you evaluate its performance?</li>
+<li>Model this with a logit transformed output. Do your results change? Would you have expected the results to change much?</li>
+<li>Model this with all parties and a multinomial response</li>
+<li>Model this with a varying-slope model</li>
+<li>Adjust the model to (1) allow for outliers in polls (2) allow for sudden changes in sentiment in the polling average</li>
+<li>Currently the only effect of polling firms is through their bias. How would you alter the model to allow some polling firms to have more variable polls? How is this similar to weighting different firms differently?</li>
+<li>Why is the constraint that the “house effects” are on average zero necessary? What would happen if you let it be anything?</li>
+<li>It is known that the polls can be systematically biased in elections, meaning that the average of polls can differ from the true result beyond what is implied by sampling uncertainty. How would you incorporate that into the model?</li>
+<li>Instead of fixing <span class="math inline">\(\xi_1\)</span> and <span class="math inline">\(\xi_T\)</span>, we could treat elections as another public opinion survey. What values of <span class="math inline">\(y\)</span>, <span class="math inline">\(s\)</span>, and <span class="math inline">\(\delta\)</span> would you give to eletions? Model and compare the results to the original method.</li>
+</ol>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Jackman2005a">
+<p>Jackman, Simon. 2005. “Pooling the Polls over an Election Campaign.” <em>Australian Journal of Political Science</em> 40 (4). Informa UK Limited: 499–517. doi:<a href="https://doi.org/10.1080/10361140500302472">10.1080/10361140500302472</a>.</p>
+</div>
+<div id="ref-Jackman2009a">
+<p>Jackman, Simon. 2009. <em>Bayesian Analysis for the Social Sciences</em>. John Wiley; Sons Ltd.</p>
+</div>
+<div id="ref-Linzer2013a">
+<p>Linzer, Drew A. 2013. “Dynamic Bayesian Forecasting of Presidential Elections in the States.” <em>Journal of the American Statistical Association</em> 108 (501): 124–34. doi:<a href="https://doi.org/10.1080/01621459.2012.737735">10.1080/01621459.2012.737735</a>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="11">
+<li id="fn11"><p>Sources: <a href="https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_(House_of_Representatives)">2007</a>, <a href="https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election">2004</a>.<a href="campaign.html#fnref11">↩</a></p></li>
+</ol>
 </div>
             </section>
 
@@ -5371,8 +5470,9 @@ model {
         </div>
       </div>
 <a href="uk92.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="aspirin-shrinkage-or-borrowing-strength-via-hierarchical-modeling-aspirin.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="aspirin.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -5415,7 +5515,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

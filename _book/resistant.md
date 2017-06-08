@@ -1,5 +1,5 @@
 
-# Resistant: Outlier-resistant regression via the Student's $t$ distribution (#resistant)
+# Resistant: Outlier-resistant regression via the Student's $t$ distribution {#resistant}
 
 
 ```r
@@ -7,10 +7,34 @@ library("tidyverse")
 library("rstan")
 ```
 
+Outlying data points can distort estimates of location, such as means or regression coefficients.[^resistant-src]
+Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers).
+A popular alternative to normal errors in regression analyses is the Student's $t$ density, with an unknown degrees of freedom parameter.
+For low degrees of freedom, the Student's $t$ distribution has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases.
+Treating the degrees of freedom parameter as an unknown parameter to be estimaetd thus provides a check on the appropriateness of the normal.
+By embedding a model with location parameters in the Student's $t$ density, we obtain outlier-resistant estimates of location parameters.
 
-Outlying data points can distort estimates of location, such as means or regression coefficients.  Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers). A popular alternative to normal errors in regression analyses is the Student's $t$ density, with an unknown degrees of freedom parameter.  For low degrees of freedom, the t has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases.  Treating the degrees of freedom parameter as an unknown parameter to be estimaetd thus provides a check on the appropriateness of the normal.  By embedding a model with location parameters in the Student's $t$ density, we obtain outlier-resistant estimates of location parameters.
+## Data
 
-To illustrate these ideas, I use data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994.   The dependent variable is the proportion of the two-party vote won by the Democratic candidate in district $i$ at election $t$ (uncontested districts are dropped from the analysis).  Indicators for Democratic and Republican incumbency are the critical explanatory variables in the analysis; coefficients on these indicators are regarded as estimates of incumbency advantage.  A series of year-specific indicators ("fixed effects") are also included in the specification.
+To illustrate these ideas, I use data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994 [@Jackman2000a].
+
+```r
+(load("data/resistant.rda"))
+#> [1] "resistant"
+glimpse(resistant)
+#> List of 6
+#>  $ y        : num [1:5090] 46.3 54.3 58.5 57.8 58.5 ...
+#>  $ lagy     : num [1:5090] 57 46.3 54.3 58.5 70 ...
+#>  $ prvwinpty: num [1:5090] 1 -1 1 1 1 1 1 1 1 1 ...
+#>  $ deminc   : num [1:5090] 0 0 1 1 1 1 0 1 1 1 ...
+#>  $ repinc   : num [1:5090] 0 1 0 0 0 0 0 0 0 0 ...
+#>  $ year     : num [1:5090] 1 2 3 4 6 7 8 10 11 12 ...
+```
+
+The response variable is the proportion of the two-party vote won by the Democratic candidate in district $i$ at election $t$.
+Indicators for Democratic and Republican incumbency are the critical explanatory variables in the analysis.
+Coefficients on these indicators are regarded as estimates of incumbency advantage.
+A series of year-specific indicators (*fixed effects*) are also included in the specification.
 
 $$
 \begin{aligned}[t]
@@ -27,11 +51,12 @@ $$
 \end{aligned}
 $$
 where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$.
-The degrees of freedom parameter in the Student-t distribution is a paramter and given the weakly informative prior suggested by @JuarezSteel2010a,
+The degrees of freedom parameter in the Student's $t$ distribution is a paramter and given the weakly informative prior suggested by @JuarezSteel2010a,
 $$
 \nu \sim \mathsf{Gamma}(2, 0.1) .
 $$
-The following code operationalizes this regression model; the conditional density of the vote proportions is $t$, with unknown degrees of freedom, $\nu.$ 
+The following code operationalizes this regression model.
+The conditional density of the vote proportions is $t$, with unknown degrees of freedom, $\nu.$ 
 
 
 
@@ -87,7 +112,7 @@ generated quantities {
 
 
 ```r
-load("data/resistant.rda")
+
 resistant_data <- within(list(), {
   y <- resistant$y
   N <- length(y)
@@ -137,3 +162,4 @@ summary(resistant_fit, par = c("nu", "sigma", "beta", "tau"))$summary
 
 1. How does using the Student-t distribution compare to using a normal distribution for the errors?
 
+[^resistant-src]: Example derived from Simon Jackman, "Resistant: Outlier-resistant regression via the t distribution," 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034107/http://jackman.stanford.edu:80/mcmc/resistant.odc).

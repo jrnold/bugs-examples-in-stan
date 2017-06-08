@@ -4,14 +4,13 @@ data {
   // observed data
   int<lower = 0, upper = N> N_obs;
   vector[N_obs] y_obs;
-  int<lower = 1, upper = N> idx_obs[N_obs];
   // censored data
   int<lower = 0, upper = N> N_cens;
   vector[N_cens] y_cens;
-  int<lower = 1, upper = N> idx_cens[N_cens];
   // covariates
   int<lower = 0> K;
-  matrix[N, K] X;
+  matrix[N_obs, K] X_obs;
+  matrix[N_cens, K] X_cens;
   // priors
   real alpha_loc;
   real<lower = 0.> alpha_scale;
@@ -25,13 +24,15 @@ parameters {
   real<lower = 0.> sigma;
 }
 transformed parameters {
-  vector[N] mu;
-  mu = X * beta;
+  vector[N_obs] mu_obs;
+  vector[N_cens] mu_cens;
+  mu_obs = alpha + X_obs * beta;
+  mu_cens = alpha + X_cens * beta;
 }
 model {
   sigma ~ cauchy(0, sigma_scale);
   alpha ~ normal(alpha_loc, alpha_scale);
   beta ~ normal(beta_loc, beta_scale);
-  y_obs ~ normal(mu[idx_obs], sigma);
-  target += normal_lccdf(y_cens | mu, sigma);
+  y_obs ~ normal(mu_obs, sigma);
+  target += normal_lccdf(y_cens | mu_cens, sigma);
 }

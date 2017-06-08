@@ -10,7 +10,7 @@ library("pscl")
 
 This is an example of pooling polls (public opinion surveys) over time to estimate public opinion.
 This example comes from @Jackman2005a and @Jackman2009a, it uses Australian polls of political party preferences between the 2004 and 2007 Australian general elections.
-This model is similar to, and a simplied form of the polling aggregation methods recently and most notably used by FiveThirtyEight, HuffingtonPost, DailyKos, NYTimes Upshot and others in US elections [@Linzer2013a].
+This model is similar to, and a simplified form of the polling aggregation methods recently and most notably used by FiveThirtyEight, HuffingtonPost, DailyKos, NYTimes Upshot and others in US elections [@Linzer2013a].
 
 ## Data
 

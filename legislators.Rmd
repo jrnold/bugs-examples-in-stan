@@ -158,7 +158,7 @@ Identification of latent state models can be challenging. The first method for i
 These can be arbitrary, but if they are chosen along the ideological dimension of 
 interest it can help the substantive interpretation.
 
-Since we \textit{a priori} know, or expect, that the primary ideological dimension is Liberal-Conservative [@PooleRosenthal], I'll fix the ideal points of the two
+Since we \textit{a priori} know, or expect, that the primary ideological dimension is Liberal-Conservative [@PooleRosenthal2000a], I'll fix the ideal points of the two
 party leaders in that congress.
 In the 109th Congress, the Republican party was the majority party and [Bill Frist](https://en.wikipedia.org/wiki/Bill_Frist) (Tennessee) was the majority (Republican) leader, and [Harry Reid](https://en.wikipedia.org/wiki/Harry_Reid) (Nevada) wad the minority (Democratic) leader:
 $$

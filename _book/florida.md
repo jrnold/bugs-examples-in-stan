@@ -3,10 +3,12 @@
 
 
 ```r
+library("tidyverse")
 library("rstan")
 ```
 
-This is an learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign [@Jackman2004a].
+In this example, beliefs about an unknown proportion are updated from new survey data.
+The particular example is using survey update beliefs about support for Bush in Florida in the 2000 presidential election campaign [@Jackman2004a].[^florida-src]
 
 
 ```r
@@ -62,3 +64,5 @@ florida_fit
 ```
 
 After observing the new poll, the mean for the posterior is 52, with a 95% credible interval of 49--55.
+
+[^florida-src]: This example is derived from  Simon Jackman, "Florida," *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034219/http://jackman.stanford.edu/mcmc/florida.zip).
