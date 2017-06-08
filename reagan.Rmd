@@ -68,7 +68,27 @@ summary(reagan_fit, par = c("alpha", "beta", "theta", "sigma"))$summary
 
 ## Cochrane-Orcutt/Prais-Winsten
 
-An AR(1) error model can also be estimated via partial-differencing as 
-in Cochrane-Orcutt/Prais-Winsten estimation.
+An AR(1) error model can also be estimated [Prais-Winsten](https://en.wikipedia.org/wiki/Prais%E2%80%93Winsten_estimation) estimation:
+$$
+\begin{aligned}[t]
+y_1 &\sim \mathsf{Normal}\left(\alpha + x_1' \beta, \frac{\sigma ^ 2}{1 - \theta ^ 2} \right), \\
+y_i &\sim \mathsf{Normal}\left(\theta y_{i - 1} + \alpha (1 - \theta) + \beta (X_i - \theta X_{i - 1}), \sigma ^ 2 \right) & i = 2, \dots, N
+\end{aligned}
+$$
+
+```{r mod_pw,cache.extra=tools::md5sum("stan/pw.stan")}
+mod_pw <- stan_model("stan/pw.stan")
+```
+```{r}
+mod_pw
+```
+
+```{r reagan_fit2,results='hide'}
+reagan_fit2 <- sampling(mod_pw, data = reagan_data)
+```
+
+```{r reagan_fit_summary2}
+summary(reagan_fit2, par = c("alpha", "beta", "theta", "sigma"))$summary
+```
 
 [^reagan]: Example derived from Simon Jackman, "Reagan: linear regression with AR(1) disturbances," *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034151/http://jackman.stanford.edu:80/mcmc/reagan.odc).
