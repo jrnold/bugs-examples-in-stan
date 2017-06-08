@@ -8,6 +8,7 @@ library("tidyverse")
 library("forcats")
 library("stringr")
 library("rstan")
+library("sn")
 ```
 
 Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators.[^legislators-src]
@@ -260,6 +261,97 @@ legislators_init_1 <- list(
 ```
 
 
+
+```r
+legislators_fit_1 <- 
+  sampling(mod_ideal_point_2, data = legislators_data_1,
+           chains = 1, iter = 500,
+           init = legislators_init_1,
+           refresh = 100)
+```
+
+
+Extract the ideal point data:
+
+```r
+legislator_summary_1 <-
+  bind_cols(s109_legis_data,
+           as_tibble(summary(legislators_fit_1, par = "xi")$summary)) %>%
+  mutate(legislator = fct_reorder(legislator, mean))
+```
+
+
+```r
+ggplot(legislator_summary_1,
+       aes(x = legislator, y = mean,
+           ymin = `2.5%`, ymax = `97.5%`, colour = party)) +
+  geom_pointrange() +
+  coord_flip() +
+  scale_color_manual(values = c(Democratic = "blue", Independent = "gray", Republican = "red")) +
+  labs(y = expression(xi[i]), x = "", colour = "Party") +
+  theme(legend.position = "bottom")
+```
+
+<div class="figure" style="text-align: center">
+<img src="legislators_files/figure-html/legislator_plot_1-1.png" alt="Estimated Ideal Points of the Senators of the 109th Congress" width="70%" />
+<p class="caption">Estimated Ideal Points of the Senators of the 109th Congress</p>
+</div>
+
+# Identification by fixing Legislator's Signs
+
+We can identify the scale and location of the latent dimensions by fixing the mean and location of the distribution of the legislator's ideal points.
+This can be done by 
+$$
+\xi_i \sim \mathsf{Normal}(0, 1)
+$$
+This does not exactly fix the mean of $\xi$ in any particular simulation.
+As the sample size increases, $n \to \infty$ will give $mean(\xi) \to 0$ and $sd(\xi) \to 1$.
+This "soft-identification" will also overestimate the uncertainty in the ideal points of legislators (see paper by ... ? ).
+So in the estimation, I do the following to ensure that in each simulation, $\xi$ has exactly mean 0 and standard deviation 1.
+$$
+\begin{aligned}[t]
+\xi_i^* &\sim \mathsf{Normal}(0, 1) \\
+\xi_i &= \frac{\xi^*_i - \mathrm{mean}(\xi)}{\mathrm{sd}(\xi)}
+\end{aligned}
+$$
+However, this does not identify the direction of the latent variables.
+This can be done by restriction the sign of either a single legislator ($\xi_i$) or roll-call ($\beta_i$).
+
+In this case, instead of fixing multiple 
+$$
+\beta_j \sim \mathsf{SkewNormal}(0, 2.5, d_j  )
+$$
+where
+$$
+d_j = 
+\begin{cases}
+-50 & \text{if Democratic party line vote} \\
+0 & \text{not a party line vote} \\
+50 & \text{if Republican party line vote}
+\end{cases} .
+$$
+
+The skew-normal distribution is an extension of the normal distribution with an additional skewness parameter,
+$$
+y \sim \mathsf{SkewNormal}(\mu, \sigma, \alpha)
+$$
+as $|\alpha| \to \infty$, the skew-normal approaches a half-normal distribution.
+
+```r
+map_df(c(-50, 0, 50), 
+        function(alpha) {
+          tibble(x = seq(-4, 4, by = 0.1),
+                 density = dsn(x, alpha = alpha),
+                 alpha = alpha)
+        }) %>%
+  ggplot(aes(x = x, y = density, colour = factor(alpha))) +
+  geom_line()
+```
+
+<img src="legislators_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
+
+
+
 ```r
 mod_ideal_point_2 <- stan_model("stan/ideal_point_2.stan")
 ```
@@ -338,114 +430,11 @@ generated quantities {
 }</code>
 </pre>
 
+## Questions
 
-```r
-legislators_fit_1 <- 
-  sampling(mod_ideal_point_2, data = legislators_data_1,
-           chains = 1, iter = 500,
-           init = legislators_init_1,
-           refresh = 100)
-```
-
-```r
-mod_ideal_point_2
-```
-
-<pre>
-  <code class="stan">// ideal point model
-// identification:
-// - xi ~ hierarchical
-// - except fixed senators
-data {
-  // number of individuals
-  int N;
-  // number of items
-  int K;
-  // observed votes
-  int<lower = 0, upper = N * K> Y_obs;
-  int y_idx_leg[Y_obs];
-  int y_idx_vote[Y_obs];
-  int y[Y_obs];
-  // priors
-  // on items
-  real alpha_loc;
-  real<lower = 0.> alpha_scale;
-  real beta_loc;
-  real<lower = 0.> beta_scale;
-  // on legislators
-  int N_xi_obs;
-  int idx_xi_obs[N_xi_obs];
-  vector[N_xi_obs] xi_obs;
-  int N_xi_param;
-  int idx_xi_param[N_xi_param];
-  // prior on ideal points
-  real zeta_loc;
-  real<lower = 0.> zeta_scale;
-  real tau_scale;
-}
-parameters {
-  // item difficulties
-  vector[K] alpha;
-  // item discrimination
-  vector[K] beta;
-  // unknown ideal points
-  vector[N_xi_param] xi_param;
-  // hyperpriors
-  real<lower = 0.> tau;
-  real<lower = 0.> zeta;
-}
-transformed parameters {
-  // create xi from observed and parameter ideal points
-  vector[Y_obs] mu;
-  vector[N] xi;
-  xi[idx_xi_param] = xi_param;
-  xi[idx_xi_obs] = xi_obs;
-  for (i in 1:Y_obs) {
-    mu[i] = alpha[y_idx_vote[i]] + beta[y_idx_vote[i]] * xi[y_idx_leg[i]];
-  }
-}
-model {
-  alpha ~ normal(alpha_loc, alpha_scale);
-  beta ~ normal(beta_loc, beta_scale);
-  xi_param ~ normal(zeta, tau);
-  xi_obs ~ normal(zeta, tau);
-  zeta ~ normal(zeta_loc, zeta_scale);
-  tau ~ cauchy(0., tau_scale);
-  y ~ bernoulli_logit(mu);
-}
-generated quantities {
-  vector[Y_obs] log_lik;
-  for (i in 1:Y_obs) {
-    log_lik[i] = bernoulli_logit_lpmf(y[i] | mu[i]);
-  }
-}</code>
-</pre>
-
-
-Extract the ideal point data:
-
-```r
-legislator_summary_1 <-
-  bind_cols(s109_legis_data,
-           as_tibble(summary(legislators_fit_1, par = "xi")$summary)) %>%
-  mutate(legislator = fct_reorder(legislator, mean))
-```
-
-
-```r
-ggplot(legislator_summary_1,
-       aes(x = legislator, y = mean,
-           ymin = `2.5%`, ymax = `97.5%`, colour = party)) +
-  geom_pointrange() +
-  coord_flip() +
-  scale_color_manual(values = c(Democratic = "blue", Independent = "green", Republican = "red")) +
-  labs(y = expression(xi[i]), x = "", colour = "Party") +
-  theme(legend.position = "bottom")
-```
-
-<div class="figure" style="text-align: center">
-<img src="legislators_files/figure-html/legislator_plot_1-1.png" alt="Estimated Ideal Points of the Senators of the 109th Congress" width="70%" />
-<p class="caption">Estimated Ideal Points of the Senators of the 109th Congress</p>
-</div>
+- Visualize the distribution of $\alpha$ and $\beta$. Plot those 
+- Estimate the model with improper priors for $\alpha$, $\beta$, and $\xi$. What happens?
+- Estimate the the model that fixes the distribution of legislators, but does not fix the signs of legislators. Run two chains. In one chain use the following starting values, $\xi_i = 1$ for all Democratic and Independent Senators, $\xi_i = -1$ for all Republican Seantors; in the other use $\xi_i = -1$ for all Democratic and Independent Senators, and $\xi_i = 1$ for all Republican Senators. Visualize the densities of various $\xi_i$ points. Look for evidence of bimodality.
+- Extend the model to $K > 1$ dimensions.
 
 [^legislators-src]: Example derived from Simon Jackman, "Legislators: estimating legislators' ideal points from voting histories (roll call data)", *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034141/http://jackman.stanford.edu:80/mcmc/legislators.odc).

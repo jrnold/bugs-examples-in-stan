@@ -218,7 +218,155 @@ summary(reagan_fit, par = c("alpha", "beta", "theta", "sigma"))$summary
 
 ## Cochrane-Orcutt/Prais-Winsten
 
-An AR(1) error model can also be estimated via partial-differencing as 
-in Cochrane-Orcutt/Prais-Winsten estimation.
+An AR(1) error model can also be estimated [Prais-Winsten](https://en.wikipedia.org/wiki/Prais%E2%80%93Winsten_estimation) estimation:
+$$
+\begin{aligned}[t]
+y_1 &\sim \mathsf{Normal}\left(\alpha + x_1' \beta, \frac{\sigma ^ 2}{1 - \theta ^ 2} \right), \\
+y_i &\sim \mathsf{Normal}\left(\theta y_{i - 1} + \alpha (1 - \theta) + \beta (X_i - \theta X_{i - 1}), \sigma ^ 2 \right) & i = 2, \dots, N
+\end{aligned}
+$$
+
+
+```r
+mod_pw <- stan_model("stan/pw.stan")
+#> In file included from file1031c24a294ea.cpp:8:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:12:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:
+#> In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/config.hpp:13:
+#> In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/config.hpp:39:
+#> /Users/jrnold/Library/R/3.4/library/BH/include/boost/config/compiler/clang.hpp:196:11: warning: 'BOOST_NO_CXX11_RVALUE_REFERENCES' macro redefined [-Wmacro-redefined]
+#> #  define BOOST_NO_CXX11_RVALUE_REFERENCES
+#>           ^
+#> <command line>:6:9: note: previous definition is here
+#> #define BOOST_NO_CXX11_RVALUE_REFERENCES 1
+#>         ^
+#> In file included from file1031c24a294ea.cpp:8:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:42:
+#> /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function 'set_zero_all_adjoints' [-Wunused-function]
+#>     static void set_zero_all_adjoints() {
+#>                 ^
+#> In file included from file1031c24a294ea.cpp:8:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:43:
+#> /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: 'static' function 'set_zero_all_adjoints_nested' declared in header file should be declared 'static inline' [-Wunneeded-internal-declaration]
+#>     static void set_zero_all_adjoints_nested() {
+#>                 ^
+#> In file included from file1031c24a294ea.cpp:8:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:11:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:59:
+#> /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/autocorrelation.hpp:17:14: warning: function 'fft_next_good_size' is not needed and will not be emitted [-Wunneeded-internal-declaration]
+#>       size_t fft_next_good_size(size_t N) {
+#>              ^
+#> In file included from file1031c24a294ea.cpp:8:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:11:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:298:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/arr.hpp:39:
+#> In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/arr/functor/integrate_ode_rk45.hpp:13:
+#> In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/numeric/odeint.hpp:61:
+#> In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/numeric/odeint/util/multi_array_adaption.hpp:29:
+#> In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array.hpp:21:
+#> In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/base.hpp:28:
+#> /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:42:43: warning: unused typedef 'index_range' [-Wunused-local-typedef]
+#>       typedef typename Array::index_range index_range;
+#>                                           ^
+#> /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:43:37: warning: unused typedef 'index' [-Wunused-local-typedef]
+#>       typedef typename Array::index index;
+#>                                     ^
+#> /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:53:43: warning: unused typedef 'index_range' [-Wunused-local-typedef]
+#>       typedef typename Array::index_range index_range;
+#>                                           ^
+#> /Users/jrnold/Library/R/3.4/library/BH/include/boost/multi_array/concept_checks.hpp:54:37: warning: unused typedef 'index' [-Wunused-local-typedef]
+#>       typedef typename Array::index index;
+#>                                     ^
+#> 8 warnings generated.
+```
+
+```r
+mod_pw
+```
+
+<pre>
+  <code class="stan">data {
+  // number of observations
+  // need at least two to estimates
+  int<lower = 2> N;
+  // response
+  vector[N] y;
+  // regression design matrix
+  int<lower = 1> K;
+  matrix[N, K] X;
+  // priors
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+  vector[K] beta_loc;
+  vector<lower = 0.>[K] beta_scale;
+  real<lower = 0.> sigma_scale;
+  real<lower = 0.> theta_a;
+  real<lower = 0.> theta_b;
+}
+parameters {
+  // regression coefficients
+  real alpha;
+  vector[K] beta;
+  // error scale
+  real<lower=0> sigma;
+  // lag coefficients
+  real<lower = 0, upper = 1> theta_raw;
+}
+transformed parameters {
+  // observation means
+  vector[N] mu;
+  // lag coefficient;
+  real<lower = -1, upper = 1> theta;
+  // convert range of theta from (0, 1) to (-1, 1)
+  theta = (2. * theta_raw - 1.);
+  // regression
+  mu[1] = alpha + dot_product(beta, X[1, ]);
+  mu[2:N] = alpha * (1 - theta) + (X[2:N, ] - theta * X[1:(N - 1), ]) * beta;
+}
+model {
+  alpha ~ cauchy(alpha_loc, alpha_scale);
+  beta ~ cauchy(beta_loc, beta_scale);
+  theta_raw ~ beta(theta_a, theta_b);
+  sigma ~ cauchy(0, sigma_scale);
+  y[1] ~ normal(mu[1], sigma / sqrt(1 + theta ^ 2));
+  y[2:N] ~ normal(mu[2:N], sigma);
+}</code>
+</pre>
+
+
+```r
+reagan_fit2 <- sampling(mod_pw, data = reagan_data)
+```
+
+
+```r
+summary(reagan_fit2, par = c("alpha", "beta", "theta", "sigma"))$summary
+#>           mean se_mean    sd   2.5%    25%    50%     75%  97.5% n_eff
+#> alpha   48.176 0.15430 6.546 36.672 43.475 47.725 52.5399 62.025  1800
+#> beta[1]  0.586 0.01302 0.668 -0.790  0.158  0.598  1.0268  1.875  2633
+#> beta[2] -3.487 0.01669 0.790 -5.167 -4.002 -3.427 -2.9408 -2.093  2242
+#> theta   -0.125 0.00378 0.155 -0.453 -0.224 -0.113 -0.0114  0.141  1677
+#> sigma    6.949 0.01137 0.537  5.985  6.578  6.909  7.2860  8.096  2234
+#>         Rhat
+#> alpha      1
+#> beta[1]    1
+#> beta[2]    1
+#> theta      1
+#> sigma      1
+```
 
 [^reagan]: Example derived from Simon Jackman, "Reagan: linear regression with AR(1) disturbances," *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034151/http://jackman.stanford.edu:80/mcmc/reagan.odc).
