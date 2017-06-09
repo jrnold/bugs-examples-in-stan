@@ -1,7 +1,7 @@
 // ideal point model
 // identification:
-// - ideal points ~ normal(0, 1)
-// - signs of ideal points using skew normal
+// - xi ~ normal(0, 1)
+// - signs of xi
 data {
   // number of individuals
   int N;
@@ -18,8 +18,12 @@ data {
   real<lower = 0.> alpha_scale;
   vector[K] beta_loc;
   vector<lower = 0.>[K] beta_scale;
-  // on ideal points
-  vector[N] xi_skew;
+  int N_xi_pos;
+  int<lower = 1, upper = N> xi_idx_pos[N_xi_pos];
+  int N_xi_neg;
+  int<lower = 1, upper = N> xi_idx_neg[N_xi_neg];
+  int N_xi_unc;
+  int<lower = 1, upper = N> xi_idx_unc[N_xi_unc];
 }
 parameters {
   // item difficulties
@@ -27,14 +31,17 @@ parameters {
   // item discrimination
   vector[K] beta;
   // unknown ideal points
-  vector[N] xi_raw;
+  vector<lower = 0.>[N_xi_pos] xi_pos;
+  vector<upper = 0.>[N_xi_neg] xi_neg;
+  vector[N_xi_unc] xi_unc;
 }
 transformed parameters {
   // create xi from observed and parameter ideal points
   vector[Y_obs] mu;
   vector[N] xi;
-
-  xi = (xi_raw - mean(xi_raw)) ./ sd(xi_raw);
+  xi[xi_idx_neg] = xi_neg;
+  xi[xi_idx_pos] = xi_pos;
+  xi[xi_idx_unc] = xi_unc;
   for (i in 1:Y_obs) {
     mu[i] = alpha[y_idx_vote[i]] + beta[y_idx_vote[i]] * xi[y_idx_leg[i]];
   }
@@ -42,14 +49,13 @@ transformed parameters {
 model {
   alpha ~ normal(alpha_loc, alpha_scale);
   beta ~ normal(beta_loc, beta_scale);
-  // soft center ideal points
-  // in transformed block enforce hard-centering
-  xi_raw ~ skew_normal(0., 1., xi_skew);
+  xi_neg ~ normal(0., 1.);
+  xi_pos ~ normal(0., 1.);
+  xi_unc ~ normal(0., 1.);
   y ~ bernoulli_logit(mu);
 }
 generated quantities {
   vector[Y_obs] log_lik;
-
   for (i in 1:Y_obs) {
     log_lik[i] = bernoulli_logit_lpmf(y[i] | mu[i]);
   }
