@@ -99,6 +99,16 @@ $$
 \end{aligned}
 $$
 
+```{r resistant_mod,results='hide',cache.extra=tools::md5sum("stan/resistant2.stan")}
+resistant_mod2 <- stan_model("stan/resistant2.stan")
+```
+```{r echo=FALSE,results='asis',cache=FALSE}
+resistant_mod2
+```
+
+
+```{r resistant_fit2,results='hide'}
+resistant_fit2 <- sampling(resistant_mod2, data = resistant_data)
 ```
 
 

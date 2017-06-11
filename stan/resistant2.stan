@@ -16,7 +16,7 @@ parameters {
   vector[Y] alpha;
   vector[K] beta;
   real<lower = 2.> nu;
-  real<lower = 0.> sigma;
+  real<lower = 0.> sigma_raw;
   real<lower = 0.> tau;
 }
 transformed parameters {
@@ -25,6 +25,7 @@ transformed parameters {
   for (i in 1:N) {
     mu[i] = alpha[year[i]] + X[i] * beta;
   }
+  // paramterization so sigma and
   sigma = sigma_raw * sqrt((nu - 2) / nu);
 }
 model{
