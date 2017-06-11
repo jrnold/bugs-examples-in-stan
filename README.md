@@ -1,4 +1,4 @@
-![Bayeux-Logo.png]
+![Bayeux Logo](Bayeux-Logo.png)
 
 Bayeux: A Tapestry of Bayesian Modeling Examples in Stan
 
