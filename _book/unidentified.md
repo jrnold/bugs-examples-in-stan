@@ -3,8 +3,15 @@
 
 The following example illustrates the need for caution in diagnosing convergence, and is based on an example appearing in Carlin and Louis' Bayes and Empirical Bayes Methods for Data Analysis, 2nd edition, p174.
 
-Consider a model for the mean as an additive sum of two parameters: e.g.,
-$y ~ N(q_1 + q_2, 1)$.   The data are not informative about $q_1$ and $q_2$ , but are informative about $m = q_1 + q_2$  and the likelihood function for the two unidentified parameters has a ridge along the locus of points
+Consider a model of the mean, in which it it the additive sum of two parameters,
+$$
+\begin{aligned}[t]
+y &\sim \mathsf{Normal}(\mu, 1) \\
+\mu &= \theta_1 + \theta_2
+\end{aligned}
+$$
+The data have no information about about either $\theta_1$ and $\theta_2$, but the data are informative about $\mu = \theta_1 + \theta_2$.
+The likelihood function for the two unidentified parameters ($\theta_1$, $\theta_2$) has a ridge along the line,
 $$
 \left\{ q_1, q_2 : \bar{y} = q_1 + q_2 \right\} ,
 $$
@@ -120,5 +127,7 @@ fit_unidentified
 #> and Rhat is the potential scale reduction factor on split chains (at 
 #> convergence, Rhat=1).
 ```
+
+
 
 This example is derived from Simon Jackman, "Unidentified: over-parameterization of normal mean", 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034211/http://jackman.stanford.edu:80/mcmc/unidentified.odc).

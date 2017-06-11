@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2017-06-08">
+<meta name="date" content="2017-06-09">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -222,13 +222,15 @@ y \sim \mathsf{SkewNormal}(\mu, \sigma, \alpha)
 <span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> x, <span class="dt">y =</span> density, <span class="dt">colour =</span> <span class="kw">factor</span>(alpha))) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_line</span>()</code></pre></div>
 <p><img src="legislators_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_ideal_point_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/ideal_point_2.stan&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_ideal_point_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/ideal_point_2.stan&quot;</span>)
+<span class="co">#&gt; hash mismatch so recompiling; make sure Stan code ends with a blank line</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_ideal_point_<span class="dv">2</span></code></pre></div>
 <pre>
   <code class="stan">// ideal point model
+//
 // identification:
-// - xi ~ hierarchical
-// - except fixed senators
+// - ideal points ~ normal(0, 1)
+// - signs of item discrimination using skew normal
 data {
   // number of individuals
   int N;
@@ -243,18 +245,9 @@ data {
   // on items
   real alpha_loc;
   real<lower = 0.> alpha_scale;
-  real beta_loc;
-  real<lower = 0.> beta_scale;
-  // on legislators
-  int N_xi_obs;
-  int idx_xi_obs[N_xi_obs];
-  vector[N_xi_obs] xi_obs;
-  int N_xi_param;
-  int idx_xi_param[N_xi_param];
-  // prior on ideal points
-  real zeta_loc;
-  real<lower = 0.> zeta_scale;
-  real tau_scale;
+  vector[K] beta_loc;
+  vector<lower = 0.>[K] beta_scale;
+  vector[K] beta_skew;
 }
 parameters {
   // item difficulties
@@ -262,28 +255,23 @@ parameters {
   // item discrimination
   vector[K] beta;
   // unknown ideal points
-  vector[N_xi_param] xi_param;
-  // hyperpriors
-  real<lower = 0.> tau;
-  real<lower = 0.> zeta;
+  vector[N] xi_raw;
 }
 transformed parameters {
   // create xi from observed and parameter ideal points
   vector[Y_obs] mu;
   vector[N] xi;
-  xi[idx_xi_param] = xi_param;
-  xi[idx_xi_obs] = xi_obs;
+  xi = (xi_raw - mean(xi_raw)) ./ sd(xi_raw);
   for (i in 1:Y_obs) {
     mu[i] = alpha[y_idx_vote[i]] + beta[y_idx_vote[i]] * xi[y_idx_leg[i]];
   }
 }
 model {
   alpha ~ normal(alpha_loc, alpha_scale);
-  beta ~ normal(beta_loc, beta_scale);
-  xi_param ~ normal(zeta, tau);
-  xi_obs ~ normal(zeta, tau);
-  zeta ~ normal(zeta_loc, zeta_scale);
-  tau ~ cauchy(0., tau_scale);
+  beta ~ skew_normal(beta_loc, beta_scale, beta_skew);
+  // soft center ideal points
+  // in transformed block enforce hard-centering
+  xi_raw ~ normal(0., 1.);
   y ~ bernoulli_logit(mu);
 }
 generated quantities {
