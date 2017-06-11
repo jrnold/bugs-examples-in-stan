@@ -1,5 +1,6 @@
-Bayesian Examples from Bayesian Examples
+![Bayeux-Logo.png]
 
+Bayeux: A Tapestry of Bayesian Modeling Examples in Stan
 
 
 WinBUGS examples from Bayesian Examples from Simon Jackman's old webpage:

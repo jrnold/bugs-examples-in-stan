@@ -82,6 +82,29 @@ resistant_fit <- sampling(resistant_mod, data = resistant_data)
 summary(resistant_fit, par = c("nu", "sigma", "beta", "tau"))$summary
 ```
 
+## Reparaterization: standard deviation instead of scale
+
+In the Student's $t$ distribution, the standard deviation is a function of the degrees of freedom. 
+For degrees of freedom $\nu > 2$, the variance is defined, and
+$$
+\sigma^* = sd(y) = \sigma \sqrt{ \frac{\nu}{\nu - 2}}
+$$
+This makes the sampling of $\nu$ and $\sigma$ a priori dependent.
+Instead, we can place priors on the degrees of freedom $\nu$ and the standard deviation $\sigma^*$,
+and treat $\sigma$ as a transformed parameter,
+$$
+\begin{aligned}
+\sigma^* &\sim \mathsf{HalfCauchy}{(0, 5)} \\
+\sigma &= \sigma^* \sqrt{\frac{\nu - 2}{\nu}} \\
+\end{aligned}
+$$
+
+```
+
+
+
+
+
 ## Questions {-}
 
 1. How does using the Student-t distribution compare to using a normal distribution for the errors?
