@@ -5,24 +5,24 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Bayesian Model Examples</title>
-  <meta name="description" content="Bayesian Model Examples">
+  <title>Bayeux: Bayesian Examples in Stan</title>
+  <meta name="description" content="Bayeux: Bayesian Examples in Stan">
   <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Bayesian Model Examples" />
+  <meta property="og:title" content="Bayeux: Bayesian Examples in Stan" />
   <meta property="og:type" content="book" />
+  <meta property="og:url" content="<p><a href="http://jrnold.github.io/bayeux/" class="uri">http://jrnold.github.io/bayeux/</a></p>" />
+  <meta property="og:image" content="<p><a href="http://jrnold.github.io/bayeux/" class="uri">http://jrnold.github.io/bayeux/</a></p>images/Bayeux-logo.png" />
   
-  <meta property="og:image" content="Bayeux-logo.png" />
-  
-  
+  <meta name="github-repo" content="jrnold/bayeux" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Bayesian Model Examples" />
+  <meta name="twitter:title" content="Bayeux: Bayesian Examples in Stan" />
+  <meta name="twitter:site" content="@jrnld" />
   
-  
-  <meta name="twitter:image" content="Bayeux-logo.png" />
+  <meta name="twitter:image" content="<p><a href="http://jrnold.github.io/bayeux/" class="uri">http://jrnold.github.io/bayeux/</a></p>images/Bayeux-logo.png" />
 
-<meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
+<meta name="author" content="Jeffrey B. Arnold">
 
 
 <meta name="date" content="2017-06-11">
@@ -49,43 +49,6 @@
 
 
 
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-</style>
 
 </head>
 
@@ -102,78 +65,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: difference in two binomial proportions</a></li>
 <li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
-<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
-<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
-<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
-<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
-</ul></li>
-<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
-<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
-<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#datas"><i class="fa fa-check"></i><b>5.1</b> Datas</a></li>
-<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
-<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
-<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
-<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
-</ul></li>
-<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
-<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
-</ul></li>
-<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
-<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
-</ul></li>
-<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
-<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
-<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
-<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
-<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
-</ul></li>
-<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a><ul>
-<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
-<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
-<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
-</ul></li>
-<li class="chapter" data-level="10" data-path="identification-by-fixing-legislators-signs.html"><a href="identification-by-fixing-legislators-signs.html"><i class="fa fa-check"></i><b>10</b> Identification by fixing Legislator’s Signs</a></li>
-<li class="chapter" data-level="11" data-path="identification-by-discrimination-parameters-signs.html"><a href="identification-by-discrimination-parameters-signs.html"><i class="fa fa-check"></i><b>11</b> Identification by Discrimination Parameters’ Signs</a><ul>
-<li class="chapter" data-level="11.1" data-path="identification-by-discrimination-parameters-signs.html"><a href="identification-by-discrimination-parameters-signs.html#questions-2"><i class="fa fa-check"></i><b>11.1</b> Questions</a></li>
-</ul></li>
-<li class="chapter" data-level="12" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>12</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
-<li class="chapter" data-level="13" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>13</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
-<li class="chapter" data-level="13.1" data-path="resistant.html"><a href="resistant.html#data-1"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
-<li class="chapter" data-level="13.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>13.2</b> Reparaterization: standard deviation instead of scale</a></li>
-<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
-</ul></li>
-<li class="chapter" data-level="14" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>14</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
-<li class="chapter" data-level="14.1" data-path="uk92.html"><a href="uk92.html#questions-4"><i class="fa fa-check"></i><b>14.1</b> Questions</a></li>
-</ul></li>
-<li class="chapter" data-level="15" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>15</b> Pooling the Polls Over an Election Campaign</a><ul>
-<li class="chapter" data-level="15.1" data-path="campaign.html"><a href="campaign.html#data-2"><i class="fa fa-check"></i><b>15.1</b> Data</a></li>
-<li class="chapter" data-level="15.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>15.2</b> Model</a></li>
-<li class="chapter" data-level="15.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>15.3</b> Estimation</a></li>
-<li class="chapter" data-level="15.4" data-path="campaign.html"><a href="campaign.html#questions-5"><i class="fa fa-check"></i><b>15.4</b> Questions</a></li>
-</ul></li>
-<li class="chapter" data-level="16" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>16</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
-<li class="chapter" data-level="16.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>16.1</b> Non-centered parameterization</a></li>
-</ul></li>
-<li class="chapter" data-level="17" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>17</b> Corporatism: Hierarchical model for economic growth</a></li>
-<li class="chapter" data-level="18" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>18</b> Unidentified: over-parameterization of normal mean</a></li>
-<li class="chapter" data-level="19" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>19</b> Engines: right-censored failure times</a><ul>
-<li class="chapter" data-level="19.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-3"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
-<li class="chapter" data-level="19.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>19.2</b> Model</a></li>
-<li class="chapter" data-level="19.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>19.3</b> Estimation</a></li>
-</ul></li>
-<li class="chapter" data-level="20" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>20</b> Truncation: How does Stan deal with truncation?</a><ul>
-<li class="chapter" data-level="20.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>20.1</b> Stan Model</a></li>
-<li class="chapter" data-level="20.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>20.2</b> Estimation</a></li>
-<li class="chapter" data-level="20.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-6"><i class="fa fa-check"></i><b>20.3</b> Questions</a></li>
-</ul></li>
-<li class="chapter" data-level="21" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>21</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
-<li class="chapter" data-level="21.1" data-path="genbeetles.html"><a href="genbeetles.html#data-4"><i class="fa fa-check"></i><b>21.1</b> Data</a></li>
-</ul></li>
-<li class="chapter" data-level="22" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>22</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
-<li class="chapter" data-level="23" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>23</b> Multivariate Missing Data</a><ul>
-<li class="chapter" data-level="23.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>23.1</b> Separate Regressions</a></li>
-<li class="chapter" data-level="23.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>23.2</b> Multivariate Normal</a></li>
-</ul></li>
+<li class="chapter" data-level="3" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>3</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="4" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>4</b> Turnout: logit/probit models for binary data</a></li>
+<li class="chapter" data-level="5" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>5</b> Cosponsorship: computing auxiliary quantities from MCMC output</a></li>
+<li class="chapter" data-level="6" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>6</b> Reagan: linear regression with AR(1) disturbances</a></li>
+<li class="chapter" data-level="7" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>7</b> Political Sophistication: item-response modeling with mixed data types</a></li>
+<li class="chapter" data-level="8" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>8</b> Legislators: estimating legislators’ ideal points from voting histories (roll call data)</a></li>
+<li class="chapter" data-level="9" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>9</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="10" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>10</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a></li>
+<li class="chapter" data-level="11" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>11</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a></li>
+<li class="chapter" data-level="12" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>12</b> Pooling the Polls Over an Election Campaign</a></li>
+<li class="chapter" data-level="13" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>13</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a></li>
+<li class="chapter" data-level="14" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>14</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="15" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>15</b> Unidentified: over-parameterization of normal mean</a></li>
+<li class="chapter" data-level="16" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>16</b> Engines: right-censored failure times</a></li>
+<li class="chapter" data-level="17" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>17</b> Truncation: How does Stan deal with truncation?</a></li>
+<li class="chapter" data-level="18" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>18</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a></li>
+<li class="chapter" data-level="19" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>19</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="20" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>20</b> Multivariate Missing Data</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -184,7 +93,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayesian Model Examples</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayeux: Bayesian Examples in Stan</a>
           </h1>
         </div>
 
@@ -193,36 +102,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="header">
-<h1 class="title">Bayesian Model Examples</h1>
-<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
+<h1 class="title">Bayeux: Bayesian Examples in Stan</h1>
+<h4 class="author"><em>Jeffrey B. Arnold</em></h4>
 <h4 class="date"><em>2017-06-11</em></h4>
 </div>
 <div id="preface" class="section level1 unnumbered">
 <h1>Preface</h1>
-<p>This work contains some Bayesian model examples written by Simon Jackman and previously available on his website. These were originally written in WinBUGS or JAGS. I have translated these examples into Stan and revised or edited them as appropriate.</p>
-<p>The examples include:</p>
-<ol style="list-style-type: decimal">
-<li><a href="undervote">Undervote</a>: difference of two independent proportions; racial differences in self-reported undervoting</li>
-<li><a href="cancer">Cancer</a>: difference of two independent proportions; differences in rates of lung cancer by smoking</li>
-<li><a href="florida">Florida</a>: learning about an unknown proportion from survey data; using survey data to update beliefs about support for Bush in Florida in the 2000 presidential election campaign</li>
-<li><a href="turnout2005">Turnout</a>: logit/probit models for binary response; voter turnout as a function of covariates</li>
-<li><a href="cosponsor">Co-Sponsor</a>: computing auxiliary quantities from MCMC output, such as residuals, goodness of fit; logit model of legislative co-sponsorship</li>
-<li><a href="reagan">Reagan</a>: linear regression with AR(1) disturbances; monthly presidential approval ratings for Ronald Reagan</li>
-<li><a href="sophistication">Political Sophistication</a>: generalized latent variable modeling (item-response modeling with a mix of binary and ordinal responses); assessing levels of political knowledge among survey respondents in France</li>
-<li><a href="legislators">Legislators</a>: generalized latent variable modeling (two-parameter item-response model); estimating legislative ideal points from roll call data</li>
-<li><a href="judges">Judges</a>: item response modeling; estimating ideological locations of Supreme Court justices via analysis of decisions</li>
-<li><a href="resistant">Resistant</a>: outlier-resistant regression via the t density; votes in U.S. Congressional elections, 1956-1994; incumbency advantage.</li>
-<li><a href="uk92">House of Commons</a>: analysis of compositional data; vote shares for candidates to the U.K. House of Commons</li>
-<li><a href="campaign">Campaign</a>: tracking a latent variable over time; support for candidates over the course of an election campaign, as revealed by polling from different survey houses.</li>
-<li><a href="aspirin">Aspirin</a>: meta-analysis via hierarchical modeling of treatment effects; combining numerous experimental studies of effect of aspirin on surviving myocardial infarction (heart attack)</li>
-<li><a href="corporatism">Corporatism</a> hierarchical linear regression model, normal errors; joint impact of left-wing governments and strength of trade unions in structuring the determinants of economic growth</li>
-<li><a href="bimodal">Bimodal</a>: severe pattern of missingness in bivariate normal data; bimodal density over correlation coefficient</li>
-<li><a href="unidentified">Unidentified</a>: the consequences of over-parameterization; contrived example from Carlin and Louis</li>
-<li><a href="engines">Engines</a>: modeling truncated data; time to failure, engines being bench-tested at different operating temperatures</li>
-<li><a href="truncated">Truncated</a>: Example of sampling from a truncated normal distribution.</li>
-<li><a href="genbeetles">Generalized Beetles</a>: Generalizing link functions for binomial GLMs.</li>
-<li><a href="negbin">Negative Binomial</a>: Example of a negative binomial regression of homicides</li>
-</ol>
+<p>This work contains some Bayesian model examples in Stan.</p>
+<p>At the moment, the majority of these are models are derived from the Simon Jackman’s “BUGS Examples: 19 worked examples in WinBUG”, lasted updated on December 4, 2009, written by Simon Jackman and previously available on his website.</p>
+<p>This work is licensed under the <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a></p>
 
 </div>
             </section>
