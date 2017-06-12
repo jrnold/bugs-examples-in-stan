@@ -99,7 +99,7 @@ $$
 \end{aligned}
 $$
 
-```{r resistant_mod,results='hide',cache.extra=tools::md5sum("stan/resistant2.stan")}
+```{r resistant_mod2,results='hide',cache.extra=tools::md5sum("stan/resistant2.stan")}
 resistant_mod2 <- stan_model("stan/resistant2.stan")
 ```
 ```{r echo=FALSE,results='asis',cache=FALSE}
@@ -110,13 +110,16 @@ resistant_mod2
 ```{r resistant_fit2,results='hide'}
 resistant_fit2 <- sampling(resistant_mod2, data = resistant_data)
 ```
-
+```{r}
+summary(resistant_fit2, par = c("beta", "sigma", "nu", "tau"))$summary
+```
 
 
 
 
 ## Questions {-}
 
-1. How does using the Student-t distribution compare to using a normal distribution for the errors?
+1. How does using the Student-t distribution compare to using a normal distribution for the errors? How would you evaluate it.
+2. Compare the effective sample size, $\hat{R}$, and speed for $\sigma$ and $\nu$ when using the scale/degrees of freedom and standard deviation/degrees of freedom parameterizations.
 
 [^resistant-src]: Example derived from Simon Jackman, "Resistant: Outlier-resistant regression via the t distribution," 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034107/http://jackman.stanford.edu:80/mcmc/resistant.odc).

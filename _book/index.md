@@ -7,7 +7,8 @@ site: "bookdown::bookdown_site"
 output:
   bookdown::gitbook: default
 documentclass: book
-bibliography: ["jackmanbayes.bib"]
+bibliography: ["bayeux.bib"]
+cover-image: Bayeux-logo.png
 biblio-style: apalike
 link-citations: yes
 ---
