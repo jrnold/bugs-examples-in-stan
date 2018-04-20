@@ -19,7 +19,6 @@ We will model voting turnout as a function of covariates (age, education, income
 turnout_formula <- vote ~ poly(age, 2) + educate + income + race
 ```
 
-
 ## Logit Model
 
 Let $y_i \in \{0, 1\}$ be the decision to vote by respondent $i$ for $i \in 1, \dots, n$,
@@ -27,7 +26,7 @@ $$
 \begin{aligned}[t]
 y_i &\sim \mathsf{Bernoulli}(\pi_i) , \\
 \pi_i &= \frac{1}{1 + e^{-\eta_i}} , \\
-\eta_i &= \alpha + x_i \beta, 
+\eta_i &= \alpha + x_i \beta,
 \end{aligned}
 $$
 where $x_i$ is a vector of covariates.
@@ -68,8 +67,6 @@ turnout_fit_logit <- sampling(turnout_mod_logit, data = turnout_data)
 turnout_fit_logit
 ```
 
-
-
 ## Probit Model
 
 The only difference between the logit and probit models are in the link function.
@@ -104,7 +101,7 @@ turnout_mod_probit
 
 Fit the model.
 ```{r turnout_fit_probit,results='hide'}
-turnout_fit_probit <- 
+turnout_fit_probit <-
   sampling(turnout_mod_probit,
            data = turnout_data)
 ```
@@ -112,12 +109,11 @@ turnout_fit_probit <-
 turnout_fit_probit
 ```
 
-
 ## rstanarm
 
 These models can also be estimated with the  **rstanarm** function `stan_glm`.
 ```{r turnout_fit_logit2,results='hide'}
-turnout_fit_logit2 <- 
+turnout_fit_logit2 <-
   stan_glm(turnout_formula,
            family = binomial(),
            data = turnout)
@@ -140,11 +136,10 @@ turnout_fit_probit2 <-
 turnout_fit_probit2
 ```
 
-
 ## Questions {-}
 
-1. Estimate the posterior distribution of the average marginal effect for each covariate using the methods in @HanmerKalkan2012a.
-1. Estimate the expected percent correctly predicted (ePCP) and percent correctly predicted (PCP) as discussed in the [cosponsorship data](#cosponsor).
-2. Estimate a generalized logit model to allow for asymmetric effects of covariates as described in the [General Beetles](#genbeetles) example and @Nagler1994a. Describe the substantive meaning of this generalization.
-1. Is there any difference in the fit of the probit and logit? Which observations fit better or worse. 
-2. Estimate the model with a Student's $t$ CDF instead of logit or probit. This is called a robit model @Liu2005a. Compare its fit and estimates to those of the logit. Which observations fit better or worse? Describe the substantive meaning of this generalization.
+1.  Estimate the posterior distribution of the average marginal effect for each covariate using the methods in @HanmerKalkan2012a.
+1.  Estimate the expected percent correctly predicted (ePCP) and percent correctly predicted (PCP) as discussed in the [cosponsorship data](#cosponsor).
+1.  Estimate a generalized logit model to allow for asymmetric effects of covariates as described in the [General Beetles](#genbeetles) example and @Nagler1994a. Describe the substantive meaning of this generalization.
+1.  Is there any difference in the fit of the probit and logit? Which observations fit better or worse.
+1.  Estimate the model with a Student's $t$ CDF instead of logit or probit. This is called a robit model @Liu2005a. Compare its fit and estimates to those of the logit. Which observations fit better or worse? Describe the substantive meaning of this generalization.

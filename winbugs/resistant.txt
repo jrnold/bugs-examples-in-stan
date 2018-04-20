@@ -1,10 +1,19 @@
-Resistant: Outlier-resistant regression via the t distribution
+Resistant: Outlier-resistant regression via the Student $t$ distribution
 
-Outlying data points can distort estimates of location, such as means or regression coefficients.  Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers). A popular alternative to normal errors in regression analyses is the student-t density, with an unknown degrees of freedom parameter.  For low degrees of freedom, the t has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases.  Treating the degrees of freedom parameter as an unknown parameter to be estimaetd thus provides a check on the appropriateness of the normal.  By embedding a model with location parameters in the t density, we obtain outlier-resistant estimates of location parameters.  
+Outlying data points can distort estimates of location, such as means or regression coefficients.
+Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers).
+A popular alternative to normal errors in regression analyses is the Student-$t$ density, with an unknown degrees of freedom parameter.
+For low degrees of freedom, the Student-$t$ has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases.
+Treating the degrees of freedom parameter as an unknown parameter to be estimaetd thus provides a check on the appropriateness of the normal.
+By embedding a model with location parameters in the t density, we obtain outlier-resistant estimates of location parameters.
 
-To illustrate these ideas, I use data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994.   The dependent variable is the proportion of the two-party vote won by the Democratic candidate in district i at election t (uncontested districts are dropped from the analysis).  Indicators for Democratic and Republican incumbency are the critical explanatory variables in the analysis; coefficients on these indicators are regarded as estimates of incumbency advantage.  A series of year-specific indicators ("fixed effects") are also included in the specification.
+To illustrate these ideas, I use data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994.
+The dependent variable is the proportion of the two-party vote won by the Democratic candidate in district $i$ at election $t$ (uncontested districts are dropped from the analysis).
+Indicators for Democratic and Republican incumbency are the critical explanatory variables in the analysis; coefficients on these indicators are regarded as estimates of incumbency advantage.
+A series of year-specific indicators ("fixed effects") are also included in the specification.
 
-The following code operationalizes this regression model; the conditional density of the vote proportions is t, with unknown degrees of freedom, nu.  A uniform prior over nu is specified; the prior places quite a lot of probability mass over values of nu consistent with the data being normal, as well as those values of nu indicating heavy-tailed data (we let the data adjudicate between the t and the normal model).
+The following code operationalizes this regression model; the conditional density of the vote proportions is $t$, with unknown degrees of freedom, $\nu$.
+A uniform prior over nu is specified; the prior places quite a lot of probability mass over values of nu consistent with the data being normal, as well as those values of nu indicating heavy-tailed data (we let the data adjudicate between the t and the normal model).
 
 model{
 	for(i in 1:5090){             ## loop over observations
@@ -15,14 +24,14 @@ model{
 			+ beta[4]*repinc[i];      ## repub incumbent
 		y[i] ~ dt(mu[i],tau,nu);    ## fit t distribution, unknown df
 	}
-  
+
 	delta <- beta[3] + beta[4];
 
   ## priors for year "fixed effects"
 	for (k in 1:20){
 		alpha[k] ~ dnorm(0.0, .001);  ## vague priors
 	}
-	## priors for the regression coefficients	
+	## priors for the regression coefficients
 	for (j in 1:4){
 		beta[j] ~ dnorm(0.0, .001);   ## vague priors
 	}
@@ -31,12 +40,12 @@ model{
 	sigma <- sqrt(1/tau);           ## monitor sigma
 	## prior for degrees of freedom parameter
 	nu ~ dunif(2,100);              ## uniform prior on 2-100
-	
+
 }
 
 Data:
 
-list(y = c(46.3040794390813, 54.3410751808394, 58.4580123126792, 57.8258661771025, 
+list(y = c(46.3040794390813, 54.3410751808394, 58.4580123126792, 57.8258661771025,
 	58.4674039580908, 62.6141767001869, 50.3317519349823, 63.5668430028569,
 	57.7213199451895, 60.2361396905796, 63.0411817163241, 61.9304106534323,
 	74.5036174097959, 77.2442744081804, 71.4029426366385, 74.7361214434346,
@@ -482,7 +491,7 @@ list(y = c(46.3040794390813, 54.3410751808394, 58.4580123126792, 57.825866177102
 	26.891154849419, 31.1017846956238, 27.1134791336984, 36.5265349275726,
 	22.9696495601916, 42.7659894067935, 46.2209099412266, 39.8674550875698,
 	42.1868513084658, 45.8412449964077, 42.9169065889514, 42.4320128787443,
-	37.3046875, 43.690747552194, 33.4136604485737, 31.8589660832519, 
+	37.3046875, 43.690747552194, 33.4136604485737, 31.8589660832519,
 	32.1229953440248, 38.2072346627799, 42.4112424112424, 34.8976918278228,
 	50.1824836656144, 61.4921523567377, 53.2956518308081, 55.6757990600327,
 	56.4674107073561, 47.4076124723869, 53.4215145904587, 50.4629072426467,
@@ -1309,7 +1318,7 @@ list(y = c(46.3040794390813, 54.3410751808394, 58.4580123126792, 57.825866177102
 	44.0966971057827, 60.7842893078628, 55.2897996814042, 62.6150853684893,
 	83.8434673349861, 88.2831102717793, 89.8951582157835, 77.7821747350833,
 	74.3661921325349, 74.3691106499707)
-, lagy = c(56.9626062778005, 46.3040794390813, 54.3410751808394, 58.4580123126792, 
+, lagy = c(56.9626062778005, 46.3040794390813, 54.3410751808394, 58.4580123126792,
 	69.9679150739736, 58.4674039580908, 62.6141767001869, 57.6057014663558,
 	63.5668430028569, 57.7213199451895, 60.2361396905796, 68.5865431945173,
 	61.9304106534323, 74.5036174097959, 77.2442744081804, 68.683082618992,
@@ -1755,7 +1764,7 @@ list(y = c(46.3040794390813, 54.3410751808394, 58.4580123126792, 57.825866177102
 	35.0552847461657, 26.891154849419, 31.1017846956238, 27.1134791336984,
 	27.8397065594639, 44.4883335046475, 42.7659894067935, 46.2209099412266,
 	39.8674550875698, 42.1868513084658, 40.2364331893218, 38.377555271437,
-	42.4320128787443, 37.3046875, 43.690747552194, 37.7412925166413, 
+	42.4320128787443, 37.3046875, 43.690747552194, 37.7412925166413,
 	31.8589660832519, 32.1229953440248, 38.2072346627799, 40.5190751125722,
 	52.3228005902407, 50.1824836656144, 61.4921523567377, 53.2956518308081,
 	55.6757990600327, 45.5416022700731, 36.6303539894234, 53.4215145904587,
@@ -1776,7 +1785,7 @@ list(y = c(46.3040794390813, 54.3410751808394, 58.4580123126792, 57.825866177102
 	92.088860706591, 55.3072966977584, 40.1373433240171, 36.7129441563717,
 	40.9676157634682, 40.2798264642082, 50.4951780174708, 48.9553080060435,
 	45.2371044489877, 43.5660328921855, 46.4851851851852, 49.9096875820425,
-	31.8799167213939, 33.15, 30.7167269109927, 40.9613344117058, 
+	31.8799167213939, 33.15, 30.7167269109927, 40.9613344117058,
 	45.0128228613299, 35.6699828813854, 40.3326215208658, 35.9334080358572,
 	39.3375054525384, 39.3229918229918, 52.6808014824823, 47.7527749135683,
 	34.8432138489486, 40.2364872201351, 48.1735109219984, 48.9793924685848,
@@ -3866,7 +3875,7 @@ list(tau=1,
 	nu=30,
 	alpha=c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
 	beta=c(0.6,-2.9,7.5,-9.06))
-	
+
 list(tau=1,
 	   nu=3,
 		 alpha=c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),

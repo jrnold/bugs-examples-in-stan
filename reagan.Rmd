@@ -23,8 +23,8 @@ $$
 \alpha &\sim \mathsf{Normal}(0, 10), \\
 \beta_k &\sim \mathsf{Normal}(0, 2.5), & k \in 1, \dots, K, \\
 \sigma &\sim \mathsf{HalfCauchy}(0, 5), \\
-\theta &= 2 \theta^*  - 1 , \\
-\theta^* &\sim \mathsf{Beta}(1, 1)  .
+\theta &= 2 \theta^{*} - 1 , \\
+\theta^{*} &\sim \mathsf{Beta}(1, 1)  .
 \end{aligned}
 $$
 
@@ -32,7 +32,6 @@ $$
 (load("data/ReaganApproval.rda"))
 ReaganApproval
 ```
-
 
 ```{r reagan_data}
 reagan_data <- within(list(), {
@@ -64,7 +63,6 @@ reagan_fit <- sampling(mod_regar1, data = reagan_data)
 ```{r reagan_fit_summary}
 summary(reagan_fit, par = c("alpha", "beta", "theta", "sigma"))$summary
 ```
-
 
 ## Cochrane-Orcutt/Prais-Winsten
 

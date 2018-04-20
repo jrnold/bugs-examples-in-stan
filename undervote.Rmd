@@ -1,33 +1,33 @@
-# Undervoting for President, by Race: difference in two binomial proportions {#undervote}
+# Undervoting for President, by Race: Difference in Two Binomial Proportions {#undervote}
 
 ```{r undervote_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
 ```
 
-Does undervoting for the US president differ by race? 
+Does undervoting for the US president differ by race?
 Intentional undervoting is when a voter chooses not to cast vote for
 an item on a ballot.
 
 @TomzHouweling2003a analyze this phenomenon using two surveys:
 
-- Voter News Service (VNS) exit poll for the 1992 election
-- Americn National Election Studies (ANES) for the 1964--2000 elections
+-   Voter News Service (VNS) exit poll for the 1992 election
+-   Americn National Election Studies (ANES) for the 1964--2000 elections
 
 Each of these surveys asked voters whether they voted for president, as well as the race of the respondents.
 The results of these surveys is contained in the `undervote` data frame.
 The column `undervote` is the number of respondents who reported voting but not voting for president.
 
 ```{r undervote}
-undervote <- 
-  tribble(
-    ~survey, ~race, ~n, ~undervote,
-    "VNS", "black", 6537, 26,
-    "VNS", "white", 44531, 91,
-    "ANES", "black", 1101, 10,
-    "ANES", "white", 9827, 57
+undervote <- tribble(
+  ~survey, ~race, ~n, ~undervote,
+  "VNS", "black", 6537, 26,
+  "VNS", "white", 44531, 91,
+  "ANES", "black", 1101, 10,
+  "ANES", "white", 9827, 57
   )
 ```
+
 ```{r echo=FALSE,results='asis'}
 undervote %>%
   mutate(`Survey` = survey,
@@ -38,7 +38,7 @@ undervote %>%
 ```
 
 We are interested in analyzing the difference in proportions for each of these surveys independently.
-We'll model the proportions of each race and survey,
+We will model the proportions of each race and survey,
 $$
 \begin{aligned}[t]
 y_i &\sim \mathsf{Binomial}(n_i, \pi_i) ,
@@ -48,7 +48,9 @@ where
 $$
 i \in \{ (\text{VNS},\text{black}), (\text{VNS},\text{white}),  (\text{ANES},\text{black}),  (\text{ANES},\text{white}) \} .
 $$
-We'll model the proportions independently by assigning them identical independent uninformative priors,
+
+We will model the proportions independently by assigning them identical independent uninformative priors,
+
 $$
 \begin{aligned}[t]
 \pi_i &\sim \mathsf{Beta}(1, 1) .
@@ -87,4 +89,6 @@ undervote_fit <- sampling(undervote_mod, data = undervote_data)
 undervote_fit
 ```
 
-- Simon Jackman, "Undervoting for President, by Race: difference in two binomial proportions", *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034102/http://jackman.stanford.edu:80/mcmc/undervote.odc)
+## References {-}
+
+Simon Jackman, "[Undervoting for President, by Race: difference in two binomial proportions](https://web-beta.archive.org/web/20070724034102/http://jackman.stanford.edu:80/mcmc/undervote.odc)", *BUGS Examples* 2007-07-24.

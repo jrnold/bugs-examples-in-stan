@@ -16,7 +16,7 @@ y_i &\sim \mathsf{Normal}(\mu, \sigma^2) I(-\infty, 10) .
 \end{aligned}
 $$
 
-With the censoring taken into account, the log likelihood is 
+With the censoring taken into account, the log likelihood is
 $$
 \log L(y; \mu, \sigma) = \sum_{i = 1}^n \left( \log \phi(y_i; \mu, \sigma^2) - \log\Phi(y_i; \mu, \sigma^2) \right)
 $$
@@ -33,13 +33,12 @@ where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$. 
 
 ## Stan Model
 
-See @Stan2016a, Chapter 11 "Truncated or Censored Data" for more on how Stan handles truncation and censoring. 
+See @Stan2016a, Chapter 11 "Truncated or Censored Data" for more on how Stan handles truncation and censoring.
 In Stan the `T` operator used in sampling statement,
 ```
 y ~ distribution(...) T[upper, lower];
 ```
 is used to adjust the log-posterior contribution for truncation.
-
 
 ```{r truncate_mod,results='hide'}
 truncate_mod <- stan_model("stan/truncated.stan")
@@ -47,8 +46,6 @@ truncate_mod <- stan_model("stan/truncated.stan")
 ```{r echo=FALSE,results='asis',cache=FALSE}
 truncate_mod
 ```
-
-
 
 ## Estimation
 
@@ -62,7 +59,6 @@ truncate_data <- within(list(), {
   sigma_scale <- sd(y)
 })
 ```
-
 
 ```{r truncate_fit1,results='hide',message=FALSE}
 truncate_fit1 <- sampling(truncate_mod, data = truncate_data)
@@ -117,12 +113,11 @@ plot_density("mu")
 plot_density("sigma")
 ```
 
-
 ## Questions
 
-1. How are the densities of $\mu$ and $\sigma$ different under the two models? Why are they different?
-2. Re-estimate the model with improper uniform priors for $\mu$ and $\sigma$. How do the posterior distributions change?
-3. Suppose that the truncation points are unknown. Write a Stan model and estimate. See @Stan2016a, Section 11.2 "Unknown Truncation Points" for how to write such a model. How important is the prior you place on the truncation points? 
+1.  How are the densities of $\mu$ and $\sigma$ different under the two models? Why are they different?
+1.  Re-estimate the model with improper uniform priors for $\mu$ and $\sigma$. How do the posterior distributions change?
+1.  Suppose that the truncation points are unknown. Write a Stan model and estimate. See @Stan2016a, Section 11.2 "Unknown Truncation Points" for how to write such a model. How important is the prior you place on the truncation points?
 
 [^truncated-source]: This example is derived from Simon Jackman. "Truncation: How does WinBUGS deal with truncation?" *BUGS Examples*, 2007-07-24,
  [URL](https://web-beta.archive.org/web/20070724034035/http://jackman.stanford.edu:80/mcmc/SingleTruncation.odc).

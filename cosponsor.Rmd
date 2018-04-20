@@ -6,20 +6,32 @@ library("rstan")
 library("rstanarm")
 ```
 
-Typically, MCMC output consists of samples from the posterior density of model parameters.  But note that other quantities can be generated as well, say, imputations for missing data points, predictions, residuals, or goodness-of-fit summary statistics.  In fact, any function of the parameters can be calculated and output.
+Typically, MCMC output consists of samples from the posterior density of model
+parameters.  But note that other quantities can be generated as well, say,
+imputations for missing data points, predictions, residuals, or goodness-of-fit
+summary statistics.  In fact, any function of the parameters can be calculated
+and output.
 
-I demonstrate these ideas in the context of a generalized linear model for binary data.  The specific application is @Krehbiel1995a, a study of legislative behavior. [^cosponsor-data] [^cosponsor-src]
-The response variable is a binary indicator, which is equal to 1 if the member of the U.S. House of Representatives chose to cosponsor bill [H.R. 3266](https://www.congress.gov/bill/103rd-congress/house-bill/3266), and 0 otherwise. Of the 434 legislators for which data is available, 228 legislators cosponsored this bill.
-H.R.3266 was a wide-ranging spending bill designed to circumvent the usual budget-making process, that was considered by the [103rd House of Representatives](https://en.wikipedia.org/wiki/103rd_United_States_Congress) in 1993--1994.
-Seven covariates are used in the analysis:
+I demonstrate these ideas in the context of a generalized linear model for
+binary data.  The specific application is @Krehbiel1995a, a study of
+legislative behavior. [^cosponsor-data] [^cosponsor-src] The response variable
+is a binary indicator, which is equal to 1 if the member of the U.S. House of
+Representatives chose to cosponsor bill [H.R.
+3266](https://www.congress.gov/bill/103rd-congress/house-bill/3266), and 0
+otherwise. Of the 434 legislators for which data is available, 228 legislators
+cosponsored this bill. H.R.3266 was a wide-ranging spending bill designed to
+circumvent the usual budget-making process, that was considered by the [103rd
+House of
+Representatives](https://en.wikipedia.org/wiki/103rd_United_States_Congress) in
+1993--1994. Seven covariates are used in the analysis:
 
-- liberalism as measured by the interest group Americans for Democratic Action (ADA),
-- fiscal conservatism published by the National Taxpayers' Union (NTU),
-- Democratic Party membership,
--Congressional seniority, measured by years since first election,
-- the electoral margin of the member,
-- membership of the House Appropriations Committee,
-- membership of the House Budget Committee.
+-   liberalism as measured by the interest group Americans for Democratic Action (ADA)
+-   fiscal conservatism published by the National Taxpayers' Union (NTU)
+-   Democratic Party membership
+-   Congressional seniority, measured by years since first election
+-   the electoral margin of the member
+-   membership of the House Appropriations Committee
+-   membership of the House Budget Committee.
 
 @Krehbiel1995a finds that, conditional on legislators' policy preferences, as measured with the ADA and NTU scores, Democrats were more likely to support H.R. 3266 than Republicans.
 Seniority is also a key predictor; junior were members more likely to cosponsor this legislation, conditional on the other covariates.
@@ -83,43 +95,45 @@ summary(cosponsor_fit, par = c("beta", "alpha", "PCP", "ePCP"))$summary
 
 This model can be fit using the **rstanarm** function `stan_glm`.
 This is a binomial model, so it uses `family = binomial()`:
+
 ```{r cosponsor_fit2,results='hide'}
 cosponsor_fit2 <- stan_glm(cosponsor_formula, data = a2z, family = binomial())
 ```
+
 ```{r}
 cosponsor_fit2
 ```
 
+-   probability of co-sponsorship for a representative member (median x values)
+    ```
+  	## clarify calculations
+    ## probability of co-sponsorship for "average" member (median x vals)
+  	probit(pbar) <- beta[1] + beta[2]*0.55 + beta[3]*0.32
+  	              + beta[4] + beta[5]*86 + beta[6]*0.26;
+  	```
 
+-   party affiliation - holding other values at their representative values
+    ```
+  	## party affiliation, effect size
+  	probit(p.dem) <- beta[1] + beta[2]*0.55 + beta[3]*0.32
+  	               + beta[4] + beta[5]*86 + beta[6]*0.26;
+    probit(p.rep) <- beta[1] + beta[2]*0.55 + beta[3]*0.32
+  	               + beta[5]*86 + beta[6]*0.26;
+  	d.party <- p.dem - p.rep;
+  	```
 
-- probability of co-sponsorship for a representative member (median x values)
-  ```
-	## clarify calculations
-  ## probability of co-sponsorship for "average" member (median x vals)
-	probit(pbar) <- beta[1] + beta[2]*0.55 + beta[3]*0.32
-	              + beta[4] + beta[5]*86 + beta[6]*0.26;
-	```
-- party affiliation - holding other values at their representative values
-  ```
-	## party affiliation, effect size
-	probit(p.dem) <- beta[1] + beta[2]*0.55 + beta[3]*0.32
-	               + beta[4] + beta[5]*86 + beta[6]*0.26;
-  probit(p.rep) <- beta[1] + beta[2]*0.55 + beta[3]*0.32
-	               + beta[5]*86 + beta[6]*0.26;
-	d.party <- p.dem - p.rep;
-	```
-- party *attributable effect* from all sources
-  ```
-  ## "attributable effect", all sources, due to party affiliation
-	probit(p.dem.all) <- beta[1] + beta[2]*0.8 + beta[3]*0.2
-	                   + beta[4] + beta[5]*86 + beta[6]*0.28;
-	probit(p.rep.all) <- beta[1] + beta[2]*0.1 + beta[3]*0.74
-	                             + beta[5]*86 + beta[6]*0.24;
-	d.party.all <- p.dem.all - p.rep.all
-  ```
+-   party *attributable effect* from all sources
+    ```
+    ## "attributable effect", all sources, due to party affiliation
+  	probit(p.dem.all) <- beta[1] + beta[2]*0.8 + beta[3]*0.2
+  	                   + beta[4] + beta[5]*86 + beta[6]*0.28;
+  	probit(p.rep.all) <- beta[1] + beta[2]*0.1 + beta[3]*0.74
+  	                             + beta[5]*86 + beta[6]*0.24;
+  	d.party.all <- p.dem.all - p.rep.all
+    ```
 
-**TODO** Do latent residuals [@GelmanGoegebeurTuerlinckxEtAl2000a; @AlbertChib1995a] make sense and have any meaning outside of Gibbs sampling? They don't seem useful relative to LOO measures of outliers.
+TODO: Calculate latent residuals [@GelmanGoegebeurTuerlinckxEtAl2000a; @AlbertChib1995a]. Do they make sense and have any meaning outside of Gibbs sampling? They don't seem useful relative to LOO measures of outliers.
 
 [^cosponsor-data]: Replication data from @Herron2010a.
 
-[^cosponsor-src]: Example derived from Simon Jackman, "Cosponsorship:  computing auxiliary quantities from MCMC output," 2004-05-01, [URL](https://web-beta.archive.org/web/20040501194620/http://jackman.stanford.edu:80/mcmc/kk.odc)
+[^cosponsor-src]: Example derived from Simon Jackman, "[Cosponsorship:  computing auxiliary quantities from MCMC output](https://web-beta.archive.org/web/20040501194620/http://jackman.stanford.edu:80/mcmc/kk.odc)", 2004-05-01.

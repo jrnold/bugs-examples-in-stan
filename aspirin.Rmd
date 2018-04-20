@@ -1,6 +1,5 @@
 # Aspirin: Borrowing Strength via Hierarchical Modeling {#aspirin}
 
-
 ```{r aspirin_setup,message=FALSE,cache=FALSE}
 library("tidyverse")
 library("rstan")
@@ -8,7 +7,7 @@ library("rstan")
 
 The following data come from a meta-analysis of heart attack data [^aspirin-src],
 ```{r aspirin}
-aspirin <- 
+aspirin <-
   tibble(y = c(2.77, 2.50, 1.84, 2.56, 2.31, -1.15),
          sd = c(1.65, 1.31, 2.34, 1.67, 1.98, 0.90))
 ```
@@ -33,13 +32,13 @@ $$
 where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$.
 
 Although the data are binomial, the sample sizes are large enough in each study that the normal approximation is valid.
-This simplifies the problem by reducing each study's data to the observed treatment effect and a standard deviation. 
+This simplifies the problem by reducing each study's data to the observed treatment effect and a standard deviation.
 The goal of the meta-analysis is to synthesize the six studies, in order to arrive at an overall estimate of the effects of aspirin on survivorship following a heart attack.
 
-This is a simple example of hierarchical modeling. 
+This is a simple example of hierarchical modeling.
 Via the exchangeability assumption, that the study-specific means have a common prior, the studies "borrow strength" from one another.
 This introducing some bias, since each study's mean mean is shrunk back towards the common mean.
-However, the benefit is gaining precision (smaller variance). 
+However, the benefit is gaining precision (smaller variance).
 We also gain a better estimate of the overall effect of aspirin on survivorship after heart attack than we would get from naively pooling the studies or using the estimate of any one study.
 
 [^aspirin-src]: This example is derived from Simon Jackman, "Aspirin: Shrinkage (or "borrowing strength") via hierarchical modeling", 2007-07-24 [URL](https://web-beta.archive.org/web/20070724034135/http://jackman.stanford.edu/mcmc/aspirin.odc). The data and the meta-analysis is from @Draper1992a.
@@ -51,8 +50,6 @@ aspirin_mod <- stan_model("stan/aspirin.stan")
 ```{r echo=FALSE,results='asis'}
 aspirin_mod
 ```
-
-
 
 ```{r aspirin_data}
 aspirin_data <- within(list(), {
@@ -66,17 +63,16 @@ aspirin_data <- within(list(), {
 })
 ```
 
-
 ```{r results='hide'}
 aspirin_fit <- sampling(aspirin_mod, data = aspirin_data)
 ```
+
 ```{r}
 aspirin_fit
 ```
 
 Note that this model is likely to produce divergent transitions.
 The reasons for this and an alternative parameterization is discussed in the next section.
-
 
 ## Non-centered parameterization
 
@@ -85,7 +81,7 @@ For few data, when there are not many groups, or when inter-group variation is h
 The non-centered parameterization is
 $$
 \begin{aligned}[t]
-\theta_i^* &\sim \mathsf{Normal}(0, 1) , \\
+\theta_i^{*} &\sim \mathsf{Normal}(0, 1) , \\
 \theta_i &= \tau \theta^*_i + \mu .
 \end{aligned}
 $$

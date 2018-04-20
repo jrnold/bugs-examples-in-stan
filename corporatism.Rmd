@@ -11,7 +11,6 @@ The magnitudes of the country-specific coefficients are conditional on (time-inv
 
 The data come from N=16 countries, and T=14 years (1971:1984) with K=6 covariates at the lowest ("micro") level of the hierarchy, and J=2 covariates (an intercept and the labor organization variable) at the 2nd level.
 
-
 ```{r corporatism}
 load("data/corporatism.rda")
 corporatism_country <- corporatism %>%

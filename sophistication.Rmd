@@ -5,18 +5,30 @@ library("tidyverse")
 library("rstan")
 ```
 
-
 ## Data
 
 ```{r PoliticalSophistication}
 (load("data/PoliticalSophistication.rda"))
 ```
 
-As part of a survey of French public opinion , 2,148 respondents were administered a series of 19 items assessing their knowledge of political leaders, political institutions, constitutional provisions, and the policies of the political parties [@GrunbergMayerSniderman2002a].[^sophistication-src]
-Each response is coded "correct" (1) or "incorrect" (0), and is modeled via a two-parameter item-response model, with a logistic link function; each respondent's level of political sophistication is the latent trait.
+As part of a survey of French public opinion , 2,148 respondents were
+administered a series of 19 items assessing their knowledge of political
+leaders, political institutions, constitutional provisions, and the policies of
+the political parties [@GrunbergMayerSniderman2002a].[^sophistication-src] Each
+response is coded "correct" (1) or "incorrect" (0), and is modeled via a
+two-parameter item-response model, with a logistic link function; each
+respondent's level of political sophistication is the latent trait.
 
-In addition, at the end of the thirty minute phone interview, the interviewer assigned a score for each respondent's level of political information (based on their impressions of the respondents formed over the course of the entire interview) on a zero to twenty scale. These responses are modeled via a linear regression, with each respondent's latent trait appearing as an unobserved predictor, and an intercept specific to each interviewer (modeled hierarchically in the code below). To uniquely orient the latent trait (higher values corresponding to more political sophistication),  the interviewer ratings are constrained to positively discriminate with respect to the latent trait (see the constraint on the prior for gamma).
-
+In addition, at the end of the thirty minute phone interview, the interviewer
+assigned a score for each respondent's level of political information (based on
+their impressions of the respondents formed over the course of the entire
+interview) on a zero to twenty scale. These responses are modeled via a linear
+regression, with each respondent's latent trait appearing as an unobserved
+predictor, and an intercept specific to each interviewer (modeled
+hierarchically in the code below). To uniquely orient the latent trait (higher
+values corresponding to more political sophistication),  the interviewer
+ratings are constrained to positively discriminate with respect to the latent
+trait (see the constraint on the prior for gamma).
 
 ## Model
 
@@ -26,7 +38,7 @@ The final item, $y_20$, is a political sophistication score (0--20) assigned by 
 Let $y_{i,j}$ be the response of respondent $i \in 1, \dots, N$ to question $j \in 1, \dots, 20$.
 $$
 \begin{aligned}[t]
-y_{i,j} &\sim \mathsf{Bernoulli}(\mathsf{Logit}^{-1}(\beta_j \xi_i - \alpha_j)) 
+y_{i,j} &\sim \mathsf{Bernoulli}(\mathsf{Logit}^{-1}(\beta_j \xi_i - \alpha_j))
 \end{aligned}
 $$
 for $j \in 1, \dots, j$.
@@ -38,16 +50,16 @@ y_{20,j} &\sim \mathsf{Normal}(\theta_i, \sigma^2) , \\
 \end{aligned}
 $$
 Since the question is assigned by the interviewer, $\theta_i$ is a linear function of a the latent score of the respondent ($\xi_i$) and an interviewer specific random effect, $\nu_{m[i]}$, where $m[i]$ means that $i$ was interviewed by interviewer $m \in 1, \dots, M$.
-The interviewer effects are given a prior distribution, 
+The interviewer effects are given a prior distribution,
 $$
 \nu_m \sim \mathsf{Normal}(0, \tau)  .
 $$
 
-To fix scale and location invariances, the respondents' abilities are given a standard normal distribution, 
+To fix scale and location invariances, the respondents' abilities are given a standard normal distribution,
 $$
 \xi_m \sim \mathsf{Normal}(0, 1) .
 $$
-Since higher interviewer assessments should be associated with a higher latent political knowledge score, the rotation invariance is resolved by restricting the coefficient for the respondents to be positive, 
+Since higher interviewer assessments should be associated with a higher latent political knowledge score, the rotation invariance is resolved by restricting the coefficient for the respondents to be positive,
 $$
 \gamma \sim \mathsf{HalfNormal}(0, 2.5 s_z) .
 $$
@@ -74,12 +86,11 @@ mod_sophistication <- stan_model("stan/sophistication.stan")
 mod_sophistication
 ```
 
-
 ## Estimation
 
 ```{r data_sophistication}
 y_scale <- 21 / 4
-  
+
 data_sophistication <- within(list(), {
   y_bern <- t(as.matrix(select(PoliticalSophistication, Q1:Q19)))
   N <- ncol(y_bern)
@@ -107,10 +118,9 @@ data_sophistication <- within(list(), {
 fit_sophistication <- sampling(mod_sophistication, data = data_sophistication, init = 0, chains = 1)
 ```
 
-
 ## Questions / Extensions
 
-1. An alternative parameterization would place the political sophistication on the same 0-20 scale as `Q20`. 
-2. Model Q20 as an ordinal variable instead of a continuous variable.
+1.  An alternative parameterization would place the political sophistication on the same 0-20 scale as `Q20`.
+1.  Model `Q20` as an ordinal variable instead of a continuous variable.
 
-[^sophistication-src]: Simon Jackman, "Political Sophistication: item-response modeling with mixed data types," *BUGS Examples,* [URL](https://web-beta.archive.org/web/*/http://jackman.stanford.edu:80/mcmc/sophistication2002.odc).
+[^sophistication-src]: Simon Jackman, "[Political Sophistication: item-response modeling with mixed data types](https://web-beta.archive.org/web/*/http://jackman.stanford.edu:80/mcmc/sophistication2002.odc)", *BUGS Examples*.

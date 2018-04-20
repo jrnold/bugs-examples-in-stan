@@ -1,4 +1,4 @@
-# Legislators: estimating legislators' ideal points from voting histories (roll call data) {#legislators}
+# Legislators: estimating legislators' ideal points from voting histories {#legislators}
 
 ```{r legislators_setup,message=FALSE,cache=FALSE}
 library("pscl")
@@ -9,13 +9,19 @@ library("rstan")
 library("sn")
 ```
 
-Recorded votes in legislative settings (roll calls) are often used to recover the underlying preferences of legislators.[^legislators-src]
-Political scientists analyze roll call data using the Euclidean spatial voting model: each legislator (i = 1, ..., n) has a preferred policy position (xi, a point in low-dimensional Euclidean space), and each vote (j = 1, ..., m) amounts to a choice between "Aye" and a "Nay" locations, qj  and Yj,  respectively. Legislators are assumed to choose on the basis of utility maximization, with utilities (in one-dimension)
+Recorded votes in legislative settings (roll calls) are often used to recover
+the underlying preferences of legislators.[^legislators-src] Political
+scientists analyze roll call data using the Euclidean spatial voting model:
+each legislator ($i = 1, ..., n$) has a preferred policy position ($x_i$, a
+point in low-dimensional Euclidean space), and each vote ($j = 1, ..., m$)
+amounts to a choice between "Aye" and a "Nay" locations, $q_j$  and $Y_j$,
+respectively. Legislators are assumed to choose on the basis of utility
+maximization, with utilities (in one-dimension)
 
-In these models, the only observed data are votes, and the analyst wants to 
+In these models, the only observed data are votes, and the analyst wants to
 model those votes as a function of legislator- ($\xi_i$), and vote-specific ($\alpha_i$, $\beta_i$) parameters.
 The vote of legislator $i$ on roll-call $j$ ($y_{i,j}$) is a function of a
-the legislator's ideal point ($\xi_i$), the vote's cutpoint ($\alpha_j$), 
+the legislator's ideal point ($\xi_i$), the vote's cutpoint ($\alpha_j$),
 and the vote's discrimination ($\beta_j$):
 $$
 \begin{aligned}[t]
@@ -30,9 +36,9 @@ $$
 Ideal points (like many latent space models) are unidentified.
 In particular,  there are three types of invariance:
 
-1. Additive Aliasing
-2. Multiplicative Ailising
-3. Rotation (Reflection) Invariance
+1.  Additive aliasing
+1.  Multiplicative aliasing
+1.  Rotation (reflection) invariance
 
 Scale invariance:
 $$
@@ -49,7 +55,7 @@ $$
 \mu_{i,j} &= \alpha_j + \beta_j \xi_i \\
           &= \alpha_j - \beta_j c + \beta_j c + \beta_j \xi_i \\
          &= (\alpha_j - \beta_j c) + \beta_j (\xi_i + c) \\
-         &= \alpha_j^* + \beta_j \xi^*_i
+         &= \alpha_j^{*} + \beta_j \xi^{*}_i
 \end{aligned}
 $$
 
@@ -58,8 +64,8 @@ $$
 \begin{aligned}[t]
 \mu_{i,j} &= \alpha_j + \beta_j \xi_i \\
           &= \alpha_j  + \beta_j (-1) (-1) \xi_i \\
-          &= \alpha_j  + (-\beta_j) (-\xi_i) \\          
-          &= \alpha_j + \beta_j^* \xi^*_i
+          &= \alpha_j  + (-\beta_j) (-\xi_i) \\
+          &= \alpha_j + \beta_j^{*} \xi^{*}_i
 \end{aligned}
 $$
 
@@ -79,13 +85,12 @@ list(sum(plogis(y - (alpha + beta %o% xi))),
 
 For each of these: Which types of rotation does it solve?
 
-1. Fix one element of $\beta$. 
-2. Fix one element of $\xi$.
-3. Fix one element of $\alpha$.
-4. Fix two elements of $\alpha$.
-5. Fix two elements of $\xi$.
-6. Fix two elements of $\beta$.
-
+1.  Fix one element of $\beta$.
+1.  Fix one element of $\xi$.
+1.  Fix one element of $\alpha$.
+1.  Fix two elements of $\alpha$.
+1.  Fix two elements of $\xi$.
+1.  Fix two elements of $\beta$.
 
 ## 109th Senate
 
@@ -102,24 +107,22 @@ s109
 This data includes all [roll-call](https://en.wikipedia.org/wiki/Voting_methods_in_deliberative_assemblies) votes, votes in which the responses of the senators are recorded.
 
 For simplicity, the ideal point model uses binary responses, but the `s109` data
-includes multiple [codes](http://voteview.com/senate109.htm) for respones to
+includes multiple [codes](http://voteview.com/senate109.htm) for response to
 roll-calls.
 
----- ----------------------------------------------------------
-0    not a member
-1    Yea
-2    Paired Yea
-3    Announced Yea,
-4    Announced Nay
-5    Paired Nay
-6    Nay
-7    Present (some Congresses, also not used some Congresses)
-8    Present (some Congresses, also not used some Congresses)
-6    Nay
-9    Not Voting
----- ----------------------------------------------------------
+| 0   | not a member
+| 1   | Yea
+| 2   | Paired Yea
+| 3   | Announced Yea
+| 4   | Announced Nay
+| 5   | Paired Nay
+| 6   | Nay
+| 7   | Present (some Congresses, also not used some Congresses)
+| 8   | Present (some Congresses, also not used some Congresses)
+| 6   | Nay
+| 9   | Not Voting
 
-In the data processing, we will aggregate the respones into "Yes", "No", and missing values.
+In the data processing, we will aggregate the responses into "Yes", "No", and missing values.
 
 ```{r}
 s109_vote_data <- as.data.frame(s109$vote.data) %>%
@@ -156,7 +159,7 @@ s109_votes <- s109$votes %>%
 ## Identification by Fixing Legislator's Ideal Points
 
 Identification of latent state models can be challenging. The first method for identifying ideal point models is to fix the values of two legislators.
-These can be arbitrary, but if they are chosen along the ideological dimension of 
+These can be arbitrary, but if they are chosen along the ideological dimension of
 interest it can help the substantive interpretation.
 
 Since we \textit{a priori} know, or expect, that the primary ideological dimension is Liberal-Conservative [@PooleRosenthal2000a], I'll fix the ideal points of the two
@@ -180,7 +183,7 @@ $$
 \end{aligned}
 $$
 
-Create a data frame with the fixed values for identification 
+Create a data frame with the fixed values for identification
 and initial values for the legislators
 ```{r legislators_xi}
 xi <-
@@ -224,15 +227,13 @@ legislators_init_1 <- list(
 )
 ```
 
-
 ```{r legislators_fit_1,results='hide'}
-legislators_fit_1 <- 
+legislators_fit_1 <-
   sampling(mod_ideal_point_2, data = legislators_data_1,
            chains = 1, iter = 500,
            init = legislators_init_1,
            refresh = 100)
 ```
-
 
 Extract the ideal point data:
 ```{r legislator_summary_1}
@@ -253,10 +254,10 @@ ggplot(legislator_summary_1,
   theme(legend.position = "bottom")
 ```
 
-# Identification by fixing Legislator's Signs
+## Identification by fixing Legislator's Signs
 
 We can identify the scale and location of the latent dimensions by fixing the mean and location of the distribution of the legislator's ideal points.
-This can be done by 
+This can be done by
 $$
 \xi_i \sim \mathsf{Normal}(0, 1)
 $$
@@ -266,20 +267,20 @@ This "soft-identification" will also overestimate the uncertainty in the ideal p
 So in the estimation, I do the following to ensure that in each simulation, $\xi$ has exactly mean 0 and standard deviation 1.
 $$
 \begin{aligned}[t]
-\xi_i^* &\sim \mathsf{Normal}(0, 1) \\
+\xi_i^{*} &\sim \mathsf{Normal}(0, 1) \\
 \xi_i &= \frac{\xi^*_i - \mathrm{mean}(\xi)}{\mathrm{sd}(\xi)}
 \end{aligned}
 $$
 However, this does not identify the direction of the latent variables.
 This can be done by restriction the sign of either a single legislator ($\xi_i$) or roll-call ($\beta_i$).
 
-In this case, instead of fixing multiple 
+In this case, instead of fixing multiple
 $$
 \beta_j \sim \mathsf{SkewNormal}(0, 2.5, d_j  )
 $$
 where
 $$
-d_j = 
+d_j =
 \begin{cases}
 -50 & \text{if Democratic party line vote} \\
 0 & \text{not a party line vote} \\
@@ -293,7 +294,7 @@ y \sim \mathsf{SkewNormal}(\mu, \sigma, \alpha)
 $$
 as $|\alpha| \to \infty$, the skew-normal approaches a half-normal distribution.
 ```{r}
-map_df(c(-50, 0, 50), 
+map_df(c(-50, 0, 50),
         function(alpha) {
           tibble(x = seq(-4, 4, by = 0.1),
                  density = dsn(x, alpha = alpha),
@@ -302,7 +303,6 @@ map_df(c(-50, 0, 50),
   ggplot(aes(x = x, y = density, colour = factor(alpha))) +
   geom_line()
 ```
-
 
 ```{r legislators_mod_ideal_point_2,results='hide',cache.extra=tools::md5sum("stan/ideal_point_2.stan")}
 mod_ideal_point_2 <- stan_model("stan/ideal_point_2.stan")
@@ -313,9 +313,18 @@ mod_ideal_point_2
 
 ## Questions
 
-- Visualize the distribution of $\alpha$ and $\beta$. Plot those 
-- Estimate the model with improper priors for $\alpha$, $\beta$, and $\xi$. What happens?
-- Estimate the the model that fixes the distribution of legislators, but does not fix the signs of legislators. Run two chains. In one chain use the following starting values, $\xi_i = 1$ for all Democratic and Independent Senators, $\xi_i = -1$ for all Republican Seantors; in the other use $\xi_i = -1$ for all Democratic and Independent Senators, and $\xi_i = 1$ for all Republican Senators. Visualize the densities of various $\xi_i$ points. Look for evidence of bimodality.
-- Extend the model to $K > 1$ dimensions.
+-   Plot the the distributions of $\alpha$ and $\beta$.
+
+-   Estimate the model with improper priors for $\alpha$, $\beta$, and $\xi$. What happens?
+
+-   Estimate the the model that fixes the distribution of legislators, but
+    does not fix the signs of legislators. Run two chains. In one chain use
+    the following starting values, $\xi_i = 1$ for all Democratic and
+    Independent Senators, $\xi_i = -1$ for all Republican Senators; in the
+    other use $\xi_i = -1$ for all Democratic and Independent Senators, and
+    $\xi_i = 1$ for all Republican Senators. Visualize the densities of
+    various $\xi_i$ points. Look for evidence of bimodality.
+
+-   Extend the model to $K > 1$ dimensions.
 
 [^legislators-src]: Example derived from Simon Jackman, "Legislators: estimating legislators' ideal points from voting histories (roll call data)", *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034141/http://jackman.stanford.edu:80/mcmc/legislators.odc).

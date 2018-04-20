@@ -5,7 +5,6 @@ library("tidyverse")
 library("rstan")
 ```
 
-
 Two groups chosen to be random samples from subpopulations of lung-cancer patients and cancer-free individuals.[^cancer]
 The scientific question of interest is the difference in the smoking habits between two groups.
 The results of the survey are:
@@ -20,12 +19,14 @@ cancer <- tribble(
 cancer
 ```
 
-[^cancer]: This example is derived from Simon Jackman, "Cancer: difference in two binomial proportions", *BUGS Examples,* 2007-07-24, http://jackman.stanford.edu:80/mcmc/cancer.odc.  [Wayback Machine](https://web-beta.archive.org/web/20070601000000*/http://jackman.stanford.edu:80/mcmc/cancer.odc). This examples comes from @JohnsonAlbert1999a, using data from @Dorn1954a.
-
-
 ## Two Sample Binomial Model
 
-In implementing this model, we have just two data points (cancer patients and control group) and a binomial sampling model, in which the population proportions of smokers in each group appear as parameters.  Quantities of interest such as the difference in the population proportions and the log of the odds ratio are computed in the generated quantities section. Uniform priors on the population proportions are used in this example.
+In implementing this model, we have just two data points (cancer patients and
+control group) and a binomial sampling model, in which the population
+proportions of smokers in each group appear as parameters.  Quantities of
+interest such as the difference in the population proportions and the log of
+the odds ratio are computed in the generated quantities section. Uniform priors
+on the population proportions are used in this example.
 
 $$
 \begin{aligned}[t]
@@ -120,8 +121,11 @@ cancer_fit2 <- sampling(cancer_mod2, cancer_data2)
 cancer_fit2
 ```
 
-
 ## Questions
 
-1. Expression the Binomial Logit model of the Difference as a regression
-2. What number of success and failures is a `Beta(1,1)` prior equivalent to?
+1.  Expression the Binomial Logit model of the Difference as a regression
+1.  What number of success and failures is a `Beta(1,1)` prior equivalent to?
+
+[^cancer]: This example is derived from Simon Jackman,
+    "[Cancer: difference in two binomial proportions](https://web-beta.archive.org/web/20070601000000*/http://jackman.stanford.edu:80/mcmc/cancer.odc)",
+    *BUGS Examples,* 2007-07-24, This examples comes from @JohnsonAlbert1999a, using data from @Dorn1954a.

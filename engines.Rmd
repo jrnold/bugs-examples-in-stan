@@ -5,16 +5,14 @@ library("tidyverse")
 library("rstan")
 ```
 
-
 ## Data
 
-The data are 40 engines tested at various operating temptures, with the the failure time if the engine failed, or the last time of the observational period if it had not [@Tanner1996a].[^engines-src]
+The data are 40 engines tested at various operating temperatures, with the the failure time if the engine failed, or the last time of the observational period if it had not [@Tanner1996a].[^engines-src]
 Of the 40 engines, 23 did not fail in their observational periods.
 ```{r engines,cache.extra=tools::md5sum("data/engines.rda")}
 load("data/engines.rda")
 glimpse(engines)
 ```
-
 
 ## Model
 
@@ -37,7 +35,6 @@ y^*_i &\sim \mathsf{Normal}(\mu_i, \sigma) U(y_i, \infty) & i \in L, \\
 \end{aligned}
 $$
 
-
 $$
 \begin{aligned}[t]
 \log L(y_i, \dots, y_N | \alpha, \beta, \sigma) &=  \sum_{i \notin L} \log \mathsf{Normal}(y_i; \mu_i, \Sigma) \\
@@ -55,7 +52,6 @@ mod_engines <- stan_model("stan/engines.stan")
 ```{r results='asis'}
 mod_engines
 ```
-
 
 ## Estimation
 
@@ -89,7 +85,6 @@ engines_data <- within(list(), {
 sampling(mod_engines, data = engines_data,
          chains = 1, init = list(list(alpha = mean(engines$y))))
 ```
-
 
 [^engines-src]: This example is derived from Simon Jackman, "Engines: right-censored failure times - the I(,) construct contrasted with other approaches", 2007-07-24,
 [URL](https://web-beta.archive.org/web/20070724034205/http://jackman.stanford.edu:80/mcmc/engines.odc)

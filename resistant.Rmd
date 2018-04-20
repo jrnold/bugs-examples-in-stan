@@ -9,12 +9,12 @@ Outlying data points can distort estimates of location, such as means or regress
 Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers).
 A popular alternative to normal errors in regression analyses is the Student's $t$ density, with an unknown degrees of freedom parameter.
 For low degrees of freedom, the Student's $t$ distribution has heavier tails than the normal, but tends to the normal as the degrees of freedom parameter increases.
-Treating the degrees of freedom parameter as an unknown parameter to be estimaetd thus provides a check on the appropriateness of the normal.
+Treating the degrees of freedom parameter as an unknown parameter to be estimated thus provides a check on the appropriateness of the normal.
 By embedding a model with location parameters in the Student's $t$ density, we obtain outlier-resistant estimates of location parameters.
 
 ## Data
 
-To illustrate these ideas, I use data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994 [@Jackman2000a].
+This example uses data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994 [@Jackman2000a].
 ```{r resistant.rda}
 (load("data/resistant.rda"))
 glimpse(resistant)
@@ -40,24 +40,22 @@ $$
 \end{aligned}
 $$
 where $\bar{y}$ is the mean of $y$, and $s_y$ is the standard deviation of $y$.
-The degrees of freedom parameter in the Student's $t$ distribution is a paramter and given the weakly informative prior suggested by @JuarezSteel2010a,
+The degrees of freedom parameter in the Student's $t$ distribution is a parameter and given the weakly informative prior suggested by @JuarezSteel2010a,
 $$
 \nu \sim \mathsf{Gamma}(2, 0.1) .
 $$
 The following code operationalizes this regression model.
-The conditional density of the vote proportions is $t$, with unknown degrees of freedom, $\nu.$ 
-
+The conditional density of the vote proportions is $t$, with unknown degrees of freedom, $\nu.$
 
 ```{r resistant_mod,results='hide',cache.extra=tools::md5sum("stan/resistant.stan")}
 resistant_mod <- stan_model("stan/resistant.stan")
 ```
+
 ```{r echo=FALSE,results='asis',cache=FALSE}
 resistant_mod
 ```
 
-
 ```{r resistant_data,cache.extra=tools::md5sum("data/resistant.rda")}
-
 resistant_data <- within(list(), {
   y <- resistant$y
   N <- length(y)
@@ -84,6 +82,6 @@ summary(resistant_fit, par = c("nu", "sigma", "beta", "tau"))$summary
 
 ## Questions {-}
 
-1. How does using the Student-t distribution compare to using a normal distribution for the errors?
+1.  How does using the Student-t distribution compare to using a normal distribution for the errors?
 
 [^resistant-src]: Example derived from Simon Jackman, "Resistant: Outlier-resistant regression via the t distribution," 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034107/http://jackman.stanford.edu:80/mcmc/resistant.odc).

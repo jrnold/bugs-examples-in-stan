@@ -6,13 +6,21 @@ library("rstan")
 library("rstanarm")
 ```
 
-The data  are  from the 1990 United States Census for the city of St. Louis, Missouri for Census Tracts, and from records of the St. Louis City Metropolitan Police Department for the years 1980 through 1994. For each Census Tract (with a population), N=111, an observation includes
+The data  are  from the 1990 United States Census for the city of St. Louis,
+Missouri for Census Tracts, and from records of the St. Louis City Metropolitan
+Police Department for the years 1980 through 1994. For each Census Tract (with
+a population), N=111, an observation includes
 
-- the median household income in 1990
-- the percentage unemployed (base of labor force)
-- a count of the number of homicide incidents.
+-   the median household income in 1990
+-   the percentage unemployed (base of labor force)
+-   a count of the number of homicide incidents.
 
-The number of homicides in this 15 year period totals 2,815.  The average size of a Census Tract is 3,571 with a range of 249--8,791. Income has been rescaled by dividing by 1,000 which produces a range similar to that of percentage unemeployed and standard deviations that are very close.  Tract homicide counts range from 0 through 99 with a median of 16 (mean is 25.+).  An enhanced set of linear, predictors does better than this two predictor example.
+The number of homicides in this 15 year period totals 2,815.  The average size
+of a Census Tract is 3,571 with a range of 249--8,791. Income has been rescaled
+by dividing by 1,000 which produces a range similar to that of percentage
+unemployed and standard deviations that are very close.  Tract homicide counts
+range from 0 through 99 with a median of 16 (mean is 25.+).  An enhanced set of
+linear, predictors does better than this two predictor example.
 
 $$
 \begin{aligned}[t]
@@ -21,7 +29,7 @@ y_i &\sim \mathsf{NegBinomial2}(\mu_i,\phi) \\
 \eta_i &= x_i \beta
 \end{aligned}
 $$
-The negative binomial distribution is parameterized so that $\mu \in \mathbb{R}^+$ is the location parameter, and $\phi \in \mathbb{R}^+$ is the reciprocal overdisperson parameter, such that the mean and variance of a random variable $Y$ distributed negative binomial is
+The negative binomial distribution is parameterized so that $\mu \in \mathbb{R}^+$ is the location parameter, and $\phi \in \mathbb{R}^+$ is the reciprocal overdispersion parameter, such that the mean and variance of a random variable $Y$ distributed negative binomial is
 $$
 \begin{aligned}[t]
 E[Y] &= \mu , \\
@@ -75,6 +83,5 @@ negbin_fit2 <- stan_glm.nb(i8094 ~ pcunemp9 + incrs, data = st_louis_census)
 ```{r}
 negbin_fit2
 ```
-
 
 Example derived from Simon Jackman, "negative binomial using the ones trick with log link", 2005-10-27, [URL](https://web-beta.archive.org/web/20051027082311/http://jackman.stanford.edu:80/mcmc/negbineg.odc).
