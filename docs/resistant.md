@@ -160,15 +160,15 @@ summary(resistant_fit, par = c("nu", "sigma", "beta", "tau"))$summary
 In the Student's $t$ distribution, the standard deviation is a function of the degrees of freedom. 
 For degrees of freedom $\nu > 2$, the variance is defined, and
 $$
-\sigma^* = sd(y) = \sigma \sqrt{ \frac{\nu}{\nu - 2}}
+\sigma^{*} = sd(y) = \sigma \sqrt{ \frac{\nu}{\nu - 2}}
 $$
 This makes the sampling of $\nu$ and $\sigma$ a priori dependent.
 Instead, we can place priors on the degrees of freedom $\nu$ and the standard deviation $\sigma^*$,
 and treat $\sigma$ as a transformed parameter,
 $$
 \begin{aligned}
-\sigma^* &\sim \mathsf{HalfCauchy}{(0, 5)} \\
-\sigma &= \sigma^* \sqrt{\frac{\nu - 2}{\nu}} \\
+\sigma^{*} &\sim \mathsf{HalfCauchy}{(0, 5)} \\
+\sigma &= \sigma^{*} \sqrt{\frac{\nu - 2}{\nu}} \\
 \end{aligned}
 $$
 
@@ -252,7 +252,6 @@ summary(resistant_fit2, par = c("beta", "sigma", "nu", "tau"))$summary
 #> nu        6.87e+00   7.70e+00  331.8 1.02
 #> tau      1.37e+308  1.75e+308 4000.0  NaN
 ```
-
 
 ## Questions {-}
 

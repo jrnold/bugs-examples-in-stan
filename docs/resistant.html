@@ -360,15 +360,15 @@ generated quantities {
 <p>In the Student’s <span class="math inline">\(t\)</span> distribution, the standard deviation is a function of the degrees of freedom.
 For degrees of freedom <span class="math inline">\(\nu &gt; 2\)</span>, the variance is defined, and
 <span class="math display">\[
-\sigma^* = sd(y) = \sigma \sqrt{ \frac{\nu}{\nu - 2}}
+\sigma^{*} = sd(y) = \sigma \sqrt{ \frac{\nu}{\nu - 2}}
 \]</span>
 This makes the sampling of <span class="math inline">\(\nu\)</span> and <span class="math inline">\(\sigma\)</span> a priori dependent.
 Instead, we can place priors on the degrees of freedom <span class="math inline">\(\nu\)</span> and the standard deviation <span class="math inline">\(\sigma^*\)</span>,
 and treat <span class="math inline">\(\sigma\)</span> as a transformed parameter,
 <span class="math display">\[
 \begin{aligned}
-\sigma^* &amp;\sim \mathsf{HalfCauchy}{(0, 5)} \\
-\sigma &amp;= \sigma^* \sqrt{\frac{\nu - 2}{\nu}} \\
+\sigma^{*} &amp;\sim \mathsf{HalfCauchy}{(0, 5)} \\
+\sigma &amp;= \sigma^{*} \sqrt{\frac{\nu - 2}{\nu}} \\
 \end{aligned}
 \]</span></p>
 <pre class="sourceCode r"><code class="sourceCode r">resistant_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/resistant2.stan&quot;</span>)</code></pre>
