@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Bayesian Model Examples</title>
+  <meta name="description" content="Bayesian Model Examples">
+  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Bayesian Model Examples" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bayesian Model Examples" />
+  
+  
+  
+
+<meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
+
+
+<meta name="date" content="2018-04-20">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="turnout.html">
+<link rel="next" href="reagan.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="dependencies.html"><a href="dependencies.html"><i class="fa fa-check"></i>Dependencies</a></li>
+<li class="chapter" data-level="" data-path="colonophon.html"><a href="colonophon.html"><i class="fa fa-check"></i>Colonophon</a></li>
+<li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: Difference in Two Binomial Proportions</a><ul>
+<li class="chapter" data-level="" data-path="undervote.html"><a href="undervote.html#references"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#data"><i class="fa fa-check"></i><b>5.1</b> Data</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data-1"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: Estimating Legislators’ Ideal Points From Voting Histories</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+<li class="chapter" data-level="9.4" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-signs"><i class="fa fa-check"></i><b>9.4</b> Identification by Fixing Legislator’s Signs</a></li>
+<li class="chapter" data-level="9.5" data-path="legislators.html"><a href="legislators.html#questions-2"><i class="fa fa-check"></i><b>9.5</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-4"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-3"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-5"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+<li class="chapter" data-level="" data-path="aspirin.html"><a href="aspirin.html#references-1"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: Over-Parameterization of a Normal Mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-4"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-6"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-5"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references-2.html"><a href="references-2.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayesian Model Examples</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="cosponsorship" class="section level1">
+<h1><span class="header-section-number">6</span> Cosponsorship: computing auxiliary quantities from MCMC output</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</code></pre>
+<p>Typically, MCMC output consists of samples from the posterior density of model
+parameters. But note that other quantities can be generated as well, say,
+imputations for missing data points, predictions, residuals, or goodness-of-fit
+summary statistics. In fact, any function of the parameters can be calculated
+and output.</p>
+<p>I demonstrate these ideas in the context of a generalized linear model for
+binary data. The specific application is <span class="citation">Krehbiel (<a href="#ref-Krehbiel1995a">1995</a>)</span>, a study of
+legislative behavior.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnote-ref" id="fnref4"><sup>4</sup></a> The response variable
+is a binary indicator, which is equal to 1 if the member of the U.S. House of
+Representatives chose to cosponsor bill <a href="https://www.congress.gov/bill/103rd-congress/house-bill/3266">H.R.
+3266</a>, and 0
+otherwise. Of the 434 legislators for which data is available, 228 legislators
+cosponsored this bill. H.R.3266 was a wide-ranging spending bill designed to
+circumvent the usual budget-making process, that was considered by the <a href="https://en.wikipedia.org/wiki/103rd_United_States_Congress">103rd
+House of
+Representatives</a> in
+1993–1994. Seven covariates are used in the analysis:</p>
+<ul>
+<li>liberalism as measured by the interest group Americans for Democratic Action (ADA)</li>
+<li>fiscal conservatism published by the National Taxpayers’ Union (NTU)</li>
+<li>Democratic Party membership</li>
+<li>Congressional seniority, measured by years since first election</li>
+<li>the electoral margin of the member</li>
+<li>membership of the House Appropriations Committee</li>
+<li>membership of the House Budget Committee.</li>
+</ul>
+<p><span class="citation">Krehbiel (<a href="#ref-Krehbiel1995a">1995</a>)</span> finds that, conditional on legislators’ policy preferences, as measured with the ADA and NTU scores, Democrats were more likely to support H.R. 3266 than Republicans.
+Seniority is also a key predictor; junior were members more likely to cosponsor this legislation, conditional on the other covariates.</p>
+<div id="model" class="section level2">
+<h2><span class="header-section-number">6.1</span> Model</h2>
+<p><span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;= \mathsf{Bernoulli}(\mu_i) \\
+\mu_i &amp;= \mathsf{Logit}^{-1}(x_i \beta)
+\end{aligned}
+\]</span></p>
+<p>Several auxiliary quantities are estimated in the following Stan program:
+the <em>percent correctly predicted (PCP)</em>,
+<span class="math display">\[
+\mathrm{PCP} = \frac{1}{N} \sum_{i = 1}^N \left( y_i (\pi_i &gt;= 0.5) + (1 - y_i) (\pi_i &lt; 0.5) \right) ,
+\]</span>
+and the expected percent correctly predicted (ePCP)* <span class="citation">(Herron <a href="#ref-Herron1999a">1999</a>)</span>,
+<span class="math display">\[
+\mathrm{PCP} = \frac{1}{N} \sum_{i = 1}^N \left( y_i \pi_i + (1 - y_i) (1 - \pi_i) \right) .
+\]</span></p>
+<p>Uncertainty in the parameters, and propagates to uncertainty in these quantities, and thus it is easy to calculate posterior distributions for these values.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;a2z&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">cosponsor_formula &lt;-<span class="st"> </span>cosp <span class="op">~</span><span class="st"> </span>ada <span class="op">+</span><span class="st"> </span>ntu <span class="op">+</span><span class="st"> </span>democrat <span class="op">+</span><span class="st"> </span>firstelected <span class="op">+</span><span class="st"> </span>margin <span class="op">+</span><span class="st"> </span>appromember <span class="op">+</span><span class="st"> </span>budgetmember</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">cosponsor_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>a2z<span class="op">$</span>cosp
+  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">update</span>(cosponsor_formula, . <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>.), <span class="dt">data =</span> a2z) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
+  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
+  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span>
+  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
+  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
+  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)
+})</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">mod_logit2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/logit2.stan&quot;</span>)</code></pre>
+<pre>
+  <code class="stan">functions {
+  real pct_correct_pred(int[] y, vector mu) {
+    real out;
+    int N;
+    N = num_elements(mu);
+    out = 0.;
+    for (i in 1:N) {
+      if (y[i]) {
+        out = out + int_step(mu[i] >= 0.5);
+      } else {
+        out = out + int_step(mu[i] < 0.5);
+      }
+    }
+    out = out / N;
+    return out;
+  }
+  real expected_pct_correct_pred(int[] y, vector mu) {
+    real out;
+    int N;
+    N = num_elements(mu);
+    out = 0.;
+    for (i in 1:N) {
+      if (y[i]) {
+        out = out + mu[i];
+      } else {
+        out = out + (1. - mu[i]);
+      }
+    }
+    out = out / N;
+    return out;
+  }
+}
+data {
+  // response
+  int N;
+  int y[N];
+  // covariates
+  int K;
+  matrix[N, K] X;
+  // priors
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+  vector[K] beta_loc;
+  vector<lower = 0.>[K] beta_scale;
+}
+parameters {
+  real alpha;
+  vector[K] beta;
+}
+transformed parameters {
+  // linear predictor
+  vector[N] eta;
+  eta = alpha + X * beta;
+}
+model {
+  alpha ~ normal(alpha_loc, alpha_scale);
+  beta ~ normal(beta_loc, beta_scale);
+  // y ~ bernoulli(inv_logit(eta));
+  // this is faster and more numerically stable
+  y ~ bernoulli_logit(eta);
+}
+generated quantities {
+  // log-likelihood of each obs
+  vector[N] log_lik;
+  // probability
+  vector[N] mu;
+  // simulated outcomes
+  int y_rep[N];
+  // percent correctly predicted
+  real PCP;
+  real ePCP;
+  for (i in 1:N) {
+    mu[i] = inv_logit(eta[i]);
+    log_lik[i] = bernoulli_logit_lpmf(y[i] | eta[i]);
+    y_rep[i] = bernoulli_rng(mu[i]);
+  }
+  PCP = pct_correct_pred(y, mu);
+  ePCP = expected_pct_correct_pred(y, mu);
+}</code>
+</pre>
+<p>Sample from this model:</p>
+<pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_logit2, <span class="dt">data =</span> cosponsor_data)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(cosponsor_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;PCP&quot;</span>, <span class="st">&quot;ePCP&quot;</span>))<span class="op">$</span>summary
+<span class="co">#&gt;           mean  se_mean      sd   2.5%    25%    50%     75%  97.5% n_eff</span>
+<span class="co">#&gt; beta[1] -0.467 5.40e-03 0.34131 -1.134 -0.700 -0.464 -0.2323 0.1901  4000</span>
+<span class="co">#&gt; beta[2]  4.205 1.15e-02 0.66477  2.938  3.751  4.192  4.6482 5.5554  3341</span>
+<span class="co">#&gt; beta[3]  0.492 7.26e-03 0.45902 -0.431  0.195  0.496  0.8074 1.3767  4000</span>
+<span class="co">#&gt; beta[4]  0.874 4.00e-03 0.25293  0.400  0.704  0.870  1.0411 1.3858  4000</span>
+<span class="co">#&gt; beta[5] -0.115 3.30e-03 0.20876 -0.532 -0.253 -0.117  0.0226 0.2971  4000</span>
+<span class="co">#&gt; beta[6] -0.321 4.26e-03 0.26969 -0.890 -0.498 -0.309 -0.1286 0.1749  4000</span>
+<span class="co">#&gt; beta[7] -0.342 3.63e-03 0.22944 -0.807 -0.493 -0.341 -0.1802 0.0977  4000</span>
+<span class="co">#&gt; alpha    1.059 4.31e-03 0.27239  0.552  0.874  1.048  1.2322 1.6194  4000</span>
+<span class="co">#&gt; PCP      0.909 9.52e-05 0.00544  0.899  0.906  0.910  0.9124 0.9194  3267</span>
+<span class="co">#&gt; ePCP     0.873 1.15e-04 0.00725  0.858  0.869  0.874  0.8786 0.8859  4000</span>
+<span class="co">#&gt;          Rhat</span>
+<span class="co">#&gt; beta[1] 1.000</span>
+<span class="co">#&gt; beta[2] 1.000</span>
+<span class="co">#&gt; beta[3] 0.999</span>
+<span class="co">#&gt; beta[4] 1.000</span>
+<span class="co">#&gt; beta[5] 0.999</span>
+<span class="co">#&gt; beta[6] 0.999</span>
+<span class="co">#&gt; beta[7] 0.999</span>
+<span class="co">#&gt; alpha   1.000</span>
+<span class="co">#&gt; PCP     1.000</span>
+<span class="co">#&gt; ePCP    1.000</span></code></pre>
+<p>This model can be fit using the <strong>rstanarm</strong> function <code>stan_glm</code>.
+This is a binomial model, so it uses <code>family = binomial()</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm</span>(cosponsor_formula, <span class="dt">data =</span> a2z, <span class="dt">family =</span> <span class="kw">binomial</span>())</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit2
+<span class="co">#&gt; stan_glm</span>
+<span class="co">#&gt;  family:       binomial [logit]</span>
+<span class="co">#&gt;  formula:      cosp ~ ada + ntu + democrat + firstelected + margin + appromember + </span>
+<span class="co">#&gt;     budgetmember</span>
+<span class="co">#&gt;  observations: 434</span>
+<span class="co">#&gt;  predictors:   8</span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt;              Median MAD_SD</span>
+<span class="co">#&gt; (Intercept)  -14.4    3.1 </span>
+<span class="co">#&gt; ada            0.0    0.0 </span>
+<span class="co">#&gt; ntu            0.2    0.0 </span>
+<span class="co">#&gt; democrat       0.9    0.9 </span>
+<span class="co">#&gt; firstelected   0.1    0.0 </span>
+<span class="co">#&gt; margin         0.0    0.0 </span>
+<span class="co">#&gt; appromember   -0.9    0.7 </span>
+<span class="co">#&gt; budgetmember  -1.0    0.7 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Sample avg. posterior predictive distribution of y:</span>
+<span class="co">#&gt;          Median MAD_SD</span>
+<span class="co">#&gt; mean_PPD 0.5    0.0   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></code></pre>
+<ul>
+<li><p>probability of co-sponsorship for a representative member (median x values)</p>
+<pre><code>## clarify calculations
+## probability of co-sponsorship for &quot;average&quot; member (median x vals)
+probit(pbar) &lt;- beta[1] + beta[2]*0.55 + beta[3]*0.32
+              + beta[4] + beta[5]*86 + beta[6]*0.26;</code></pre></li>
+<li><p>party affiliation - holding other values at their representative values</p>
+<pre><code>## party affiliation, effect size
+probit(p.dem) &lt;- beta[1] + beta[2]*0.55 + beta[3]*0.32
+               + beta[4] + beta[5]*86 + beta[6]*0.26;
+probit(p.rep) &lt;- beta[1] + beta[2]*0.55 + beta[3]*0.32
+               + beta[5]*86 + beta[6]*0.26;
+d.party &lt;- p.dem - p.rep;</code></pre></li>
+<li><p>party <em>attributable effect</em> from all sources</p>
+<pre><code>## &quot;attributable effect&quot;, all sources, due to party affiliation
+probit(p.dem.all) &lt;- beta[1] + beta[2]*0.8 + beta[3]*0.2
+                   + beta[4] + beta[5]*86 + beta[6]*0.28;
+probit(p.rep.all) &lt;- beta[1] + beta[2]*0.1 + beta[3]*0.74
+                             + beta[5]*86 + beta[6]*0.24;
+d.party.all &lt;- p.dem.all - p.rep.all</code></pre></li>
+</ul>
+<p>TODO: Calculate latent residuals <span class="citation">(Gelman et al. <a href="#ref-GelmanGoegebeurTuerlinckxEtAl2000a">2000</a>; Albert and Chib <a href="#ref-AlbertChib1995a">1995</a>)</span>. Do they make sense and have any meaning outside of Gibbs sampling? They don’t seem useful relative to LOO measures of outliers.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Krehbiel1995a">
+<p>Krehbiel, Keith. 1995. “Cosponsors and Wafflers from a to Z.” <em>American Journal of Political Science</em> 39 (4). JSTOR:906. <a href="https://doi.org/10.2307/2111662" class="uri">https://doi.org/10.2307/2111662</a>.</p>
+</div>
+<div id="ref-Herron1999a">
+<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP):83–98. <a href="https://doi.org/10.1093/oxfordjournals.pan.a029806" class="uri">https://doi.org/10.1093/oxfordjournals.pan.a029806</a>.</p>
+</div>
+<div id="ref-GelmanGoegebeurTuerlinckxEtAl2000a">
+<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell:247–68. <a href="https://doi.org/10.1111/1467-9876.00190" class="uri">https://doi.org/10.1111/1467-9876.00190</a>.</p>
+</div>
+<div id="ref-AlbertChib1995a">
+<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP):747–69. <a href="https://doi.org/10.1093/biomet/82.4.747" class="uri">https://doi.org/10.1093/biomet/82.4.747</a>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="3">
+<li id="fn3"><p>Replication data from <span class="citation">Herron (<a href="#ref-Herron2010a">2010</a>)</span>.<a href="cosponsorship.html#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn4"><p>Example derived from Simon Jackman, “<a href="https://web-beta.archive.org/web/20040501194620/http://jackman.stanford.edu:80/mcmc/kk.odc">Cosponsorship: computing auxiliary quantities from MCMC output</a>”, 2004-05-01.<a href="cosponsorship.html#fnref4" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="turnout.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="reagan.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

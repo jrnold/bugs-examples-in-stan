@@ -14,13 +14,15 @@ This model is similar to, and a simplified form of the polling aggregation metho
 
 ## Data
 
-The data for Australian
+The data for Australian Elections polls between 2004 and 2007.
+
 ```{r AustralianElectionPolling}
 data("AustralianElectionPolling", package = "pscl")
 glimpse(AustralianElectionPolling)
 ```
 
 The election result data for the House of Representatives: "first preferences".[^auselecsrc]
+
 ```{r elections}
 elections <-
   list(
@@ -64,9 +66,11 @@ AustralianElectionPolling <-
 ## Model
 
 The Stan model is:
+
 ```{r campaign_mod,results='hide',cache.extra=tools::md5sum("stan/campaign.stan")}
 campaign_mod <- stan_model("stan/campaign.stan")
 ```
+
 ```{r echo=FALSE,results='asis'}
 campaign_mod
 ```
@@ -99,11 +103,13 @@ campaign_fit <- sampling(campaign_mod, data = campaign_data,
                          chains = 1,
                          init = list(list(xi = rep(mean(campaign_data$y), campaign_data$N))))
 ```
+
 ```{r}
 campaign_fit
 ```
 
-Plot the posterior distribution of the share of the Liberals
+Plot the posterior distribution of the share supporting the Liberal party.
+
 ```{r campaign_plot_xi}
 xi <- summary(campaign_fit, par = "xi")$summary %>%
   as.data.frame() %>%
@@ -130,6 +136,6 @@ ggplot() +
 1.  Currently the only effect of polling firms is through their bias. How would you alter the model to allow some polling firms to have more variable polls? How is this similar to weighting different firms differently?
 1.  Why is the constraint that the "house effects" are on average zero necessary? What would happen if you let it be anything?
 1.  It is known that the polls can be systematically biased in elections, meaning that the average of polls can differ from the true result beyond what is implied by sampling uncertainty. How would you incorporate that into the model?
-1.  Instead of fixing $\xi_1$ and $\xi_T$, we could treat elections as another public opinion survey. What values of $y$, $s$, and $\delta$ would you give to eletions? Model and compare the results to the original method.
+1.  Instead of fixing $\xi_1$ and $\xi_T$, we could treat elections as another public opinion survey. What values of $y$, $s$, and $\delta$ would you give to elections? Model and compare the results to the original method.
 
 [^auselecsrc]: Sources: [2007](https://en.wikipedia.org/wiki/Results_of_the_Australian_federal_election,_2007_%28House_of_Representatives%29), [2004](https://en.wikipedia.org/wiki/Full_national_lower_house_results_for_the_2004_Australian_federal_election).

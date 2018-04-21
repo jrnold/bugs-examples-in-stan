@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Bayesian Model Examples</title>
+  <meta name="description" content="Bayesian Model Examples">
+  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Bayesian Model Examples" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bayesian Model Examples" />
+  
+  
+  
+
+<meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
+
+
+<meta name="date" content="2018-04-20">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="resistant.html">
+<link rel="next" href="campaign.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="dependencies.html"><a href="dependencies.html"><i class="fa fa-check"></i>Dependencies</a></li>
+<li class="chapter" data-level="" data-path="colonophon.html"><a href="colonophon.html"><i class="fa fa-check"></i>Colonophon</a></li>
+<li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: Difference in Two Binomial Proportions</a><ul>
+<li class="chapter" data-level="" data-path="undervote.html"><a href="undervote.html#references"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#data"><i class="fa fa-check"></i><b>5.1</b> Data</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data-1"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: Estimating Legislators’ Ideal Points From Voting Histories</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+<li class="chapter" data-level="9.4" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-signs"><i class="fa fa-check"></i><b>9.4</b> Identification by Fixing Legislator’s Signs</a></li>
+<li class="chapter" data-level="9.5" data-path="legislators.html"><a href="legislators.html#questions-2"><i class="fa fa-check"></i><b>9.5</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-4"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-3"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-5"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+<li class="chapter" data-level="" data-path="aspirin.html"><a href="aspirin.html#references-1"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: Over-Parameterization of a Normal Mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-4"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-6"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-5"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references-2.html"><a href="references-2.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayesian Model Examples</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="uk92" class="section level1">
+<h1><span class="header-section-number">12</span> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<p>The data for this example consist of constituency vote proportions from the 1992 United Kingdom House of Commons election.
+These data come from <span class="citation">Katz and King (<a href="#ref-KatzKing1999a">1999</a>)</span>, were re-analyzed <span class="citation">Tomz, Tucker, and Wittenberg (<a href="#ref-TomzTuckerWittenberg2002a">2002</a>)</span>.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>
+This data is included in the <strong>pscl</strong> package as <code>UKHouseOfCommons</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">(<span class="kw">data</span>(<span class="st">&quot;UKHouseOfCommons&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>))
+<span class="co">#&gt; [1] &quot;UKHouseOfCommons&quot;</span>
+<span class="kw">glimpse</span>(UKHouseOfCommons)
+<span class="co">#&gt; Observations: 521</span>
+<span class="co">#&gt; Variables: 12</span>
+<span class="co">#&gt; $ constituency &lt;chr&gt; &quot;Barrow &amp; Furness&quot;, &quot;Berwick-upon-Tweed&quot;, &quot;Bishop...</span>
+<span class="co">#&gt; $ county       &lt;chr&gt; &quot;Cumbria&quot;, &quot;Northumberland&quot;, &quot;Durham&quot;, &quot;Durham&quot;, ...</span>
+<span class="co">#&gt; $ y1           &lt;dbl&gt; 1.3286, -0.3032, 0.5598, 0.0978, 1.7351, 0.4546, ...</span>
+<span class="co">#&gt; $ y2           &lt;dbl&gt; 1.473, -0.663, 1.011, 0.909, 1.851, 1.925, 0.108,...</span>
+<span class="co">#&gt; $ y1lag        &lt;dbl&gt; 1.1820, -0.5689, 0.7052, -0.4139, 1.5507, 0.0408,...</span>
+<span class="co">#&gt; $ y2lag        &lt;dbl&gt; 1.0142, -1.0906, 1.0258, 0.3037, 1.6453, 1.4702, ...</span>
+<span class="co">#&gt; $ coninc       &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0...</span>
+<span class="co">#&gt; $ labinc       &lt;int&gt; 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1...</span>
+<span class="co">#&gt; $ libinc       &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span>
+<span class="co">#&gt; $ v1           &lt;dbl&gt; 0.413, 0.328, 0.318, 0.240, 0.435, 0.167, 0.533, ...</span>
+<span class="co">#&gt; $ v2           &lt;dbl&gt; 0.477, 0.229, 0.500, 0.541, 0.488, 0.727, 0.246, ...</span>
+<span class="co">#&gt; $ v3           &lt;dbl&gt; 0.1094, 0.4437, 0.1818, 0.2181, 0.0767, 0.1061, 0...</span></code></pre>
+<p>The data consist of the vote proportions for 522 constituencies, for the three major UK parties: the Labor party, the Conservative Party, and the Liberal-Alliance.
+Instead of working with the vote proportions directly, we will work with log-odds ratios.
+This is common in the analysis of multinomial or “compositional” data <span class="citation">(Aitchison <a href="#ref-Aitchison1982a">1982</a>)</span>.
+The column <code>y1</code> is the log-odds of Conservative to the Liberal-Democratic vote share, while <code>y2</code> is the log-odds of Labor to the Liberal-Democratic vote share.</p>
+<p>Let <span class="math inline">\(y_{i,k}\)</span>, <span class="math inline">\(k \in \{1, 2\}\)</span>, <span class="math inline">\(i \in 1, \dots, N\)</span> be the log-odds ratio vote share in constituency <span class="math inline">\(i\)</span>.
+<span class="citation">Katz and King (<a href="#ref-KatzKing1999a">1999</a>)</span> noted that the distribution of the log-odds ratios appear to be heavy-tailed relative to the normal.
+Thus, like them, we will model the data with a multivariate Student’s <span class="math inline">\(t\)</span> distribution with unknown degrees of freedom (<span class="math inline">\(\nu\)</span>),
+<span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;\sim \mathsf{StudentT}(\nu, \alpha + x&#39; \beta, \Sigma) &amp; i \in 1, \dots, N,
+\end{aligned}
+\]</span></p>
+<p>For identification, as in a logit regression, either the intercept or scale must be fixed. In this case, <span class="math inline">\(\Sigma\)</span> is a correlation matrix.</p>
+<p>Weakly informative priors are used for the regression parameters.
+The degrees of freedom of the multivariate Student t distribution is a parameter, and given a weakly informative Gamma distribution that puts most of the prior density between 3 and 40 <span class="citation">(Juárez and Steel <a href="#ref-JuarezSteel2010a">2010</a>)</span>,
+<span class="math display">\[
+\begin{aligned}[t]
+\alpha &amp;\sim  \mathsf{Normal}(0, 10) , \\
+\beta_p &amp;\sim \mathsf{Normal}(0, 2.5), &amp; p \in 1, \dots, P , \\
+\Sigma &amp;\sim \mathsf{LkjCorr}(\eta) , \\
+\nu &amp;\sim \mathsf{Gamma}(2, 0.1) .
+\end{aligned}
+\]</span></p>
+<pre class="sourceCode r"><code class="sourceCode r">(<span class="kw">data</span>(<span class="st">&quot;UKHouseOfCommons&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>))
+<span class="co">#&gt; [1] &quot;UKHouseOfCommons&quot;</span>
+<span class="kw">glimpse</span>(UKHouseOfCommons)
+<span class="co">#&gt; Observations: 521</span>
+<span class="co">#&gt; Variables: 12</span>
+<span class="co">#&gt; $ constituency &lt;chr&gt; &quot;Barrow &amp; Furness&quot;, &quot;Berwick-upon-Tweed&quot;, &quot;Bishop...</span>
+<span class="co">#&gt; $ county       &lt;chr&gt; &quot;Cumbria&quot;, &quot;Northumberland&quot;, &quot;Durham&quot;, &quot;Durham&quot;, ...</span>
+<span class="co">#&gt; $ y1           &lt;dbl&gt; 1.3286, -0.3032, 0.5598, 0.0978, 1.7351, 0.4546, ...</span>
+<span class="co">#&gt; $ y2           &lt;dbl&gt; 1.473, -0.663, 1.011, 0.909, 1.851, 1.925, 0.108,...</span>
+<span class="co">#&gt; $ y1lag        &lt;dbl&gt; 1.1820, -0.5689, 0.7052, -0.4139, 1.5507, 0.0408,...</span>
+<span class="co">#&gt; $ y2lag        &lt;dbl&gt; 1.0142, -1.0906, 1.0258, 0.3037, 1.6453, 1.4702, ...</span>
+<span class="co">#&gt; $ coninc       &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0...</span>
+<span class="co">#&gt; $ labinc       &lt;int&gt; 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1...</span>
+<span class="co">#&gt; $ libinc       &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span>
+<span class="co">#&gt; $ v1           &lt;dbl&gt; 0.413, 0.328, 0.318, 0.240, 0.435, 0.167, 0.533, ...</span>
+<span class="co">#&gt; $ v2           &lt;dbl&gt; 0.477, 0.229, 0.500, 0.541, 0.488, 0.727, 0.246, ...</span>
+<span class="co">#&gt; $ v3           &lt;dbl&gt; 0.1094, 0.4437, 0.1818, 0.2181, 0.0767, 0.1061, 0...</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">uk92_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dplyr<span class="op">::</span><span class="kw">select</span>(UKHouseOfCommons, y1, y2))
+  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>y1lag <span class="op">+</span><span class="st"> </span>y2lag <span class="op">+</span><span class="st"> </span>coninc <span class="op">+</span><span class="st"> </span>labinc <span class="op">+</span><span class="st"> </span>libinc, <span class="dt">data =</span> UKHouseOfCommons) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
+  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(y)
+  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(y)
+  P &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
+  alpha_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
+  alpha_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">10</span>, K)
+  beta_loc &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, K, P)
+  beta_scale &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="fl">2.5</span>, K, P)
+  Sigma_corr_shape &lt;-<span class="st"> </span><span class="dv">2</span>
+  Sigma_scale_scale &lt;-<span class="st"> </span><span class="dv">5</span>
+})</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">uk92_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/uk92.stan&quot;</span>)</code></pre>
+<pre>
+  <code class="stan">data {
+  // multivariate outcome
+  int<lower = 1> N;
+  int<lower = 2> K;
+  vector[K] y[N];
+  // covariates
+  int<lower = 0> P;
+  vector[P] X[N];
+  // prior
+  vector[K] alpha_loc;
+  vector<lower = 0.>[K] alpha_scale;
+  vector[P] beta_loc[K];
+  vector<lower = 0.>[P] beta_scale[K];
+  real<lower = 0.> Sigma_corr_shape;
+  real<lower = 0.> Sigma_scale_scale;
+}
+parameters {
+  // regression intercept
+  vector[K] alpha;
+  // regression coefficients
+  vector[P] beta[K];
+  // Cholesky factor of the correlation matrix
+  cholesky_factor_corr[K] Sigma_corr_L;
+  vector<lower = 0.>[K] Sigma_scale;
+  // student-T degrees of freedom
+  real<lower = 2.> nu;
+}
+transformed parameters {
+  vector[K] mu[N];
+  matrix[K, K] Sigma;
+  // covariance matrix
+  Sigma = crossprod(diag_pre_multiply(Sigma_scale, Sigma_corr_L));
+  for (i in 1:N) {
+    for (k in 1:K) {
+      mu[i, k] = alpha[k] + dot_product(X[i], beta[k]);
+    }
+  }
+}
+model {
+  for (k in 1:K) {
+    alpha[k] ~ normal(alpha_loc[k], alpha_scale[k]);
+    beta[k] ~ normal(beta_loc[k], beta_scale[k]);
+  }
+  nu ~ gamma(2, 0.1);
+  Sigma_scale ~ cauchy(0., Sigma_scale_scale);
+  Sigma_corr_L ~ lkj_corr_cholesky(Sigma_corr_shape);
+  y ~ multi_student_t(nu, mu, Sigma);
+}</code>
+</pre>
+<p>Fit the model in Stan.</p>
+<pre class="sourceCode r"><code class="sourceCode r">uk92_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(uk92_mod, <span class="dt">data =</span> uk92_data, <span class="dt">chains =</span> <span class="dv">1</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(uk92_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;nu&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;Sigma&quot;</span>))<span class="op">$</span>summary
+<span class="co">#&gt;               mean  se_mean      sd    2.5%     25%     50%      75%</span>
+<span class="co">#&gt; nu          4.6265 2.29e-02 0.67580  3.5457  4.1313  4.5598  5.04690</span>
+<span class="co">#&gt; alpha[1]    0.9295 2.90e-04 0.00853  0.9136  0.9238  0.9292  0.93503</span>
+<span class="co">#&gt; alpha[2]    0.6090 3.85e-04 0.01138  0.5868  0.6013  0.6086  0.61684</span>
+<span class="co">#&gt; beta[1,1]   0.3612 4.86e-04 0.01340  0.3334  0.3525  0.3608  0.37011</span>
+<span class="co">#&gt; beta[1,2]   0.1641 5.64e-04 0.01378  0.1385  0.1542  0.1636  0.17386</span>
+<span class="co">#&gt; beta[1,3]   0.0466 5.65e-04 0.01414  0.0172  0.0378  0.0469  0.05629</span>
+<span class="co">#&gt; beta[1,4]  -0.0620 6.98e-04 0.01624 -0.0952 -0.0735 -0.0615 -0.05111</span>
+<span class="co">#&gt; beta[1,5]  -0.0135 5.80e-04 0.01480 -0.0433 -0.0229 -0.0128 -0.00383</span>
+<span class="co">#&gt; beta[2,1]  -0.0209 6.33e-04 0.01760 -0.0552 -0.0326 -0.0210 -0.00972</span>
+<span class="co">#&gt; beta[2,2]   1.0396 7.07e-04 0.01873  1.0047  1.0267  1.0390  1.05279</span>
+<span class="co">#&gt; beta[2,3]   0.0723 7.71e-04 0.01936  0.0323  0.0597  0.0732  0.08537</span>
+<span class="co">#&gt; beta[2,4]  -0.0539 9.70e-04 0.02162 -0.0969 -0.0691 -0.0532 -0.03851</span>
+<span class="co">#&gt; beta[2,5]  -0.0162 8.15e-04 0.02082 -0.0577 -0.0292 -0.0152 -0.00339</span>
+<span class="co">#&gt; Sigma[1,1]  0.0320 9.75e-05 0.00287  0.0268  0.0300  0.0318  0.03383</span>
+<span class="co">#&gt; Sigma[1,2]  0.0371 1.10e-04 0.00346  0.0311  0.0347  0.0369  0.03954</span>
+<span class="co">#&gt; Sigma[2,1]  0.0371 1.10e-04 0.00346  0.0311  0.0347  0.0369  0.03954</span>
+<span class="co">#&gt; Sigma[2,2]  0.0564 1.57e-04 0.00497  0.0476  0.0527  0.0563  0.05972</span>
+<span class="co">#&gt;              97.5% n_eff  Rhat</span>
+<span class="co">#&gt; nu          6.0858   868 1.001</span>
+<span class="co">#&gt; alpha[1]    0.9465   863 0.999</span>
+<span class="co">#&gt; alpha[2]    0.6312   873 0.999</span>
+<span class="co">#&gt; beta[1,1]   0.3872   760 1.002</span>
+<span class="co">#&gt; beta[1,2]   0.1920   597 1.002</span>
+<span class="co">#&gt; beta[1,3]   0.0725   627 1.000</span>
+<span class="co">#&gt; beta[1,4]  -0.0296   541 1.002</span>
+<span class="co">#&gt; beta[1,5]   0.0165   652 1.000</span>
+<span class="co">#&gt; beta[2,1]   0.0146   773 1.000</span>
+<span class="co">#&gt; beta[2,2]   1.0771   702 1.003</span>
+<span class="co">#&gt; beta[2,3]   0.1077   630 0.999</span>
+<span class="co">#&gt; beta[2,4]  -0.0124   497 1.001</span>
+<span class="co">#&gt; beta[2,5]   0.0240   652 1.000</span>
+<span class="co">#&gt; Sigma[1,1]  0.0379   865 0.999</span>
+<span class="co">#&gt; Sigma[1,2]  0.0441  1000 0.999</span>
+<span class="co">#&gt; Sigma[2,1]  0.0441  1000 0.999</span>
+<span class="co">#&gt; Sigma[2,2]  0.0667  1000 0.999</span></code></pre>
+<div id="questions-4" class="section level2">
+<h2><span class="header-section-number">12.1</span> Questions</h2>
+<ul>
+<li>Given this model, replicate some of the results in <span class="citation">Katz and King (<a href="#ref-KatzKing1999a">1999</a>)</span>.</li>
+<li>Model the data using a multivariate normal model instead. How do the results differ? Which fits the data better? What does the value of <span class="math inline">\(\nu\)</span> from the multivariate Student t model tell you about the plausibility of the multivariate normal distribution?</li>
+<li><span class="citation">Tomz, Tucker, and Wittenberg (<a href="#ref-TomzTuckerWittenberg2002a">2002</a>)</span> suggest using seemingly unrelated regressions (SUR). Model the data with SUR. How does it compare in results and speed?</li>
+<li>Could you model this using a multinomial model with the data provided? What data would you need?</li>
+</ul>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-KatzKing1999a">
+<p>Katz, Jonathan N., and Gary King. 1999. “A Statistical Model for Multiparty Electoral Data.” <em>American Political Science Review</em> 93 (01). Cambridge University Press (CUP):15–32. <a href="https://doi.org/10.2307/2585758" class="uri">https://doi.org/10.2307/2585758</a>.</p>
+</div>
+<div id="ref-TomzTuckerWittenberg2002a">
+<p>Tomz, Michael, Joshua A. Tucker, and Jason Wittenberg. 2002. “An Easy and Accurate Regression Model for Multiparty Electoral Data.” <em>Political Analysis</em> 10 (1). [Oxford University Press, Society for Political Methodology]:66–83. <a href="http://www.jstor.org/stable/25791665" class="uri">http://www.jstor.org/stable/25791665</a>.</p>
+</div>
+<div id="ref-Aitchison1982a">
+<p>Aitchison, J. 1982. “The Statistical Analysis of Compositional Data.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 44 (2). [Royal Statistical Society, Wiley]:139–77. <a href="http://www.jstor.org/stable/2345821" class="uri">http://www.jstor.org/stable/2345821</a>.</p>
+</div>
+<div id="ref-JuarezSteel2010a">
+<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited:52–66. <a href="https://doi.org/10.1198/jbes.2009.07145" class="uri">https://doi.org/10.1198/jbes.2009.07145</a>.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="10">
+<li id="fn10"><p>Example derived from Simon Jackman, “House of Commons elections: modeling with the multivariate t density.” <em>BUGS Examples</em> <a href="https://web-beta.archive.org/web/20070724034125/http://jackman.stanford.edu/mcmc/92.odc">URL</a>. Some language copied from the original.<a href="uk92.html#fnref10" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="resistant.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="campaign.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

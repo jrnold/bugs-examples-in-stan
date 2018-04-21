@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Bayesian Model Examples</title>
+  <meta name="description" content="Bayesian Model Examples">
+  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Bayesian Model Examples" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bayesian Model Examples" />
+  
+  
+  
+
+<meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
+
+
+<meta name="date" content="2018-04-20">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="truncation-how-does-stan-deal-with-truncation.html">
+<link rel="next" href="negbin.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
+<li class="chapter" data-level="" data-path="dependencies.html"><a href="dependencies.html"><i class="fa fa-check"></i>Dependencies</a></li>
+<li class="chapter" data-level="" data-path="colonophon.html"><a href="colonophon.html"><i class="fa fa-check"></i>Colonophon</a></li>
+<li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: Difference in Two Binomial Proportions</a><ul>
+<li class="chapter" data-level="" data-path="undervote.html"><a href="undervote.html#references"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="cancer.html"><a href="cancer.html"><i class="fa fa-check"></i><b>2</b> Cancer: difference in two binomial proportions</a></li>
+<li class="chapter" data-level="3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html"><i class="fa fa-check"></i><b>3</b> A tibble: 2 x 3</a><ul>
+<li class="chapter" data-level="3.1" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#two-sample-binomial-model"><i class="fa fa-check"></i><b>3.1</b> Two Sample Binomial Model</a></li>
+<li class="chapter" data-level="3.2" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#binomial-logit-model-of-the-difference"><i class="fa fa-check"></i><b>3.2</b> Binomial Logit Model of the Difference</a></li>
+<li class="chapter" data-level="3.3" data-path="a-tibble-2-x-3.html"><a href="a-tibble-2-x-3.html#questions"><i class="fa fa-check"></i><b>3.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="florida.html"><a href="florida.html"><i class="fa fa-check"></i><b>4</b> Florida: Learning About an Unknown Proportion from Survey Data</a></li>
+<li class="chapter" data-level="5" data-path="turnout.html"><a href="turnout.html"><i class="fa fa-check"></i><b>5</b> Turnout: logit/probit models for binary data</a><ul>
+<li class="chapter" data-level="5.1" data-path="turnout.html"><a href="turnout.html#data"><i class="fa fa-check"></i><b>5.1</b> Data</a></li>
+<li class="chapter" data-level="5.2" data-path="turnout.html"><a href="turnout.html#logit-model"><i class="fa fa-check"></i><b>5.2</b> Logit Model</a></li>
+<li class="chapter" data-level="5.3" data-path="turnout.html"><a href="turnout.html#probit-model"><i class="fa fa-check"></i><b>5.3</b> Probit Model</a></li>
+<li class="chapter" data-level="5.4" data-path="turnout.html"><a href="turnout.html#rstanarm"><i class="fa fa-check"></i><b>5.4</b> rstanarm</a></li>
+<li class="chapter" data-level="" data-path="turnout.html"><a href="turnout.html#questions-1"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="cosponsorship.html"><a href="cosponsorship.html"><i class="fa fa-check"></i><b>6</b> Cosponsorship: computing auxiliary quantities from MCMC output</a><ul>
+<li class="chapter" data-level="6.1" data-path="cosponsorship.html"><a href="cosponsorship.html#model"><i class="fa fa-check"></i><b>6.1</b> Model</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="reagan.html"><a href="reagan.html"><i class="fa fa-check"></i><b>7</b> Reagan: linear regression with AR(1) disturbances</a><ul>
+<li class="chapter" data-level="7.1" data-path="reagan.html"><a href="reagan.html#cochrane-orcuttprais-winsten"><i class="fa fa-check"></i><b>7.1</b> Cochrane-Orcutt/Prais-Winsten</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="sophistication.html"><a href="sophistication.html"><i class="fa fa-check"></i><b>8</b> Political Sophistication: item-response modeling with mixed data types</a><ul>
+<li class="chapter" data-level="8.1" data-path="sophistication.html"><a href="sophistication.html#data-1"><i class="fa fa-check"></i><b>8.1</b> Data</a></li>
+<li class="chapter" data-level="8.2" data-path="sophistication.html"><a href="sophistication.html#model-1"><i class="fa fa-check"></i><b>8.2</b> Model</a></li>
+<li class="chapter" data-level="8.3" data-path="sophistication.html"><a href="sophistication.html#estimation"><i class="fa fa-check"></i><b>8.3</b> Estimation</a></li>
+<li class="chapter" data-level="8.4" data-path="sophistication.html"><a href="sophistication.html#questions-extensions"><i class="fa fa-check"></i><b>8.4</b> Questions / Extensions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="legislators.html"><a href="legislators.html"><i class="fa fa-check"></i><b>9</b> Legislators: Estimating Legislators’ Ideal Points From Voting Histories</a><ul>
+<li class="chapter" data-level="9.1" data-path="legislators.html"><a href="legislators.html#identification"><i class="fa fa-check"></i><b>9.1</b> Identification</a></li>
+<li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
+<li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
+<li class="chapter" data-level="9.4" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-signs"><i class="fa fa-check"></i><b>9.4</b> Identification by Fixing Legislator’s Signs</a></li>
+<li class="chapter" data-level="9.5" data-path="legislators.html"><a href="legislators.html#questions-2"><i class="fa fa-check"></i><b>9.5</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
+<li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
+<li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
+<li class="chapter" data-level="12.1" data-path="uk92.html"><a href="uk92.html#questions-4"><i class="fa fa-check"></i><b>12.1</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="campaign.html"><a href="campaign.html"><i class="fa fa-check"></i><b>13</b> Pooling the Polls Over an Election Campaign</a><ul>
+<li class="chapter" data-level="13.1" data-path="campaign.html"><a href="campaign.html#data-3"><i class="fa fa-check"></i><b>13.1</b> Data</a></li>
+<li class="chapter" data-level="13.2" data-path="campaign.html"><a href="campaign.html#model-2"><i class="fa fa-check"></i><b>13.2</b> Model</a></li>
+<li class="chapter" data-level="13.3" data-path="campaign.html"><a href="campaign.html#estimation-1"><i class="fa fa-check"></i><b>13.3</b> Estimation</a></li>
+<li class="chapter" data-level="13.4" data-path="campaign.html"><a href="campaign.html#questions-5"><i class="fa fa-check"></i><b>13.4</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="aspirin.html"><a href="aspirin.html"><i class="fa fa-check"></i><b>14</b> Aspirin: Borrowing Strength via Hierarchical Modeling</a><ul>
+<li class="chapter" data-level="14.1" data-path="aspirin.html"><a href="aspirin.html#non-centered-parameterization"><i class="fa fa-check"></i><b>14.1</b> Non-centered parameterization</a></li>
+<li class="chapter" data-level="" data-path="aspirin.html"><a href="aspirin.html#references-1"><i class="fa fa-check"></i>References</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="corporatism.html"><a href="corporatism.html"><i class="fa fa-check"></i><b>15</b> Corporatism: Hierarchical model for economic growth</a></li>
+<li class="chapter" data-level="16" data-path="unidentified.html"><a href="unidentified.html"><i class="fa fa-check"></i><b>16</b> Unidentified: Over-Parameterization of a Normal Mean</a></li>
+<li class="chapter" data-level="17" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html"><i class="fa fa-check"></i><b>17</b> Engines: right-censored failure times</a><ul>
+<li class="chapter" data-level="17.1" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#data-4"><i class="fa fa-check"></i><b>17.1</b> Data</a></li>
+<li class="chapter" data-level="17.2" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#model-3"><i class="fa fa-check"></i><b>17.2</b> Model</a></li>
+<li class="chapter" data-level="17.3" data-path="engines-right-censored-failure-times.html"><a href="engines-right-censored-failure-times.html#estimation-2"><i class="fa fa-check"></i><b>17.3</b> Estimation</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html"><i class="fa fa-check"></i><b>18</b> Truncation: How does Stan deal with truncation?</a><ul>
+<li class="chapter" data-level="18.1" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#stan-model"><i class="fa fa-check"></i><b>18.1</b> Stan Model</a></li>
+<li class="chapter" data-level="18.2" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#estimation-3"><i class="fa fa-check"></i><b>18.2</b> Estimation</a></li>
+<li class="chapter" data-level="18.3" data-path="truncation-how-does-stan-deal-with-truncation.html"><a href="truncation-how-does-stan-deal-with-truncation.html#questions-6"><i class="fa fa-check"></i><b>18.3</b> Questions</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="genbeetles.html"><a href="genbeetles.html"><i class="fa fa-check"></i><b>19</b> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</a><ul>
+<li class="chapter" data-level="19.1" data-path="genbeetles.html"><a href="genbeetles.html#data-5"><i class="fa fa-check"></i><b>19.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="negbin.html"><a href="negbin.html"><i class="fa fa-check"></i><b>20</b> Negative Binomial: Estimating Homicides in Census Tracks</a></li>
+<li class="chapter" data-level="21" data-path="multivarmissing.html"><a href="multivarmissing.html"><i class="fa fa-check"></i><b>21</b> Multivariate Missing Data</a><ul>
+<li class="chapter" data-level="21.1" data-path="multivarmissing.html"><a href="multivarmissing.html#separate-regressions"><i class="fa fa-check"></i><b>21.1</b> Separate Regressions</a></li>
+<li class="chapter" data-level="21.2" data-path="multivarmissing.html"><a href="multivarmissing.html#multivariate-normal"><i class="fa fa-check"></i><b>21.2</b> Multivariate Normal</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references-2.html"><a href="references-2.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Bayesian Model Examples</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="genbeetles" class="section level1">
+<h1><span class="header-section-number">19</span> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</h1>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</code></pre>
+<p>GLMs rely on link functions, linking the linear predictors and the response probability, <span class="math inline">\(\pi\)</span>.<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>
+Logit and probit are perhaps the most familiar link functions, mapping from the unit probability interval to the real line using the inverse CDFs of the logistic and standard Normal distributions, respectively.
+The logit and probit link functions have the interesting property that they are symmetric
+about <span class="math inline">\(\pi = 0.5\)</span>, and guarantee the effects of <span class="math inline">\(x_i\)</span> on <span class="math inline">\(\pi\)</span> to be greatest when <span class="math inline">\(\pi = 0.5\)</span>.
+To see this, recall that in GLMs for binomial data the effects of <span class="math inline">\(x_i\)</span> on <span class="math inline">\(\pi\)</span> are not constant, but vary over <span class="math inline">\(\pi\)</span>.
+For logit and probit, with link functions symmetric around zero, the effect of <span class="math inline">\(x_i\)</span> on <span class="math inline">\(\pi\)</span> is at its greatest when <span class="math inline">\(f(x_i \beta)\)</span> is its maximum, which for logit and probit occurs at <span class="math inline">\(x_i \beta = 0\)</span>.
+In dose-response studies, this means that responsiveness to dose is at its greatest when subjects are on the cusp of a response, at, that is, when <span class="math inline">\(E(\pi) = 0.5\)</span>.
+In a study of voter turnout, ordinary logit or probit is estimated subject to the constraint that the effects of the covariates are at their greatest for citizens who are indifferent between turning out and abstaining <span class="citation">(Nagler <a href="#ref-Nagler1994a">1994</a>)</span>.
+Furthermore, for logit/probit, these marginal effects diminish in magnitude symmetrically as we move away from <span class="math inline">\(E(\pi) = 0.5\)</span>.
+This symmetry follows from the symmetry of the logistic and normal PDFs/CDFs.</p>
+<p>One can easily envisage situations where the researcher would not want to impose these features of the logit or probit link functions on their data.
+In many settings, knowledge of exactly where the marginal impact of the covariates is maximized is of tremendous practical importance, with implications for targeting policy interventions, resource allocation, and so on.
+For example, how to distribute resources for educational or health improvements?
+Given that the effects of interventions are not constant across a set of baseline probabilities, knowing where proposed interventions are likely to have bigger or smaller effects is valuable information for policy-makers.
+As we have seen, logit or probit models constrain these effects to be at their greatest when <span class="math inline">\(E(\pi) = 1/2\)</span>, via their symmetric S-shaped link functions.
+Ceteris paribus we would prefer to estimate the shape of the link function from the data.</p>
+<p>A relatively straightforward way to let the data be informative as to the shape of the link function is via a simple one-parameter transformation of the logit link <span class="citation">(Prentice <a href="#ref-Prentice1976a">1976</a>)</span>:
+<span class="math display">\[
+\pi = \frac{1}{(1 + \exp(-x_i \beta))^\nu}
+\]</span>
+where <span class="math inline">\(\nu &gt; 0\)</span> is a parameter that skews the logit link. The standard logit model is a special case, where <span class="math inline">\(\nu = 1\)</span>.</p>
+<p>Thus the model for the binomial responses, <span class="math inline">\(r_i \in \{0, n_i}\)</span>, for <span class="math inline">\(i \in 1, \dots, N\)</span>,
+<span class="math display">\[
+\begin{aligned}[t]
+r_i &amp;\sim \mathsf{Binomial}(n_i, \pi_i) , \\
+\pi_i &amp;= 1 - \frac{1}{(1 + e^{(\alpha + x_i&#39; \beta_i)})^\nu} .
+\end{aligned}
+\]</span></p>
+<p>Estimating <span class="math inline">\(m\)</span> and <span class="math inline">\(b\)</span> by maximum likelihood is relatively straightforward, although there is little reason to believe the frequentist sampling distribution for <span class="math inline">\(m\)</span> is likely to be well approximated by the normal in a finite sample.
+Notice that <span class="math inline">\(m\)</span> enters the model in a highly non-linear fashion, and that different ranges of <span class="math inline">\(m\)</span> imply quite different relationships between the linear predictors and <span class="math inline">\(\pi\)</span>.
+In Bayesian terms, we can reasonably expect the posterior density of <span class="math inline">\(m\)</span> to be non-normal, and probably log-
+Inferences for these quantities could well be misleading if we were to rely only on point estimates and asymptotic normal approximations; instead, a Bayesian approach via MCMC offers a way for us to obtain arbitrarily precise approximations to the posterior densities of these quantities.</p>
+<p>Give <span class="math inline">\(\mu\)</span> a Gamma prior with a mean of 1, corresponding to the standard logit model, and a standard deviation of 2,
+<span class="math display">\[
+\nu \sim \mathsf{Gamma}(0.25, 0.25) .
+\]</span>
+The regression coefficients are given weakly informative priors,
+<span class="math display">\[
+\begin{aligned}[t]
+\alpha &amp;\sim N(0, 10) , \\
+\beta &amp;\sim N(0, 2.5) .
+\end{aligned}
+\]</span></p>
+<pre class="sourceCode r"><code class="sourceCode r">genbeetles_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/genbeetles.stan&quot;</span>)</code></pre>
+<pre>
+  <code class="stan">data {
+  int N;
+  int r[N];
+  int n[N];
+  vector[N] x;
+}
+parameters {
+  real alpha;
+  real beta;
+  real<lower = 0.> nu;
+}
+transformed parameters {
+  vector[N] mu;
+  for (i in 1:N) {
+    mu[i] = pow(inv_logit(alpha + beta * x[i]), nu) ;
+  }
+}
+model {
+  alpha ~ normal(0., 10.);
+  beta ~ normal(0., 2.5);
+  nu ~ gamma(0.25, 0.25);
+  r ~ binomial(n, mu);
+}
+generated quantities {
+  // probability where the maximum marginal effect
+  real pdot;
+  pdot = pow(inv_logit(nu), nu);
+}</code>
+</pre>
+<div id="data-5" class="section level2">
+<h2><span class="header-section-number">19.1</span> Data</h2>
+<p>To demonstrate the use of MCMC methods in this context, I use the famous
+beetles data of <span class="citation">Bliss (<a href="#ref-Bliss1935a">1935</a>)</span>. These data have been extensively used by
+statisticians in studies generalized link functions <span class="citation">(Prentice <a href="#ref-Prentice1976a">1976</a>; Stukel <a href="#ref-Stukel1988a">1988</a>)</span>, and are used by <span class="citation">Spiegelhalter, Best, and Gilks (<a href="#ref-SpiegelhalterBestGilks1996a">1996</a>)</span> to demonstrate how
+BUGS handles GLMs for binomial data. <span class="citation">Carlin and Louis (<a href="#ref-CarlinLouis2000a">2000</a>)</span> use these data in an
+MCMC implementation of the one-parameter generalization used here.</p>
+<p>These data are included with the **VGAM“** package as <code>flourbeetle</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">(<span class="kw">data</span>(<span class="st">&quot;flourbeetle&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;VGAM&quot;</span>))
+<span class="co">#&gt; [1] &quot;flourbeetle&quot;</span></code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">genbeetles_data &lt;-
+<span class="st">  </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+    r &lt;-<span class="st"> </span>flourbeetle<span class="op">$</span>killed
+    N &lt;-<span class="st"> </span><span class="kw">length</span>(r)
+    n &lt;-<span class="st"> </span>flourbeetle<span class="op">$</span>exposed
+    x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(flourbeetle<span class="op">$</span>logdose) <span class="op">%&gt;%</span>
+<span class="st">      </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()
+  })</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">genbeetles_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(genbeetles_mod, <span class="dt">data =</span> genbeetles_data)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">genbeetles_fit
+<span class="co">#&gt; Inference for Stan model: genbeetles.</span>
+<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
+<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;          mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff</span>
+<span class="co">#&gt; alpha   -1.37    0.04 0.93   -3.50   -1.90   -1.28   -0.74    0.26   688</span>
+<span class="co">#&gt; beta     4.08    0.03 0.92    2.58    3.44    3.98    4.62    6.20   693</span>
+<span class="co">#&gt; nu       0.34    0.01 0.14    0.16    0.25    0.31    0.40    0.68   626</span>
+<span class="co">#&gt; mu[1]    0.10    0.00 0.03    0.06    0.08    0.10    0.12    0.16  1461</span>
+<span class="co">#&gt; mu[2]    0.19    0.00 0.03    0.13    0.17    0.19    0.21    0.25  2701</span>
+<span class="co">#&gt; mu[3]    0.33    0.00 0.03    0.27    0.31    0.33    0.35    0.39  4000</span>
+<span class="co">#&gt; mu[4]    0.54    0.00 0.04    0.47    0.51    0.54    0.57    0.62  1485</span>
+<span class="co">#&gt; mu[5]    0.77    0.00 0.03    0.70    0.75    0.77    0.80    0.84  1697</span>
+<span class="co">#&gt; mu[6]    0.92    0.00 0.02    0.88    0.91    0.92    0.94    0.96  2481</span>
+<span class="co">#&gt; mu[7]    0.98    0.00 0.01    0.95    0.97    0.98    0.99    0.99  1151</span>
+<span class="co">#&gt; mu[8]    0.99    0.00 0.01    0.98    0.99    0.99    1.00    1.00   903</span>
+<span class="co">#&gt; pdot     0.84    0.00 0.04    0.76    0.81    0.84    0.87    0.91   661</span>
+<span class="co">#&gt; lp__  -185.46    0.05 1.29 -188.70 -186.09 -185.12 -184.51 -183.99   739</span>
+<span class="co">#&gt;       Rhat</span>
+<span class="co">#&gt; alpha    1</span>
+<span class="co">#&gt; beta     1</span>
+<span class="co">#&gt; nu       1</span>
+<span class="co">#&gt; mu[1]    1</span>
+<span class="co">#&gt; mu[2]    1</span>
+<span class="co">#&gt; mu[3]    1</span>
+<span class="co">#&gt; mu[4]    1</span>
+<span class="co">#&gt; mu[5]    1</span>
+<span class="co">#&gt; mu[6]    1</span>
+<span class="co">#&gt; mu[7]    1</span>
+<span class="co">#&gt; mu[8]    1</span>
+<span class="co">#&gt; pdot     1</span>
+<span class="co">#&gt; lp__     1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:25:19 2018.</span>
+<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
+<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Nagler1994a">
+<p>Nagler, Jonathan. 1994. “Scobit: An Alternative Estimator to Logit and Probit.” <em>American Journal of Political Science</em> 38 (1). [Midwest Political Science Association, Wiley]:230–55. <a href="http://www.jstor.org/stable/2111343" class="uri">http://www.jstor.org/stable/2111343</a>.</p>
+</div>
+<div id="ref-Prentice1976a">
+<p>Prentice, Ross L. 1976. “A Generalization of the Probit and Logit Methods for Dose Response Curves.” <em>Biometrics</em> 32 (4). [Wiley, International Biometric Society]:761–68. <a href="http://www.jstor.org/stable/2529262" class="uri">http://www.jstor.org/stable/2529262</a>.</p>
+</div>
+<div id="ref-Bliss1935a">
+<p>Bliss, C. I. 1935. “The Calculation of the Dosage-Mortality Curve.” <em>Annals of Applied Biology</em> 22 (1). Wiley-Blackwell:134–67. <a href="https://doi.org/10.1111/j.1744-7348.1935.tb07713.x" class="uri">https://doi.org/10.1111/j.1744-7348.1935.tb07713.x</a>.</p>
+</div>
+<div id="ref-Stukel1988a">
+<p>Stukel, Therese A. 1988. “Generalized Logistic Models.” <em>Journal of the American Statistical Association</em> 83 (402). [American Statistical Association, Taylor &amp; Francis, Ltd.]:426–31. <a href="http://www.jstor.org/stable/2288858" class="uri">http://www.jstor.org/stable/2288858</a>.</p>
+</div>
+<div id="ref-SpiegelhalterBestGilks1996a">
+<p>Spiegelhalter, D. J., A. Thomas N. Best, and W. R. Gilks. 1996. “BUGS: Bayesian Inference Using Gibbs Sampling, Version 0.5.”</p>
+</div>
+<div id="ref-CarlinLouis2000a">
+<p>Carlin, Bradley P., and Thomas A. Louis. 2000. <em>Bayes and Empirical Bayes Methods for Data Analysis</em>. 2nd ed. Chapman; Hall/CRC.</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="16">
+<li id="fn16"><p>This example is derived from Simon Jackman, “<a href="https://web-beta.archive.org/web/20051027084129/http://jackman.stanford.edu:80/mcmc/genbeetles.odc">Generalized Beetles: generalizing link functions for binomial GLMs</a>”, 2005-10-27.<a href="genbeetles.html#fnref16" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="truncation-how-does-stan-deal-with-truncation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="negbin.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"linkedin": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

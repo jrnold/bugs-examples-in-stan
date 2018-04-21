@@ -68,11 +68,10 @@ beetles data of @Bliss1935a. These data have been extensively used by
 statisticians in studies generalized link functions [@Prentice1976a;
 @Stukel1988a], and are used by @SpiegelhalterBestGilks1996a to demonstrate how
 BUGS handles GLMs for binomial data. @CarlinLouis2000a use these data in an
-MCMC implementation of the one-parameter generalization used here; they made
-use of re-parameterizations and problem-specific computer programming to handle
-the non-conjugacies introduced via the skew parameter $m$.
+MCMC implementation of the one-parameter generalization used here.
 
 These data are included with the **VGAM"** package as  `flourbeetle`:
+
 ```{r genbeetles_flourbeetle}
 (data("flourbeetle", package = "VGAM"))
 ```
@@ -96,4 +95,4 @@ genbeetles_fit <- sampling(genbeetles_mod, data = genbeetles_data)
 genbeetles_fit
 ```
 
-[^genbeetles-src]: This example is derived from Simon Jackman, "Generalized Beetles: generalizing link functions for binomial GLMs", 2005-10-27, [URL](https://web-beta.archive.org/web/20051027084129/http://jackman.stanford.edu:80/mcmc/genbeetles.odc).
+[^genbeetles-src]: This example is derived from Simon Jackman, "[Generalized Beetles: generalizing link functions for binomial GLMs](https://web-beta.archive.org/web/20051027084129/http://jackman.stanford.edu:80/mcmc/genbeetles.odc)", 2005-10-27.

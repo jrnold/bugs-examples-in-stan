@@ -25,6 +25,7 @@ Bimodal <- tribble(
     NA,    -2
 )
 ```
+
 ```{r}
 Bimodal
 ```
@@ -38,22 +39,23 @@ Bayesian analysis (with uninformative priors) similarly recovers a bimodal
 posterior density for the correlation coefficient; e.g., [@Tanner1996a,
 @Congdon2007a].
 
-```{r bimodal_mod,message = FALSE,results='hide',cache.extra=tools::md5sum("stan/bimodal.stan")}
+```{r bimodal_mod,message=FALSE,results='hide',cache.extra=tools::md5sum("stan/bimodal.stan")}
 bimodal_mod <- stan_model("stan/bimodal.stan")
 ```
+
 ```{r echo=FALSE}
 bimodal_mod
 ```
 
 You can ignore the **rstan** warning,
-```
-DIAGNOSTIC(S) FROM PARSER:
-Warning (non-fatal):
-Left-hand side of sampling statement (~) may contain a non-linear transform of a parameter or local variable.
-If it does, you need to include a target += statement with the log absolute determinant of the Jacobian of the transform.
-Left-hand-side of sampling statement:
-    X[i] ~ multi_normal(...)
-```
+
+  DIAGNOSTIC(S) FROM PARSER:
+  Warning (non-fatal):
+  Left-hand side of sampling statement (~) may contain a non-linear transform of a parameter or local variable.
+  If it does, you need to include a target += statement with the log absolute determinant of the Jacobian of the transform.
+  Left-hand-side of sampling statement:
+      X[i] ~ multi_normal(...)
+
 since the left hand side is a simple linear relationship and no
 Jacobian adjustment is needed.
 All we did was replace index values in the transformed parameter.
@@ -68,7 +70,6 @@ X <- X_mat %>%
 
 X_obs <- filter(X, !is.na(value))
 X_miss <- filter(X, is.na(value))
-
 bimodal_data <- within(list(), {
   N <- nrow(X_mat)
   x_obs <- X_obs$value
@@ -86,8 +87,11 @@ bimodal_data <- within(list(), {
 bimodal_fit <- sampling(bimodal_mod, data = bimodal_data,
                         chains = 4)
 ```
+
 ```{r}
 bimodal_fit
 ```
 
-This example is derived from Simon Jackman, "Bimodal: Extreme missingness in bivariate normal data", [URL](https://web-beta.archive.org/web/20070724034055/http://jackman.stanford.edu:80/mcmc/bimodal.odc).
+This example is derived from Simon Jackman, "Bimodal: Extreme missingness in
+bivariate normal data",
+[URL](https://web-beta.archive.org/web/20070724034055/http://jackman.stanford.edu:80/mcmc/bimodal.odc).

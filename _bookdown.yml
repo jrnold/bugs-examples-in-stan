@@ -1,3 +1,4 @@
+output_dir: "docs"
 before_chapter_script:
 - _common.R
 new_session: yes

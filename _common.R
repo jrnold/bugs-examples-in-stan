@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 
 options(dplyr.print_min = 6, dplyr.print_max = 6)
 
+# set rstan options
 rstan::rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 

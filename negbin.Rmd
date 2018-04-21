@@ -54,8 +54,8 @@ negbin_mod <- stan_model("stan/negbin.stan")
 negbin_mod
 ```
 
-```{r negbin_data,cache.extra=tools::md5sum("data/st_louis_census.rda")}
-load("data/st_louis_census.rda")
+```{r negbin_data}
+data("st_louis_census", package = "bayesjackman")
 negbin_data <- within(list(), {
   y <- st_louis_census$i8094
   N <- length(y)

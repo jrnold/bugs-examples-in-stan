@@ -15,8 +15,8 @@ By embedding a model with location parameters in the Student's $t$ density, we o
 ## Data
 
 This example uses data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994 [@Jackman2000a].
-```{r resistant.rda}
-(load("data/resistant.rda"))
+```{r resistant}
+data("resistant", package = "bayesjackman")
 glimpse(resistant)
 ```
 

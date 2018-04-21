@@ -12,7 +12,7 @@ an item on a ballot.
 @TomzHouweling2003a analyze this phenomenon using two surveys:
 
 -   Voter News Service (VNS) exit poll for the 1992 election
--   Americn National Election Studies (ANES) for the 1964--2000 elections
+-   American National Election Studies (ANES) for the 1964--2000 elections
 
 Each of these surveys asked voters whether they voted for president, as well as the race of the respondents.
 The results of these surveys is contained in the `undervote` data frame.

@@ -98,8 +98,11 @@ aspirin_mod2
 aspirin_fit2 <- sampling(aspirin_mod2, data = aspirin_data,
                         control = list(adapt_delta = 0.99))
 ```
+
 ```{r}
 aspirin_fit2
 ```
 
-[^aspirin-example]: This example is derived from Simon Jackman, "Aspirin: Shrinkage (or `borrowing strength') via hierarchical modeling," 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034135/http://jackman.stanford.edu:80/mcmc/aspirin.odc).
+## References {-}
+
+This example is derived from Simon Jackman, "Aspirin: Shrinkage (or `borrowing strength') via hierarchical modeling," 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034135/http://jackman.stanford.edu:80/mcmc/aspirin.odc).

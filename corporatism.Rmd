@@ -9,10 +9,13 @@ The following program implements a regression model of economic growth among 16 
 The model is hierarchical in that it specifies country-specific coefficients for the following predictors: lagged growth, demand, import price movements, export price movements, leftist government and an intercept.
 The magnitudes of the country-specific coefficients are conditional on (time-invariant) extent of labor organization within each country; these regression relationships constitute the second level of the model.
 
-The data come from N=16 countries, and T=14 years (1971:1984) with K=6 covariates at the lowest ("micro") level of the hierarchy, and J=2 covariates (an intercept and the labor organization variable) at the 2nd level.
+The data come from N=16 countries, and $T=14$ years (1971:1984) with $K=6$ covariates at the lowest ("micro") level of the hierarchy, and $J=2$ covariates (an intercept and the labor organization variable) at the second level.
 
 ```{r corporatism}
-load("data/corporatism.rda")
+data("corporatism", package = "bayesjackman")
+```
+
+```{r corporatism_country}
 corporatism_country <- corporatism %>%
   dplyr::select(country, labor.org) %>%
   distinct()
@@ -21,8 +24,9 @@ corporatism_country <- corporatism %>%
 ```{r corporatism_mod,results='hide'}
 corporatism_mod <- stan_model("stan/corporatism.stan")
 ```
+
 ```{r echo=FALSE,cache=FALSE,results='asis'}
 corporatism_mod
 ```
 
-[^corporatism-src]: Example derived from Simon Jackman, "Corporatism: hierarchical or `multi-level' model for economic growth in 16 OECD countries", 2007-07-24 [URL](https://web-beta.archive.org/web/20070724034043/http://jackman.stanford.edu/mcmc/corporatism.odc).
+[^corporatism-src]: Example derived from Simon Jackman, "[Corporatism: hierarchical or 'multi-level' model for economic growth in 16 OECD countries](https://web-beta.archive.org/web/20070724034043/http://jackman.stanford.edu/mcmc/corporatism.odc)", 2007-07-24.

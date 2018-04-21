@@ -57,8 +57,8 @@ $$
 
 Uncertainty in the parameters, and propagates to uncertainty in these quantities, and thus it is easy to calculate posterior distributions for these values.
 
-```{r a2z,cache.extra=tools::md5sum("data/a2z.rda")}
-(load("data/a2z.rda"))
+```{r a2z}
+data("a2z", package = "bayesjackman")
 ```
 
 ```{r cosponsor_formula}

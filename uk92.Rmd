@@ -27,7 +27,7 @@ y_i &\sim \mathsf{StudentT}(\nu, \alpha + x' \beta, \Sigma) & i \in 1, \dots, N,
 \end{aligned}
 $$
 
-For identifiction, as in a logit regression, either the intercept or scale must be fixed. In this case, $\Sigma$ is a correlation matrix.
+For identification, as in a logit regression, either the intercept or scale must be fixed. In this case, $\Sigma$ is a correlation matrix.
 
 Weakly informative priors are used for the regression parameters.
 The degrees of freedom of the multivariate Student t distribution is a parameter, and given a weakly informative Gamma distribution that puts most of the prior density between 3 and 40 [@JuarezSteel2010a],

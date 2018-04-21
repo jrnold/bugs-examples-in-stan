@@ -1,6 +1,6 @@
-# Legislators: estimating legislators' ideal points from voting histories {#legislators}
+# Legislators: Estimating Legislators' Ideal Points From Voting Histories {#legislators}
 
-```{r legislators_setup,message=FALSE,cache=FALSE}
+```{r legislators_setup,message=FALSE}
 library("pscl")
 library("tidyverse")
 library("forcats")
@@ -70,6 +70,7 @@ $$
 $$
 
 Example:
+
 ```{r legislators_identification}
 xi <- c(-1, -0.5, 0.5, 1)
 alpha <- c(1, 0, -1)
@@ -104,23 +105,25 @@ The `s109` object is not a data frame, so see its documentation for information 
 s109
 ```
 
-This data includes all [roll-call](https://en.wikipedia.org/wiki/Voting_methods_in_deliberative_assemblies) votes, votes in which the responses of the senators are recorded.
+This data includes all
+[roll-call](https://en.wikipedia.org/wiki/Voting_methods_in_deliberative_assemblies)
+votes, votes in which the responses of the senators are recorded.
 
-For simplicity, the ideal point model uses binary responses, but the `s109` data
-includes multiple [codes](http://voteview.com/senate109.htm) for response to
-roll-calls.
+For simplicity, the ideal point model uses binary responses, but the `s109`
+data includes multiple [codes](http://voteview.com/senate109.htm) for response
+to roll-calls.
 
-| 0   | not a member
-| 1   | Yea
-| 2   | Paired Yea
-| 3   | Announced Yea
-| 4   | Announced Nay
-| 5   | Paired Nay
-| 6   | Nay
-| 7   | Present (some Congresses, also not used some Congresses)
-| 8   | Present (some Congresses, also not used some Congresses)
-| 6   | Nay
-| 9   | Not Voting
+| 0   | not a member                                              |
+| 1   | Yea                                                       |
+| 2   | Paired Yea                                                |
+| 3   | Announced Yea                                             |
+| 4   | Announced Nay                                             |
+| 5   | Paired Nay                                                |
+| 6   | Nay                                                       |
+| 7   | Present (some Congresses, also not used some Congresses)  |
+| 8   | Present (some Congresses, also not used some Congresses)  |
+| 6   | Nay                                                       |
+| 9   | Not Voting                                                |
 
 In the data processing, we will aggregate the responses into "Yes", "No", and missing values.
 
@@ -183,8 +186,8 @@ $$
 \end{aligned}
 $$
 
-Create a data frame with the fixed values for identification
-and initial values for the legislators
+Create a data frame with the fixed values for identification and the initial values for the ideal points of the legislators.
+
 ```{r legislators_xi}
 xi <-
   s109_legis_data %>%
@@ -227,15 +230,20 @@ legislators_init_1 <- list(
 )
 ```
 
+```{r message=FALSE,results='hide',warning=FALSE}
+mod_ideal_point_1 <- stan_model("stan/ideal_point_1.stan")
+```
+
 ```{r legislators_fit_1,results='hide'}
 legislators_fit_1 <-
-  sampling(mod_ideal_point_2, data = legislators_data_1,
+  sampling(mod_ideal_point_1, data = legislators_data_1,
            chains = 1, iter = 500,
            init = legislators_init_1,
            refresh = 100)
 ```
 
 Extract the ideal point data:
+
 ```{r legislator_summary_1}
 legislator_summary_1 <-
   bind_cols(s109_legis_data,
@@ -254,7 +262,7 @@ ggplot(legislator_summary_1,
   theme(legend.position = "bottom")
 ```
 
-## Identification by fixing Legislator's Signs
+## Identification by Fixing Legislator's Signs
 
 We can identify the scale and location of the latent dimensions by fixing the mean and location of the distribution of the legislator's ideal points.
 This can be done by
@@ -274,7 +282,7 @@ $$
 However, this does not identify the direction of the latent variables.
 This can be done by restriction the sign of either a single legislator ($\xi_i$) or roll-call ($\beta_i$).
 
-In this case, instead of fixing multiple
+In this case, instead of fixing the ideal points of two legislators, instead use skew-normal distributions to set the sides of each legislator.
 $$
 \beta_j \sim \mathsf{SkewNormal}(0, 2.5, d_j  )
 $$

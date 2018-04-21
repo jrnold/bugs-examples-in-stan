@@ -6,7 +6,8 @@ site: "bookdown::bookdown_site"
 output:
   bookdown::gitbook: default
 documentclass: book
-bibliography: ["jackmanbayes.bib"]
+bibliography:
+- "jackmanbayes.bib"
 biblio-style: apalike
 link-citations: yes
 ---
@@ -39,3 +40,19 @@ The examples include:
 1.  [Truncated](truncated): Example of sampling from a truncated normal distribution.
 1.  [Generalized Beetles](genbeetles): Generalizing link functions for binomial GLMs.
 1.  [Negative Binomial](negbin): Example of a negative binomial regression of homicides
+
+# Dependencies {-}
+
+The R packages, Stan models, and datasets needed to run the code examples can be installed with
+```{r eval=FALSE}
+# install.packages("devtools")
+devtools::install_github("jrnold/jackman-bayes", subdir = "bayesjackman")
+```
+
+
+# Colonophon {-}
+
+```{r}
+sessionInfo()
+```
+

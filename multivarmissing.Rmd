@@ -55,7 +55,7 @@ $$
 \gamma_2, \beta_2, \beta_3 &\sim \mathsf{Normal}(0, 2.5)
 \end{aligned}
 $$
-Note that this assumes that $x$, $y$, and $z$ are standardized to have zero mean and unit variance. 
+Note that this assumes that $x$, $y$, and $z$ are standardized to have zero mean and unit variance.
 
 ```{r data_multivarmissing}
 data_multivarmissing <- within(list(), {
@@ -90,17 +90,19 @@ data_multivarmissing <- within(list(), {
 })
 ```
 
-```{r mod_multivarmissing,cache.extra=tools::md5sum("stan/multivarmissing.stan")}
+```{r mod_multivarmissing,cache.extra=tools::md5sum("stan/multivarmissing.stan"),message=FALSE,warning=FALSE}
 mod_multivarmissing <- stan_model("stan/multivarmissing2.stan")
 ```
+
 ```{r}
 mod_multivarmissing
 ```
 
 ```{r fit_multivarmissing,results='hide'}
-fit_multivarmissing <- 
+fit_multivarmissing <-
   sampling(mod_multivarmissing, data = data_multivarmissing)
 ```
+
 ```{r}
 fit_multivarmissing
 ```
@@ -113,7 +115,7 @@ $$
 x_i \\
 y_i \\
 z_i
-\end{bmatrix} \sim 
+\end{bmatrix} \sim
 \mathsf{Normal}(\mu, \Sigma)
 $$
 where $\mu$ and $\Sigma$ are given weakly informative priors,
@@ -140,16 +142,18 @@ data_multivarmissing2 <- within(list(), {
 ```{r mod_multivarmissing2,cache.extra=tools::md5sum("stan/multivarmissing2.stan")}
 mod_multivarmissing2 <- stan_model("stan/multivarmissing2.stan")
 ```
+
 ```{r}
 mod_multivarmissing2
 ```
 
 ```{r fit_multivarmissing2,results='hide'}
-fit_multivarmissing <- 
+fit_multivarmissing <-
   sampling(mod_multivarmissing2, data = data_multivarmissing2)
 ```
+
 ```{r}
 fit_multivarmissing
 ```
 
-[^multivarmissing-src]: This example is derived from Simon Jackan, "Multivariate Missing Data," 2002-06-18, [URL](https://web-beta.archive.org/web/20020618183148/http://jackman.stanford.edu:80/mcmc/multivarmissing.odc).
+[^multivarmissing-src]: This example is derived from Simon Jackman, "[Multivariate Missing Data](https://web-beta.archive.org/web/20020618183148/http://jackman.stanford.edu:80/mcmc/multivarmissing.odc)", 2002-06-18.

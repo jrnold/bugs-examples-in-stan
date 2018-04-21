@@ -6,7 +6,7 @@ library("rstanarm")
 library("rstan")
 ```
 
-## Datas
+## Data
 
 The data comprise the first 2,000 (of 15,000+) observations in the 1992 [American National Election Studies](http://www.electionstudies.org/) (ANES).
 These data are included in the **Zelig** package as `turnout` and analyzed in @KingTomzWittenberg2000a.

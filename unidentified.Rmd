@@ -1,6 +1,6 @@
 # Unidentified: Over-Parameterization of a Normal Mean {#unidentified}
 
-The following example illustrates the need for caution in diagnosing convergence, and is based on an example appearing in Carlin and Louis' Bayes and Empirical Bayes Methods for Data Analysis, 2nd edition, p174.
+The following example illustrates the need for caution in diagnosing convergence, and is based on an example appearing in @CarlinLouis2000a [p174].
 
 Consider a model for the mean as an additive sum of two parameters: e.g.,
 $y ~ N(q_1 + q_2, 1)$.   The data are not informative about $q_1$ and $q_2$ , but are informative about $m = q_1 + q_2$  and the likelihood function for the two unidentified parameters has a ridge along the locus of points
@@ -10,8 +10,7 @@ $$
 where $\bar{y}$ is the mean of the observed data.
 
 Bayesian models require the specification of priors for model parameters.  Proper priors will ensure unimodal posteriors for $q_1$ and $q_2$, and
-can be used to sample from the posterior for this problem. Carlin
-and Louis show (see their Q25, p191) the dangers of models of this
+can be used to sample from the posterior for this problem. @CarlinLouis2000a show (see their Q25, p191) the dangers of models of this
 type.  The posteriors for $\theta$ are not identical to the prior (the posterior
 standard deviations are 7.05, while the prior standard deviations used below
 are 10), suggesting that the data are somewhat informative about both $\theta$

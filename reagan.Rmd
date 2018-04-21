@@ -29,7 +29,7 @@ $$
 $$
 
 ```{r ReaganApproval}
-(load("data/ReaganApproval.rda"))
+data("ReaganApproval", package = "bayesjackman")
 ReaganApproval
 ```
 

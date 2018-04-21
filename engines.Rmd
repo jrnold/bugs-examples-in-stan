@@ -9,8 +9,9 @@ library("rstan")
 
 The data are 40 engines tested at various operating temperatures, with the the failure time if the engine failed, or the last time of the observational period if it had not [@Tanner1996a].[^engines-src]
 Of the 40 engines, 23 did not fail in their observational periods.
-```{r engines,cache.extra=tools::md5sum("data/engines.rda")}
-load("data/engines.rda")
+
+```{r engines}
+data("engines", package = "bayesjackman")
 glimpse(engines)
 ```
 
@@ -49,6 +50,7 @@ $$
 ```{r mod_engines,results='hide',cache.extra=tools::md5sum("data/engines.stan")}
 mod_engines <- stan_model("stan/engines.stan")
 ```
+
 ```{r results='asis'}
 mod_engines
 ```
@@ -56,6 +58,7 @@ mod_engines
 ## Estimation
 
 For the input data to the Stan model, the observations that are observed and censored have to be provided in separate vectors.
+
 ```{r }
 X <- scale(engines$x)
 
