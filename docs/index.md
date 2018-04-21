@@ -2,13 +2,13 @@
 ---
 title: "Bayesian Model Examples"
 author: "Jeffrey B. Arnold and Simon Jackman"
-date: "2018-04-20"
+date: "2018-04-21"
 site: "bookdown::bookdown_site"
 output:
   bookdown::gitbook: default
 documentclass: book
 bibliography:
-- "jackmanbayes.bib"
+- "bayes.bib"
 biblio-style: apalike
 link-citations: yes
 ---
@@ -19,7 +19,7 @@ This work contains the Bayesian model examples written by Simon Jackman and prev
 These were originally written in WinBUGS or JAGS.
 I have translated these examples into Stan and revised or edited them as appropriate.
 
-The examples include:
+This work is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)
 
 1.  [Undervote](undervote): difference of two independent proportions; racial differences in self-reported undervoting
 1.  [Cancer](cancer): difference of two independent proportions; differences in rates of lung cancer by smoking
@@ -42,7 +42,7 @@ The examples include:
 1.  [Generalized Beetles](genbeetles): Generalizing link functions for binomial GLMs.
 1.  [Negative Binomial](negbin): Example of a negative binomial regression of homicides
 
-# Dependencies {-}
+## Dependencies {-}
 
 The R packages, Stan models, and datasets needed to run the code examples can be installed with
 
@@ -51,8 +51,7 @@ The R packages, Stan models, and datasets needed to run the code examples can be
 devtools::install_github("jrnold/jackman-bayes", subdir = "bayesjackman")
 ```
 
-
-# Colonophon {-}
+## Colonophon {-}
 
 
 ```r
@@ -84,4 +83,3 @@ sessionInfo()
 #> [28] pillar_1.2.1       compiler_3.4.4     scales_0.5.0      
 #> [31] backports_1.1.2    stats4_3.4.4
 ```
-

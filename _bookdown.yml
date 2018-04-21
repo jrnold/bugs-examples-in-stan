@@ -1,6 +1,7 @@
 output_dir: "docs"
 before_chapter_script:
 - _common.R
+delete_merged_file: true
 new_session: yes
 rmd_files:
 - index.Rmd

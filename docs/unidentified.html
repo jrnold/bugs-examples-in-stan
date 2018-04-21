@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-20">
+<meta name="date" content="2018-04-21">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,9 +127,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a></li>
-<li class="chapter" data-level="" data-path="dependencies.html"><a href="dependencies.html"><i class="fa fa-check"></i>Dependencies</a></li>
-<li class="chapter" data-level="" data-path="colonophon.html"><a href="colonophon.html"><i class="fa fa-check"></i>Colonophon</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#dependencies"><i class="fa fa-check"></i>Dependencies</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#colonophon"><i class="fa fa-check"></i>Colonophon</a></li>
+</ul></li>
 <li class="chapter" data-level="1" data-path="undervote.html"><a href="undervote.html"><i class="fa fa-check"></i><b>1</b> Undervoting for President, by Race: Difference in Two Binomial Proportions</a><ul>
 <li class="chapter" data-level="" data-path="undervote.html"><a href="undervote.html#references"><i class="fa fa-check"></i>References</a></li>
 </ul></li>
@@ -164,11 +165,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="9.2" data-path="legislators.html"><a href="legislators.html#th-senate"><i class="fa fa-check"></i><b>9.2</b> 109th Senate</a></li>
 <li class="chapter" data-level="9.3" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-ideal-points"><i class="fa fa-check"></i><b>9.3</b> Identification by Fixing Legislator’s Ideal Points</a></li>
 <li class="chapter" data-level="9.4" data-path="legislators.html"><a href="legislators.html#identification-by-fixing-legislators-signs"><i class="fa fa-check"></i><b>9.4</b> Identification by Fixing Legislator’s Signs</a></li>
-<li class="chapter" data-level="9.5" data-path="legislators.html"><a href="legislators.html#questions-2"><i class="fa fa-check"></i><b>9.5</b> Questions</a></li>
+<li class="chapter" data-level="9.5" data-path="legislators.html"><a href="legislators.html#identification-by-discrimination-parameters-signs"><i class="fa fa-check"></i><b>9.5</b> Identification by Discrimination Parameters’ Signs</a></li>
+<li class="chapter" data-level="9.6" data-path="legislators.html"><a href="legislators.html#questions-2"><i class="fa fa-check"></i><b>9.6</b> Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -225,8 +228,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="unidentified" class="section level1">
 <h1><span class="header-section-number">16</span> Unidentified: Over-Parameterization of a Normal Mean</h1>
 <p>The following example illustrates the need for caution in diagnosing convergence, and is based on an example appearing in <span class="citation">Carlin and Louis (<a href="#ref-CarlinLouis2000a">2000</a> p174)</span>.</p>
-<p>Consider a model for the mean as an additive sum of two parameters: e.g.,
-<span class="math inline">\(y ~ N(q_1 + q_2, 1)\)</span>. The data are not informative about <span class="math inline">\(q_1\)</span> and <span class="math inline">\(q_2\)</span> , but are informative about <span class="math inline">\(m = q_1 + q_2\)</span> and the likelihood function for the two unidentified parameters has a ridge along the locus of points
+<p>Consider a model of the mean, in which it it the additive sum of two parameters,
+<span class="math display">\[
+\begin{aligned}[t]
+y &amp;\sim \mathsf{Normal}(\mu, 1) \\
+\mu &amp;= \theta_1 + \theta_2
+\end{aligned}
+\]</span>
+The data have no information about about either <span class="math inline">\(\theta_1\)</span> and <span class="math inline">\(\theta_2\)</span>, but the data are informative about <span class="math inline">\(\mu = \theta_1 + \theta_2\)</span>.
+The likelihood function for the two unidentified parameters (<span class="math inline">\(\theta_1\)</span>, <span class="math inline">\(\theta_2\)</span>) has a ridge along the line,
 <span class="math display">\[
 \left\{ q_1, q_2 : \bar{y} = q_1 + q_2 \right\} ,
 \]</span>

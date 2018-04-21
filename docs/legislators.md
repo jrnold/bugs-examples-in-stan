@@ -161,8 +161,8 @@ to roll-calls.
 
 In the data processing, we will aggregate the responses into "Yes", "No", and missing values.
 
-- `close`: Definition of non-lopsided votes in ; votes with between 35% and 65% yeas in which the parties are likely to whip members.
-- `lopsided`: Definition of lopsided votes used in W-NOMINATE and dropped. Votes with less than 2.5% or greater than 97.5% yeas.
+-   `close`: Definition of non-lopsided votes in ; votes with between 35% and 65% yeas in which the parties are likely to whip members.
+-   `lopsided`: Definition of lopsided votes used in W-NOMINATE and dropped. Votes with less than 2.5% or greater than 97.5% yeas.
 
 
 ```r
@@ -212,11 +212,10 @@ partyline <-
                              "Republican", partyline)) %>%
   rename(pct_yea_D = Democratic, pct_yea_R = Republican) %>%
   select(-Independent)
-  
+
 s109_vote_data <-
   left_join(s109_vote_data, partyline, by = ".rollcall_id")
 ```
-
 
 ## Identification by Fixing Legislator's Ideal Points
 
@@ -245,11 +244,6 @@ $$
 \end{aligned}
 $$
 
-<<<<<<< HEAD:docs/legislators.md
-Create a data frame with the fixed values for identification and the initial values for the ideal points of the legislators.
-
-=======
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
 
 ```r
 mod_ideal_point_1 <- stan_model("stan/ideal_point_1.stan")
@@ -329,7 +323,6 @@ generated quantities {
 }</code>
 </pre>
 
-
 Create a data frame with the fixed values for identification.
 Additionally, set initial values of ideal points: Republicans at `xi = 1`, Democrats at `xi = -1`, and independents at `xi = 0`.
 This may help speed up convergence.
@@ -385,11 +378,7 @@ mod_ideal_point_1 <- stan_model("stan/ideal_point_1.stan")
 
 
 ```r
-<<<<<<< HEAD:docs/legislators.md
 legislators_fit_1 <-
-=======
-legislators_fit_1 <- 
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
   sampling(mod_ideal_point_1, data = legislators_data_1,
            chains = 1, iter = 500,
            init = legislators_init_1,
@@ -444,11 +433,7 @@ $$
 However, this does not identify the direction of the latent variables.
 This can be done by restriction the sign of either a single legislator ($\xi_i$) or roll-call ($\beta_i$).
 
-<<<<<<< HEAD:docs/legislators.md
 In this case, instead of fixing the ideal points of two legislators, instead use skew-normal distributions to set the sides of each legislator.
-=======
-In this case, instead of fixing the 
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
 $$
 \beta_j \sim \mathsf{SkewNormal}(0, 2.5, d_j  )
 $$
@@ -479,11 +464,7 @@ map_df(c(-50, 0, 50),
   geom_line()
 ```
 
-<img src="legislators_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" />
-<<<<<<< HEAD:docs/legislators.md
-=======
-
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
+<img src="legislators_files/figure-html/unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" />
 
 
 ```r
@@ -496,14 +477,9 @@ mod_ideal_point_3
 
 <pre>
   <code class="stan">// ideal point model
-//
 // identification:
 // - ideal points ~ normal(0, 1)
-<<<<<<< HEAD:docs/legislators.md
-// - signs of item discrimination using skew normal
-=======
 // - signs of ideal points using skew normal
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
 data {
   // number of individuals
   int N;
@@ -518,16 +494,10 @@ data {
   // on items
   real alpha_loc;
   real<lower = 0.> alpha_scale;
-<<<<<<< HEAD:docs/legislators.md
-  vector[K] beta_loc;
-  vector<lower = 0.>[K] beta_scale;
-  vector[K] beta_skew;
-=======
   real beta_loc;
   real<lower = 0.> beta_scale;
   // on ideal points
   vector[N] xi_skew;
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
 }
 parameters {
   // item difficulties
@@ -541,10 +511,7 @@ transformed parameters {
   // create xi from observed and parameter ideal points
   vector[Y_obs] mu;
   vector[N] xi;
-<<<<<<< HEAD:docs/legislators.md
-=======
 
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
   xi = (xi_raw - mean(xi_raw)) ./ sd(xi_raw);
   for (i in 1:Y_obs) {
     mu[i] = alpha[y_idx_vote[i]] + beta[y_idx_vote[i]] * xi[y_idx_leg[i]];
@@ -552,17 +519,10 @@ transformed parameters {
 }
 model {
   alpha ~ normal(alpha_loc, alpha_scale);
-<<<<<<< HEAD:docs/legislators.md
-  beta ~ skew_normal(beta_loc, beta_scale, beta_skew);
-  // soft center ideal points
-  // in transformed block enforce hard-centering
-  xi_raw ~ normal(0., 1.);
-=======
   beta ~ normal(beta_loc, beta_scale);
   // soft center ideal points
   // in transformed block enforce hard-centering
   xi_raw ~ skew_normal(0., 1., xi_skew);
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
   y ~ bernoulli_logit(mu);
 }
 generated quantities {
@@ -598,38 +558,35 @@ legislators_data_2 <-
 
 ```r
 legislators_init_2 <- function(chain_id) {
-  list(xi_raw = if_else(s109_legis_data$party == "Republican", 1, 
+  list(xi_raw = if_else(s109_legis_data$party == "Republican", 1,
                     if_else(s109_legis_data$party == "Democratic", -1, 0)))
 }
 ```
 
 
 ```r
-legislators_fit_2 <- sampling(mod_ideal_point_3, 
+legislators_fit_2 <- sampling(mod_ideal_point_3,
                               data = legislators_data_2,
                               init = legislators_init_2,
                               chains = 1, iter = 500,
                               pars = c("alpha", "beta", "xi"))
 ```
 
-
-# Identification by Discrimination Parameters' Signs
+## Identification by Discrimination Parameters' Signs
 
 Alternatively, we can identify the location and scale of the latent dimensions with the
 legislator's ideal points,
 $$
 \begin{aligned}[t]
-\xi_i^* &\sim \mathsf{Normal}(0, 1) \\
-\xi_i &= \frac{\xi^*_i - \mathrm{mean}(\xi)}{\mathrm{sd}(\xi)} ,
+\xi_i^{*} &\sim \mathsf{Normal}(0, 1) \\
+\xi_i &= \frac{\xi^{*}_i - \mathrm{mean}(\xi)}{\mathrm{sd}(\xi)} ,
 \end{aligned}
 $$
 and identify the rotation of latent dimensions by fixing the sign of the discrimination parameter of a single roll-call vote ($\beta_j$).
 
 
-
 ```r
 mod_ideal_point_2 <- stan_model("stan/ideal_point_2.stan")
-#> hash mismatch so recompiling; make sure Stan code ends with a blank line
 ```
 
 ```r
@@ -742,10 +699,8 @@ legislators_fit_3 <- sampling(mod_ideal_point_2,
                               pars = c("alpha", "beta", "xi"))
 ```
 
-
 ## Questions
 
-<<<<<<< HEAD:docs/legislators.md
 -   Plot the the distributions of $\alpha$ and $\beta$.
 
 -   Estimate the model with improper priors for $\alpha$, $\beta$, and $\xi$. What happens?
@@ -759,11 +714,5 @@ legislators_fit_3 <- sampling(mod_ideal_point_2,
     various $\xi_i$ points. Look for evidence of bimodality.
 
 -   Extend the model to $K > 1$ dimensions.
-=======
-- Compare the results of the models.
-- Estimate the model with improper priors for $\alpha$, $\beta$, and $\xi$. What happens?
-- Estimate the the model that fixes the distribution of legislators, but does not fix the signs of legislators. Run two chains. In one chain use the following starting values, $\xi_i = 1$ for all Democratic and Independent Senators, $\xi_i = -1$ for all Republican Seantors; in the other use $\xi_i = -1$ for all Democratic and Independent Senators, and $\xi_i = 1$ for all Republican Senators. Visualize the densities of various $\xi_i$ points. Look for evidence of bimodality.
-- Extend the model to $K > 1$ dimensions.
->>>>>>> 2c0f6aa8a3ee03e62597a3eac350fc216e98d7a3:_book/legislators.md
 
 [^legislators-src]: Example derived from Simon Jackman, "Legislators: estimating legislators' ideal points from voting histories (roll call data)", *BUGS Examples,* 2007-07-24, [URL](https://web-beta.archive.org/web/20070724034141/http://jackman.stanford.edu:80/mcmc/legislators.odc).

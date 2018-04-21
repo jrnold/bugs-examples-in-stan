@@ -7,7 +7,7 @@ output:
   bookdown::gitbook: default
 documentclass: book
 bibliography:
-- "jackmanbayes.bib"
+- "bayes.bib"
 biblio-style: apalike
 link-citations: yes
 ---
