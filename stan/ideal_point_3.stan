@@ -16,8 +16,8 @@ data {
   // on items
   real alpha_loc;
   real<lower = 0.> alpha_scale;
-  vector[K] beta_loc;
-  vector<lower = 0.>[K] beta_scale;
+  real beta_loc;
+  real<lower = 0.> beta_scale;
   // on ideal points
   vector[N] xi_skew;
 }

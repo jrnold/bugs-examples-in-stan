@@ -127,14 +127,20 @@ to roll-calls.
 
 In the data processing, we will aggregate the responses into "Yes", "No", and missing values.
 
+-   `close`: Definition of non-lopsided votes in ; votes with between 35% and 65% yeas in which the parties are likely to whip members.
+-   `lopsided`: Definition of lopsided votes used in W-NOMINATE and dropped. Votes with less than 2.5% or greater than 97.5% yeas.
+
 ```{r}
 s109_vote_data <- as.data.frame(s109$vote.data) %>%
   mutate(rollcall = paste(session, number, sep = "-"),
          passed = result %in% c("Confirmed", "Agreed To", "Passed"),
-         pct_yea = yeatotal / (yeatotal + naytotal),
-         unanimous = pct_yea %in% c(0, 1),
-         lopsided = pct_yea < 0.35 | pct_yea > 0.65) %>%
+         votestotal = yeatotal + naytotal,
+         yea_pct = yeatotal / (yeatotal + naytotal),
+         unanimous = yea_pct %in% c(0, 1),
+         close = yea_pct < 0.35 | yea_pct > 0.65,
+         lopsided = yea_pct < 0.025 | yea_pct > 0.975) %>%
   filter(!unanimous) %>%
+  select(-unanimous) %>%
   mutate(.rollcall_id = row_number())
 
 s109_legis_data <- as.data.frame(s109$legis.data) %>%
@@ -152,11 +158,28 @@ s109_votes <- s109$votes %>%
   # recode to Yea (TRUE), Nay (FALSE), or missing
   mutate(yea = NA,
          yea = if_else(vote %in% c(1, 2, 3), TRUE, yea),
-         yea = if_else(vote %in% c(4, 5, 6), FALSE, yea)) %>%
+         yea = if_else(vote %in% c(4, 5, 6), FALSE, yea)
+         ) %>%
   filter(!is.na(yea)) %>%
   inner_join(dplyr::select(s109_vote_data, rollcall, .rollcall_id), by = "rollcall") %>%
   inner_join(dplyr::select(s109_legis_data, legislator, party, .legis_id), by = "legislator")
 
+partyline <-
+  s109_votes %>%
+  group_by(.rollcall_id, party) %>%
+  summarise(yea = mean(yea)) %>%
+  spread(party, yea) %>%
+  ungroup() %>%
+  mutate(partyline = NA_character_,
+         partyline = if_else(Republican < 0.1 & Democratic > 0.9,
+                             "Democratic", partyline),
+         partyline = if_else(Republican > 0.9 & Democratic < 0.1,
+                             "Republican", partyline)) %>%
+  rename(pct_yea_D = Democratic, pct_yea_R = Republican) %>%
+  select(-Independent)
+
+s109_vote_data <-
+  left_join(s109_vote_data, partyline, by = ".rollcall_id")
 ```
 
 ## Identification by Fixing Legislator's Ideal Points
@@ -186,12 +209,20 @@ $$
 \end{aligned}
 $$
 
-Create a data frame with the fixed values for identification and the initial values for the ideal points of the legislators.
+```{r legislators_mod_ideal_point_1,results='hide',cache.extra=tools::md5sum("stan/ideal_point_1.stan")}
+mod_ideal_point_1 <- stan_model("stan/ideal_point_1.stan")
+```
+```{r}
+mod_ideal_point_1
+```
 
-```{r legislators_xi}
-xi <-
+Create a data frame with the fixed values for identification.
+Additionally, set initial values of ideal points: Republicans at `xi = 1`, Democrats at `xi = -1`, and independents at `xi = 0`.
+This may help speed up convergence.
+```{r legislators_xi_init_1}
+xi_1 <-
   s109_legis_data %>%
-  mutate(# set values
+  mutate(
          xi = if_else(legislator == "FRIST (R TN)", 1,
                  if_else(legislator == "REID (D NV)", -1, NA_real_)),
          init = if_else(party == "Republican", 1,
@@ -199,6 +230,7 @@ xi <-
 
 ```
 
+Define and setup all the data needed for this
 ```{r legislators_data_1}
 legislators_data_1 <-
   within(list(), {
@@ -213,11 +245,11 @@ legislators_data_1 <-
     alpha_scale <- 5
     beta_loc <- 0
     beta_scale <- 2.5
-    N_xi_obs <- sum(!is.na(xi$xi))
-    idx_xi_obs <- which(!is.na(xi$xi))
-    xi_obs <- xi$xi[!is.na(xi$xi)]
-    N_xi_param <- sum(is.na(xi$xi))
-    idx_xi_param <- which(is.na(xi$xi))
+    N_xi_obs <- sum(!is.na(xi_1$xi))
+    idx_xi_obs <- which(!is.na(xi_1$xi))
+    xi_obs <- xi_1$xi[!is.na(xi_1$xi)]
+    N_xi_param <- sum(is.na(xi_1$xi))
+    idx_xi_param <- which(is.na(xi_1$xi))
     tau_scale <- 5
     zeta_loc <- 0
     zeta_scale <- 10
@@ -226,7 +258,7 @@ legislators_data_1 <-
 
 ```{r legislators_init_1}
 legislators_init_1 <- list(
-  list(xi_param = xi$init[is.na(xi$xi)])
+  list(xi_param = xi_1$init[is.na(xi_1$xi)])
 )
 ```
 
@@ -239,7 +271,8 @@ legislators_fit_1 <-
   sampling(mod_ideal_point_1, data = legislators_data_1,
            chains = 1, iter = 500,
            init = legislators_init_1,
-           refresh = 100)
+           refresh = 100,
+           pars = c("alpha", "beta", "xi"))
 ```
 
 Extract the ideal point data:
@@ -312,11 +345,111 @@ map_df(c(-50, 0, 50),
   geom_line()
 ```
 
+```{r legislators_mod_ideal_point_3,results='hide',cache.extra=tools::md5sum("stan/ideal_point_3.stan")}
+mod_ideal_point_3 <- stan_model("stan/ideal_point_3.stan")
+```
+```{r}
+mod_ideal_point_3
+```
+
+Instead of fixing the ideal points, set the skewness parameter
+of the skew normal distribution so that $\xi_{\text{FRIST (R TN)}} > 0$.
+```{r legislators_data_2}
+legislators_data_2 <-
+  within(list(), {
+    y <- as.integer(s109_votes$yea)
+    y_idx_leg <- as.integer(s109_votes$.legis_id)
+    y_idx_vote <- as.integer(s109_votes$.rollcall_id)
+    Y_obs <- length(y)
+    N <- max(s109_votes$.legis_id)
+    K <- max(s109_votes$.rollcall_id)
+    # priors
+    alpha_loc <- 0
+    alpha_scale <- 5
+    beta_loc <- 0
+    beta_scale <- 2.5
+    xi_skew <- if_else(s109_legis_data$legislator == "FRIST (R TN)", 50, 0)
+  })
+```
+
+```{r legislators_init_2}
+legislators_init_2 <- function(chain_id) {
+  list(xi_raw = if_else(s109_legis_data$party == "Republican", 1,
+                    if_else(s109_legis_data$party == "Democratic", -1, 0)))
+}
+```
+
+```{r legislators_fit_2,results='hide'}
+legislators_fit_2 <- sampling(mod_ideal_point_3,
+                              data = legislators_data_2,
+                              init = legislators_init_2,
+                              chains = 1, iter = 500,
+                              pars = c("alpha", "beta", "xi"))
+```
+
+## Identification by Discrimination Parameters' Signs
+
+Alternatively, we can identify the location and scale of the latent dimensions with the
+legislator's ideal points,
+$$
+\begin{aligned}[t]
+\xi_i^{*} &\sim \mathsf{Normal}(0, 1) \\
+\xi_i &= \frac{\xi^{*}_i - \mathrm{mean}(\xi)}{\mathrm{sd}(\xi)} ,
+\end{aligned}
+$$
+and identify the rotation of latent dimensions by fixing the sign of the discrimination parameter of a single roll-call vote ($\beta_j$).
+
 ```{r legislators_mod_ideal_point_2,results='hide',cache.extra=tools::md5sum("stan/ideal_point_2.stan")}
 mod_ideal_point_2 <- stan_model("stan/ideal_point_2.stan")
 ```
 ```{r}
 mod_ideal_point_2
+```
+
+As before, we will restrict the sign using a skew-normal distribution with a large skewness parameter.
+Theoretically, it does not matter which parameter is restricted, but it can be useful for both interpretation and computation to restrict the sign of the parameter that *ex ante* you expect to be far from zero.
+Since, in this case, it is expected that the primary dimension is liberal-conservative, and that the current Republican/Democratic parties divide on those lines, we will choose
+a bill that splits on party lines.
+
+We'll fix $\beta_{\text{2-169}}$ which was a roll-call vote which perfectly split on party
+lines: 55 Republican senators in favor, and 43 Democratic senators opposed.
+Of the roll-call votes that perfectly split on party lines, this had the most total votes cast.
+
+```{r legislators_data_3}
+legislators_data_3 <-
+  within(list(), {
+    y <- as.integer(s109_votes$yea)
+    y_idx_leg <- as.integer(s109_votes$.legis_id)
+    y_idx_vote <- as.integer(s109_votes$.rollcall_id)
+    Y_obs <- length(y)
+    N <- max(s109_votes$.legis_id)
+    K <- max(s109_votes$.rollcall_id)
+    # priors
+    alpha_loc <- 0
+    alpha_scale <- 5
+    beta_loc <- rep(0, K)
+    beta_scale <- rep(2.5, K)
+    beta_skew <- if_else(s109_vote_data$rollcall == "2-169", 50, 0)
+  })
+```
+
+```{r legislators_init_3}
+legislators_init_3 <- function(chain_id) {
+  list(beta = if_else(s109_vote_data$partyline %in% "Republican", 1,
+                      if_else(s109_vote_data$partyline %in% "Democratic", -1,
+                              0)),
+       alpha = plogis(s109_vote_data$yea_pct),
+       xi_raw = if_else(s109_legis_data$party == "Republican", 1,
+                                      if_else(s109_legis_data$party == "Democratic", -1, 0)))
+}
+```
+
+```{r legislators_fit_3,results='hide'}
+legislators_fit_3 <- sampling(mod_ideal_point_2,
+                              data = legislators_data_3,
+                              init = legislators_init_3,
+                              chains = 1, iter = 500,
+                              pars = c("alpha", "beta", "xi"))
 ```
 
 ## Questions

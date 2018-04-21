@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   
-<link rel="prev" href="multivarmissing.html">
-
+<link rel="prev" href="turnout.html">
+<link rel="next" href="reagan.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -192,143 +192,221 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
+<div id="cosponsorship" class="section level1">
+<h1><span class="header-section-number">6</span> Cosponsorship: computing auxiliary quantities from MCMC output</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
+<span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</code></pre></div>
+<p>Typically, MCMC output consists of samples from the posterior density of model parameters. But note that other quantities can be generated as well, say, imputations for missing data points, predictions, residuals, or goodness-of-fit summary statistics. In fact, any function of the parameters can be calculated and output.</p>
+<p>I demonstrate these ideas in the context of a generalized linear model for binary data. The specific application is <span class="citation">Krehbiel (<a href="#ref-Krehbiel1995a">1995</a>)</span>, a study of legislative behavior.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a><a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> The response variable is a binary indicator, which is equal to 1 if the member of the U.S. House of Representatives chose to cosponsor bill <a href="https://www.congress.gov/bill/103rd-congress/house-bill/3266">H.R. 3266</a>, and 0 otherwise. Of the 434 legislators for which data is available, 228 legislators cosponsored this bill. H.R.3266 was a wide-ranging spending bill designed to circumvent the usual budget-making process, that was considered by the <a href="https://en.wikipedia.org/wiki/103rd_United_States_Congress">103rd House of Representatives</a> in 1993–1994. Seven covariates are used in the analysis:</p>
+<ul>
+<li>liberalism as measured by the interest group Americans for Democratic Action (ADA),</li>
+<li>fiscal conservatism published by the National Taxpayers’ Union (NTU),</li>
+<li>Democratic Party membership, -Congressional seniority, measured by years since first election,</li>
+<li>the electoral margin of the member,</li>
+<li>membership of the House Appropriations Committee,</li>
+<li>membership of the House Budget Committee.</li>
+</ul>
+<p><span class="citation">Krehbiel (<a href="#ref-Krehbiel1995a">1995</a>)</span> finds that, conditional on legislators’ policy preferences, as measured with the ADA and NTU scores, Democrats were more likely to support H.R. 3266 than Republicans. Seniority is also a key predictor; junior were members more likely to cosponsor this legislation, conditional on the other covariates.</p>
+<div id="model" class="section level2">
+<h2><span class="header-section-number">6.1</span> Model</h2>
+<p><span class="math display">\[
+\begin{aligned}[t]
+y_i &amp;= \mathsf{Bernoulli}(\mu_i) \\
+\mu_i &amp;= \mathsf{Logit}^{-1}(x_i \beta)
+\end{aligned}
+\]</span></p>
+<p>Several auxiliary quantities are estimated in the following Stan program: the <em>percent correctly predicted (PCP)</em>, <span class="math display">\[
+\mathrm{PCP} = \frac{1}{N} \sum_{i = 1}^N \left( y_i (\pi_i &gt;= 0.5) + (1 - y_i) (\pi_i &lt; 0.5) \right) ,
+\]</span> and the expected percent correctly predicted (ePCP)* <span class="citation">(Herron <a href="#ref-Herron1999a">1999</a>)</span>, <span class="math display">\[
+\mathrm{PCP} = \frac{1}{N} \sum_{i = 1}^N \left( y_i \pi_i + (1 - y_i) (1 - \pi_i) \right) .
+\]</span></p>
+<p>Uncertainty in the parameters, and propagates to uncertainty in these quantities, and thus it is easy to calculate posterior distributions for these values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(<span class="kw">load</span>(<span class="st">&quot;data/a2z.rda&quot;</span>))
+<span class="co">#&gt; [1] &quot;a2z&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cosponsor_formula &lt;-<span class="st"> </span>cosp <span class="op">~</span><span class="st"> </span>ada <span class="op">+</span><span class="st"> </span>ntu <span class="op">+</span><span class="st"> </span>democrat <span class="op">+</span><span class="st"> </span>firstelected <span class="op">+</span><span class="st"> </span>margin <span class="op">+</span><span class="st"> </span>appromember <span class="op">+</span><span class="st"> </span>budgetmember</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cosponsor_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
+  y &lt;-<span class="st"> </span>a2z<span class="op">$</span>cosp
+  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
+  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">update</span>(cosponsor_formula, . <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>.), <span class="dt">data =</span> a2z) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
+  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
+  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span>
+  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
+  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
+  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)
+})</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod_logit2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/logit2.stan&quot;</span>)</code></pre></div>
+<pre>
+  <code class="stan">functions {
+  real pct_correct_pred(int[] y, vector mu) {
+    real out;
+    int N;
+    N = num_elements(mu);
+    out = 0.;
+    for (i in 1:N) {
+      if (y[i]) {
+        out = out + int_step(mu[i] >= 0.5);
+      } else {
+        out = out + int_step(mu[i] < 0.5);
+      }
+    }
+    out = out / N;
+    return out;
+  }
+  real expected_pct_correct_pred(int[] y, vector mu) {
+    real out;
+    int N;
+    N = num_elements(mu);
+    out = 0.;
+    for (i in 1:N) {
+      if (y[i]) {
+        out = out + mu[i];
+      } else {
+        out = out + (1. - mu[i]);
+      }
+    }
+    out = out / N;
+    return out;
+  }
+}
+data {
+  // response
+  int N;
+  int y[N];
+  // covariates
+  int K;
+  matrix[N, K] X;
+  // priors
+  real alpha_loc;
+  real<lower = 0.> alpha_scale;
+  vector[K] beta_loc;
+  vector<lower = 0.>[K] beta_scale;
+}
+parameters {
+  real alpha;
+  vector[K] beta;
+}
+transformed parameters {
+  // linear predictor
+  vector[N] eta;
+  eta = alpha + X * beta;
+}
+model {
+  alpha ~ normal(alpha_loc, alpha_scale);
+  beta ~ normal(beta_loc, beta_scale);
+  // y ~ bernoulli(inv_logit(eta));
+  // this is faster and more numerically stable
+  y ~ bernoulli_logit(eta);
+}
+generated quantities {
+  // log-likelihood of each obs
+  vector[N] log_lik;
+  // probability
+  vector[N] mu;
+  // simulated outcomes
+  int y_rep[N];
+  // percent correctly predicted
+  real PCP;
+  real ePCP;
+  for (i in 1:N) {
+    mu[i] = inv_logit(eta[i]);
+    log_lik[i] = bernoulli_logit_lpmf(y[i] | eta[i]);
+    y_rep[i] = bernoulli_rng(mu[i]);
+  }
+  PCP = pct_correct_pred(y, mu);
+  ePCP = expected_pct_correct_pred(y, mu);
+}</code>
+</pre>
+<p>Sample from this model:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_logit2, <span class="dt">data =</span> cosponsor_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(cosponsor_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;PCP&quot;</span>, <span class="st">&quot;ePCP&quot;</span>))<span class="op">$</span>summary
+<span class="co">#&gt;           mean  se_mean      sd   2.5%    25%    50%     75%  97.5% n_eff</span>
+<span class="co">#&gt; beta[1] -0.446 5.42e-03 0.34283 -1.100 -0.673 -0.447 -0.2178 0.2212  4000</span>
+<span class="co">#&gt; beta[2]  4.224 1.13e-02 0.65230  3.005  3.775  4.208  4.6555 5.5614  3325</span>
+<span class="co">#&gt; beta[3]  0.487 7.25e-03 0.45844 -0.418  0.182  0.488  0.7884 1.3874  4000</span>
+<span class="co">#&gt; beta[4]  0.872 4.06e-03 0.25663  0.379  0.696  0.868  1.0350 1.3997  4000</span>
+<span class="co">#&gt; beta[5] -0.110 3.32e-03 0.21009 -0.521 -0.247 -0.107  0.0336 0.2839  4000</span>
+<span class="co">#&gt; beta[6] -0.323 4.24e-03 0.26831 -0.882 -0.496 -0.314 -0.1390 0.1742  4000</span>
+<span class="co">#&gt; beta[7] -0.337 3.56e-03 0.22542 -0.792 -0.491 -0.329 -0.1808 0.0799  4000</span>
+<span class="co">#&gt; alpha    1.059 4.37e-03 0.27625  0.560  0.868  1.049  1.2399 1.6288  4000</span>
+<span class="co">#&gt; PCP      0.909 8.59e-05 0.00543  0.899  0.906  0.910  0.9124 0.9194  4000</span>
+<span class="co">#&gt; ePCP     0.873 1.15e-04 0.00724  0.858  0.869  0.874  0.8786 0.8861  4000</span>
+<span class="co">#&gt;          Rhat</span>
+<span class="co">#&gt; beta[1] 0.999</span>
+<span class="co">#&gt; beta[2] 1.000</span>
+<span class="co">#&gt; beta[3] 1.000</span>
+<span class="co">#&gt; beta[4] 1.000</span>
+<span class="co">#&gt; beta[5] 1.000</span>
+<span class="co">#&gt; beta[6] 1.000</span>
+<span class="co">#&gt; beta[7] 1.000</span>
+<span class="co">#&gt; alpha   1.000</span>
+<span class="co">#&gt; PCP     1.000</span>
+<span class="co">#&gt; ePCP    1.000</span></code></pre></div>
+<p>This model can be fit using the <strong>rstanarm</strong> function <code>stan_glm</code>. This is a binomial model, so it uses <code>family = binomial()</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm</span>(cosponsor_formula, <span class="dt">data =</span> a2z, <span class="dt">family =</span> <span class="kw">binomial</span>())</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit2
+<span class="co">#&gt; stan_glm</span>
+<span class="co">#&gt;  family:  binomial [logit]</span>
+<span class="co">#&gt;  formula: cosp ~ ada + ntu + democrat + firstelected + margin + appromember + </span>
+<span class="co">#&gt;     budgetmember</span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Estimates:</span>
+<span class="co">#&gt;              Median MAD_SD</span>
+<span class="co">#&gt; (Intercept)  -14.4    3.1 </span>
+<span class="co">#&gt; ada            0.0    0.0 </span>
+<span class="co">#&gt; ntu            0.2    0.0 </span>
+<span class="co">#&gt; democrat       0.9    0.9 </span>
+<span class="co">#&gt; firstelected   0.1    0.0 </span>
+<span class="co">#&gt; margin         0.0    0.0 </span>
+<span class="co">#&gt; appromember   -0.9    0.7 </span>
+<span class="co">#&gt; budgetmember  -1.0    0.7 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Sample avg. posterior predictive </span>
+<span class="co">#&gt; distribution of y (X = xbar):</span>
+<span class="co">#&gt;          Median MAD_SD</span>
+<span class="co">#&gt; mean_PPD 0.5    0.0   </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ------</span>
+<span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></code></pre></div>
+<ul>
+<li>probability of co-sponsorship for a representative member (median x values) <code>## clarify calculations   ## probability of co-sponsorship for &quot;average&quot; member (median x vals) probit(pbar) &lt;- beta[1] + beta[2]*0.55 + beta[3]*0.32               + beta[4] + beta[5]*86 + beta[6]*0.26;</code></li>
+<li>party affiliation - holding other values at their representative values <code>## party affiliation, effect size probit(p.dem) &lt;- beta[1] + beta[2]*0.55 + beta[3]*0.32                + beta[4] + beta[5]*86 + beta[6]*0.26;   probit(p.rep) &lt;- beta[1] + beta[2]*0.55 + beta[3]*0.32                + beta[5]*86 + beta[6]*0.26; d.party &lt;- p.dem - p.rep;</code></li>
+<li>party <em>attributable effect</em> from all sources <code>## &quot;attributable effect&quot;, all sources, due to party affiliation probit(p.dem.all) &lt;- beta[1] + beta[2]*0.8 + beta[3]*0.2                    + beta[4] + beta[5]*86 + beta[6]*0.28; probit(p.rep.all) &lt;- beta[1] + beta[2]*0.1 + beta[3]*0.74                              + beta[5]*86 + beta[6]*0.24; d.party.all &lt;- p.dem.all - p.rep.all</code></li>
+</ul>
+<p><strong>TODO</strong> Do latent residuals <span class="citation">(Gelman et al. <a href="#ref-GelmanGoegebeurTuerlinckxEtAl2000a">2000</a>; J. Albert and Chib <a href="#ref-AlbertChib1995a">1995</a>)</span> make sense and have any meaning outside of Gibbs sampling? They don’t seem useful relative to LOO measures of outliers.</p>
 
+</div>
+</div>
+<h3>References</h3>
 <div id="refs" class="references">
-<div>
-<p>Aitchison, J. 1982. “The Statistical Analysis of Compositional Data.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 44 (2). [Royal Statistical Society, Wiley]: 139–77. <a href="http://www.jstor.org/stable/2345821" class="uri">http://www.jstor.org/stable/2345821</a>.</p>
-</div>
-<div>
-<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP): 747–69. doi:<a href="https://doi.org/10.1093/biomet/82.4.747">10.1093/biomet/82.4.747</a>.</p>
-</div>
-<div>
-<p>Alvarez, R. Michael, Geoffrey Garrett, and Peter Lange. 1991. “Government Partisanship, Labor Organization, and Macroeconomic Performance.” <em>The American Political Science Review</em> 85 (2). [American Political Science Association, Cambridge University Press]: 539–56. <a href="http://www.jstor.org/stable/1963174" class="uri">http://www.jstor.org/stable/1963174</a>.</p>
-</div>
-<div>
-<p>Betancourt, M. J., and Mark Girolami. 2013. “Hamiltonian Monte Carlo for Hierarchical Models,” December. <a href="http://arxiv.org/abs/1312.0906v1" class="uri">http://arxiv.org/abs/1312.0906v1</a>.</p>
-</div>
-<div>
-<p>Bliss, C. I. 1935. “The Calculation of the Dosage-Mortality Curve.” <em>Annals of Applied Biology</em> 22 (1). Wiley-Blackwell: 134–67. doi:<a href="https://doi.org/10.1111/j.1744-7348.1935.tb07713.x">10.1111/j.1744-7348.1935.tb07713.x</a>.</p>
-</div>
-<div>
-<p>Carlin, Bradley P., and Thomas A. Louis. 2000. <em>Bayes and Empirical Bayes Methods for Data Analysis</em>. 2nd ed. Chapman; Hall/CRC.</p>
-</div>
-<div>
-<p>Dorn, Harold F. 1954. “The Relationship of Cancer of the Lung and the Use of Tobacco.” <em>The American Statistician</em> 8 (5). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 7–13. <a href="http://www.jstor.org/stable/2681545" class="uri">http://www.jstor.org/stable/2681545</a>.</p>
-</div>
-<div>
-<p>Draper, IDavid. 1992. <em>Combining Information: Statistical Issues and Opportunities for Research</em>. Contemporary Statistics. National Academy Press. <a href="https://books.google.com/books?id=l0ArAAAAYAAJ" class="uri">https://books.google.com/books?id=l0ArAAAAYAAJ</a>.</p>
-</div>
-<div>
-<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell: 247–68. doi:<a href="https://doi.org/10.1111/1467-9876.00190">10.1111/1467-9876.00190</a>.</p>
-</div>
-<div>
-<p>Grunberg, Gérard, Nonna Mayer, and Paul M. Sniderman. 2002. <em>La Démocratie à L’épreuve : Une Nouvelle Approche de L’opinion Des Français</em>. Fnsp - Presse de la.</p>
-</div>
-<div>
-<p>Hanmer, Michael J., and Kerem Ozan Kalkan. 2012. “Behind the Curve: Clarifying the Best Approach to Calculating Predicted Probabilities and Marginal Effects from Limited Dependent Variable Models.” <em>American Journal of Political Science</em> 57 (1). Wiley-Blackwell: 263–77. doi:<a href="https://doi.org/10.1111/j.1540-5907.2012.00602.x">10.1111/j.1540-5907.2012.00602.x</a>.</p>
-</div>
-<div>
-<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP): 83–98. doi:<a href="https://doi.org/10.1093/oxfordjournals.pan.a029806">10.1093/oxfordjournals.pan.a029806</a>.</p>
-</div>
-<div>
-<p>———. 2010. “Replication Data for: Post-Estimation Uncertainty in Limited Dependent Variable Models.” Harvard Dataverse. doi:<a href="https://doi.org/1902.1/11199">1902.1/11199</a>.</p>
-</div>
-<div>
-<p>Jackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” <em>Political Analysis</em> 8 (4). [Oxford University Press, Society for Political Methodology]: 307–32. <a href="http://www.jstor.org/stable/25791616" class="uri">http://www.jstor.org/stable/25791616</a>.</p>
-</div>
-<div>
-<p>———. 2004. “Bayesian Analysis for Political Research.” <em>Annual Review of Political Science</em> 7 (1). Annual Reviews: 483–505. doi:<a href="https://doi.org/10.1146/annurev.polisci.7.012003.104706">10.1146/annurev.polisci.7.012003.104706</a>.</p>
-</div>
-<div>
-<p>———. 2005. “Pooling the Polls over an Election Campaign.” <em>Australian Journal of Political Science</em> 40 (4). Informa UK Limited: 499–517. doi:<a href="https://doi.org/10.1080/10361140500302472">10.1080/10361140500302472</a>.</p>
-</div>
-<div>
-<p>———. 2009. <em>Bayesian Analysis for the Social Sciences</em>. John Wiley; Sons Ltd.</p>
-</div>
-<div>
-<p>Johnson, Valen E., and James H. Albert. 1999. <em>Ordinal Data Modeling</em>. Springer-Verlag. doi:<a href="https://doi.org/10.1007/b98832">10.1007/b98832</a>.</p>
-</div>
-<div>
-<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited: 52–66. doi:<a href="https://doi.org/10.1198/jbes.2009.07145">10.1198/jbes.2009.07145</a>.</p>
-</div>
-<div>
-<p>Katz, Jonathan N., and Gary King. 1999. “A Statistical Model for Multiparty Electoral Data.” <em>American Political Science Review</em> 93 (01). Cambridge University Press (CUP): 15–32. doi:<a href="https://doi.org/10.2307/2585758">10.2307/2585758</a>.</p>
-</div>
-<div>
-<p>King, Gary, Michael Tomz, and Jason Wittenberg. 2000. “Making the Most of Statistical Analyses: Improving Interpretation and Presentation.” <em>American Journal of Political Science</em> 44 (2). [Midwest Political Science Association, Wiley]: 347–61. <a href="http://www.jstor.org/stable/2669316" class="uri">http://www.jstor.org/stable/2669316</a>.</p>
-</div>
-<div>
+<div id="ref-Krehbiel1995a">
 <p>Krehbiel, Keith. 1995. “Cosponsors and Wafflers from a to Z.” <em>American Journal of Political Science</em> 39 (4). JSTOR: 906. doi:<a href="https://doi.org/10.2307/2111662">10.2307/2111662</a>.</p>
 </div>
-<div>
-<p>Linzer, Drew A. 2013. “Dynamic Bayesian Forecasting of Presidential Elections in the States.” <em>Journal of the American Statistical Association</em> 108 (501): 124–34. doi:<a href="https://doi.org/10.1080/01621459.2012.737735">10.1080/01621459.2012.737735</a>.</p>
+<div id="ref-Herron1999a">
+<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP): 83–98. doi:<a href="https://doi.org/10.1093/oxfordjournals.pan.a029806">10.1093/oxfordjournals.pan.a029806</a>.</p>
 </div>
-<div>
-<p>Liu, Chuanhai. 2005. “Robit Regression: A Simple Robust Alternative to Logistic and Probit Regression.” In <em>Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives</em>, 227–38. John Wiley &amp; Sons, Ltd. doi:<a href="https://doi.org/10.1002/0470090456.ch21">10.1002/0470090456.ch21</a>.</p>
+<div id="ref-GelmanGoegebeurTuerlinckxEtAl2000a">
+<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell: 247–68. doi:<a href="https://doi.org/10.1111/1467-9876.00190">10.1111/1467-9876.00190</a>.</p>
 </div>
-<div>
-<p>Nagler, Jonathan. 1994. “Scobit: An Alternative Estimator to Logit and Probit.” <em>American Journal of Political Science</em> 38 (1). [Midwest Political Science Association, Wiley]: 230–55. <a href="http://www.jstor.org/stable/2111343" class="uri">http://www.jstor.org/stable/2111343</a>.</p>
-</div>
-<div>
-<p>Poole, Keith T., and Howard Rosenthal. 2000. <em>Congress: A Political-Economic History of Roll Call Voting</em>. Oxford University Press.</p>
-</div>
-<div>
-<p>Prentice, Ross L. 1976. “A Generalization of the Probit and Logit Methods for Dose Response Curves.” <em>Biometrics</em> 32 (4). [Wiley, International Biometric Society]: 761–68. <a href="http://www.jstor.org/stable/2529262" class="uri">http://www.jstor.org/stable/2529262</a>.</p>
-</div>
-<div>
-<p>Spiegelhalter, D. J., A. Thomas N. Best, and W. R. Gilks. 1996. “BUGS: Bayesian Inference Using Gibbs Sampling, Version 0.5.”</p>
-</div>
-<div>
-<p>Stan Development Team. 2016. <em>Stan Modeling Language Users Guide and Reference Manual, Version 2.14.0</em>. <a href="https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf" class="uri">https://github.com/stan-dev/stan/releases/download/v2.14.0/stan-reference-2.14.0.pdf</a>.</p>
-</div>
-<div>
-<p>Stukel, Therese A. 1988. “Generalized Logistic Models.” <em>Journal of the American Statistical Association</em> 83 (402). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 426–31. <a href="http://www.jstor.org/stable/2288858" class="uri">http://www.jstor.org/stable/2288858</a>.</p>
-</div>
-<div>
-<p>Tanner, Martin A. 1996. <em>Tools for Statistical Inference</em>. Springer.</p>
-</div>
-<div>
-<p>Tomz, Michael, and Robert P. Van Houweling. 2003. “How Does Voting Equipment Affect the Racial Gap in Voided Ballots?” <em>American Journal of Political Science</em> 47 (1). Wiley-Blackwell: 46–60. doi:<a href="https://doi.org/10.1111/1540-5907.00004">10.1111/1540-5907.00004</a>.</p>
-</div>
-<div>
-<p>Tomz, Michael, Joshua A. Tucker, and Jason Wittenberg. 2002. “An Easy and Accurate Regression Model for Multiparty Electoral Data.” <em>Political Analysis</em> 10 (1). [Oxford University Press, Society for Political Methodology]: 66–83. <a href="http://www.jstor.org/stable/25791665" class="uri">http://www.jstor.org/stable/25791665</a>.</p>
-</div>
-<div>
-<p>Western, Bruce. 1998. “Causal Heterogeneity in Comparative Research: A Bayesian Hierarchical Modelling Approach.” <em>American Journal of Political Science</em> 42 (4). [Midwest Political Science Association, Wiley]: 1233–59. doi:<a href="https://doi.org/10.2307/2991856">10.2307/2991856</a>.</p>
+<div id="ref-AlbertChib1995a">
+<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP): 747–69. doi:<a href="https://doi.org/10.1093/biomet/82.4.747">10.1093/biomet/82.4.747</a>.</p>
 </div>
 </div>
+<div class="footnotes">
+<hr />
+<ol start="3">
+<li id="fn3"><p>Replication data from <span class="citation">Herron (<a href="#ref-Herron2010a">2010</a>)</span>.<a href="cosponsorship.html#fnref3">↩</a></p></li>
+<li id="fn4"><p>Example derived from Simon Jackman, “Cosponsorship: computing auxiliary quantities from MCMC output,” 2004-05-01, <a href="https://web-beta.archive.org/web/20040501194620/http://jackman.stanford.edu:80/mcmc/kk.odc">URL</a><a href="cosponsorship.html#fnref4">↩</a></p></li>
+</ol>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </section>
 
           </div>
         </div>
       </div>
-<a href="multivarmissing.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="turnout.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="reagan.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
