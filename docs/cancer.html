@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,16 +227,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="cancer" class="section level1">
 <h1><span class="header-section-number">2</span> Cancer: difference in two binomial proportions</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>Two groups chosen to be random samples from subpopulations of lung-cancer patients and cancer-free individuals.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
 The scientific question of interest is the difference in the smoking habits between two groups.
 The results of the survey are:</p>
-<pre class="sourceCode r"><code class="sourceCode r">cancer &lt;-<span class="st"> </span><span class="kw">tribble</span>(
-  <span class="op">~</span>group, <span class="op">~</span>n, <span class="op">~</span>smokers,
-  <span class="st">&quot;Cancer patients&quot;</span>, <span class="dv">86</span>, <span class="dv">82</span>,
-  <span class="st">&quot;Control group&quot;</span>, <span class="dv">86</span>, <span class="dv">72</span>
-)</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">cancer &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="op">~</span>group, <span class="op">~</span>n, <span class="op">~</span>smokers,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="st">&quot;Cancer patients&quot;</span>, <span class="dv">86</span>, <span class="dv">82</span>,</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="st">&quot;Control group&quot;</span>, <span class="dv">86</span>, <span class="dv">72</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">)</a></code></pre></div>
 </div>
 <div class="footnotes">
 <hr />

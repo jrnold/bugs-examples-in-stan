@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,9 +227,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="negbin" class="section level1">
 <h1><span class="header-section-number">20</span> Negative Binomial: Estimating Homicides in Census Tracks</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb165-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb165-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a>
+<a class="sourceLine" id="cb165-3" data-line-number="3"><span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</a></code></pre></div>
 <p>The data are from the 1990 United States Census for the city of St. Louis,
 Missouri for Census Tracts, and from records of the St. Louis City Metropolitan
 Police Department for the years 1980 through 1994. For each Census Tract (with
@@ -268,7 +268,7 @@ As <span class="math inline">\(\phi \to \infty\)</span>, the negative binomial a
 \phi^{-1} &amp;\sim \mathsf{HalfCauchy}(0, 5).
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">negbin_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/negbin.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" data-line-number="1">negbin_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/negbin.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -310,51 +310,51 @@ generated quantities {
   }
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;st_louis_census&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)
-negbin_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span>st_louis_census<span class="op">$</span>i8094
-  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
-  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
-  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
-  beta_mean &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
-  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)  
-  alpha_mean &lt;-<span class="st"> </span><span class="dv">0</span>
-  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
-  reciprocal_phi_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">negbin_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(negbin_mod, <span class="dt">data =</span> negbin_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(negbin_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;phi&quot;</span>))<span class="op">$</span>summary
-<span class="co">#&gt;           mean se_mean     sd   2.5%    25%    50%    75%  97.5% n_eff</span>
-<span class="co">#&gt; alpha    2.926 0.00114 0.0719  2.787  2.878  2.926  2.973  3.064  4000</span>
-<span class="co">#&gt; beta[1]  0.691 0.00197 0.1122  0.471  0.615  0.689  0.766  0.912  3245</span>
-<span class="co">#&gt; beta[2] -0.349 0.00171 0.1007 -0.551 -0.415 -0.348 -0.280 -0.154  3481</span>
-<span class="co">#&gt; phi      1.968 0.00488 0.3088  1.424  1.751  1.949  2.166  2.639  4000</span>
-<span class="co">#&gt;         Rhat</span>
-<span class="co">#&gt; alpha      1</span>
-<span class="co">#&gt; beta[1]    1</span>
-<span class="co">#&gt; beta[2]    1</span>
-<span class="co">#&gt; phi        1</span></code></pre>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb167-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;st_louis_census&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</a>
+<a class="sourceLine" id="cb167-2" data-line-number="2">negbin_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb167-3" data-line-number="3">  y &lt;-<span class="st"> </span>st_louis_census<span class="op">$</span>i8094</a>
+<a class="sourceLine" id="cb167-4" data-line-number="4">  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)</a>
+<a class="sourceLine" id="cb167-5" data-line-number="5">  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()</a>
+<a class="sourceLine" id="cb167-6" data-line-number="6">  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)</a>
+<a class="sourceLine" id="cb167-7" data-line-number="7">  beta_mean &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)</a>
+<a class="sourceLine" id="cb167-8" data-line-number="8">  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)  </a>
+<a class="sourceLine" id="cb167-9" data-line-number="9">  alpha_mean &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb167-10" data-line-number="10">  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb167-11" data-line-number="11">  reciprocal_phi_scale &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb167-12" data-line-number="12">})</a></code></pre></div>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" data-line-number="1">negbin_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(negbin_mod, <span class="dt">data =</span> negbin_data)</a></code></pre></div>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb169-1" data-line-number="1"><span class="kw">summary</span>(negbin_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;phi&quot;</span>))<span class="op">$</span>summary</a>
+<a class="sourceLine" id="cb169-2" data-line-number="2"><span class="co">#&gt;           mean se_mean     sd   2.5%    25%    50%    75%  97.5% n_eff</span></a>
+<a class="sourceLine" id="cb169-3" data-line-number="3"><span class="co">#&gt; alpha    2.926 0.00114 0.0719  2.787  2.878  2.926  2.973  3.064  4000</span></a>
+<a class="sourceLine" id="cb169-4" data-line-number="4"><span class="co">#&gt; beta[1]  0.691 0.00197 0.1122  0.471  0.615  0.689  0.766  0.912  3245</span></a>
+<a class="sourceLine" id="cb169-5" data-line-number="5"><span class="co">#&gt; beta[2] -0.349 0.00171 0.1007 -0.551 -0.415 -0.348 -0.280 -0.154  3481</span></a>
+<a class="sourceLine" id="cb169-6" data-line-number="6"><span class="co">#&gt; phi      1.968 0.00488 0.3088  1.424  1.751  1.949  2.166  2.639  4000</span></a>
+<a class="sourceLine" id="cb169-7" data-line-number="7"><span class="co">#&gt;         Rhat</span></a>
+<a class="sourceLine" id="cb169-8" data-line-number="8"><span class="co">#&gt; alpha      1</span></a>
+<a class="sourceLine" id="cb169-9" data-line-number="9"><span class="co">#&gt; beta[1]    1</span></a>
+<a class="sourceLine" id="cb169-10" data-line-number="10"><span class="co">#&gt; beta[2]    1</span></a>
+<a class="sourceLine" id="cb169-11" data-line-number="11"><span class="co">#&gt; phi        1</span></a></code></pre></div>
 <p>We could also fit the model using the <strong>rstanarm</strong> function <code>stan_glm.nb</code> (or <code>stan_glm</code>):</p>
-<pre class="sourceCode r"><code class="sourceCode r">negbin_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm.nb</span>(i8094 <span class="op">~</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">negbin_fit2
-<span class="co">#&gt; stan_glm.nb</span>
-<span class="co">#&gt;  family:       neg_binomial_2 [log]</span>
-<span class="co">#&gt;  formula:      i8094 ~ pcunemp9 + incrs</span>
-<span class="co">#&gt;  observations: 111</span>
-<span class="co">#&gt;  predictors:   3</span>
-<span class="co">#&gt; ------</span>
-<span class="co">#&gt;                       Median MAD_SD</span>
-<span class="co">#&gt; (Intercept)            2.8    0.4  </span>
-<span class="co">#&gt; pcunemp9               0.1    0.0  </span>
-<span class="co">#&gt; incrs                 -0.1    0.0  </span>
-<span class="co">#&gt; reciprocal_dispersion  1.9    0.3  </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Sample avg. posterior predictive distribution of y:</span>
-<span class="co">#&gt;          Median MAD_SD</span>
-<span class="co">#&gt; mean_PPD 32.4    5.6  </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; ------</span>
-<span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></code></pre>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" data-line-number="1">negbin_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm.nb</span>(i8094 <span class="op">~</span><span class="st"> </span>pcunemp9 <span class="op">+</span><span class="st"> </span>incrs, <span class="dt">data =</span> st_louis_census)</a></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" data-line-number="1">negbin_fit2</a>
+<a class="sourceLine" id="cb171-2" data-line-number="2"><span class="co">#&gt; stan_glm.nb</span></a>
+<a class="sourceLine" id="cb171-3" data-line-number="3"><span class="co">#&gt;  family:       neg_binomial_2 [log]</span></a>
+<a class="sourceLine" id="cb171-4" data-line-number="4"><span class="co">#&gt;  formula:      i8094 ~ pcunemp9 + incrs</span></a>
+<a class="sourceLine" id="cb171-5" data-line-number="5"><span class="co">#&gt;  observations: 111</span></a>
+<a class="sourceLine" id="cb171-6" data-line-number="6"><span class="co">#&gt;  predictors:   3</span></a>
+<a class="sourceLine" id="cb171-7" data-line-number="7"><span class="co">#&gt; ------</span></a>
+<a class="sourceLine" id="cb171-8" data-line-number="8"><span class="co">#&gt;                       Median MAD_SD</span></a>
+<a class="sourceLine" id="cb171-9" data-line-number="9"><span class="co">#&gt; (Intercept)            2.8    0.4  </span></a>
+<a class="sourceLine" id="cb171-10" data-line-number="10"><span class="co">#&gt; pcunemp9               0.1    0.0  </span></a>
+<a class="sourceLine" id="cb171-11" data-line-number="11"><span class="co">#&gt; incrs                 -0.1    0.0  </span></a>
+<a class="sourceLine" id="cb171-12" data-line-number="12"><span class="co">#&gt; reciprocal_dispersion  1.9    0.3  </span></a>
+<a class="sourceLine" id="cb171-13" data-line-number="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb171-14" data-line-number="14"><span class="co">#&gt; Sample avg. posterior predictive distribution of y:</span></a>
+<a class="sourceLine" id="cb171-15" data-line-number="15"><span class="co">#&gt;          Median MAD_SD</span></a>
+<a class="sourceLine" id="cb171-16" data-line-number="16"><span class="co">#&gt; mean_PPD 32.4    5.6  </span></a>
+<a class="sourceLine" id="cb171-17" data-line-number="17"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb171-18" data-line-number="18"><span class="co">#&gt; ------</span></a>
+<a class="sourceLine" id="cb171-19" data-line-number="19"><span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></a></code></pre></div>
 <p>Example derived from Simon Jackman, “negative binomial using the ones trick with log link”, 2005-10-27, <a href="https://web-beta.archive.org/web/20051027082311/http://jackman.stanford.edu:80/mcmc/negbineg.odc">URL</a>.</p>
 
 </div>

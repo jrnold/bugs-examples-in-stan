@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,9 +227,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="cosponsorship" class="section level1">
 <h1><span class="header-section-number">6</span> Cosponsorship: computing auxiliary quantities from MCMC output</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb39-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a>
+<a class="sourceLine" id="cb39-3" data-line-number="3"><span class="kw">library</span>(<span class="st">&quot;rstanarm&quot;</span>)</a></code></pre></div>
 <p>Typically, MCMC output consists of samples from the posterior density of model
 parameters. But note that other quantities can be generated as well, say,
 imputations for missing data points, predictions, residuals, or goodness-of-fit
@@ -276,19 +276,19 @@ and the expected percent correctly predicted (ePCP)* <span class="citation">(Her
 \mathrm{PCP} = \frac{1}{N} \sum_{i = 1}^N \left( y_i \pi_i + (1 - y_i) (1 - \pi_i) \right) .
 \]</span></p>
 <p>Uncertainty in the parameters, and propagates to uncertainty in these quantities, and thus it is easy to calculate posterior distributions for these values.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;a2z&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">cosponsor_formula &lt;-<span class="st"> </span>cosp <span class="op">~</span><span class="st"> </span>ada <span class="op">+</span><span class="st"> </span>ntu <span class="op">+</span><span class="st"> </span>democrat <span class="op">+</span><span class="st"> </span>firstelected <span class="op">+</span><span class="st"> </span>margin <span class="op">+</span><span class="st"> </span>appromember <span class="op">+</span><span class="st"> </span>budgetmember</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">cosponsor_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span>a2z<span class="op">$</span>cosp
-  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
-  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">update</span>(cosponsor_formula, . <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>.), <span class="dt">data =</span> a2z) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
-  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
-  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
-  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
-  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_logit2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/logit2.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;a2z&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">cosponsor_formula &lt;-<span class="st"> </span>cosp <span class="op">~</span><span class="st"> </span>ada <span class="op">+</span><span class="st"> </span>ntu <span class="op">+</span><span class="st"> </span>democrat <span class="op">+</span><span class="st"> </span>firstelected <span class="op">+</span><span class="st"> </span>margin <span class="op">+</span><span class="st"> </span>appromember <span class="op">+</span><span class="st"> </span>budgetmember</a></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1">cosponsor_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb42-2" data-line-number="2">  y &lt;-<span class="st"> </span>a2z<span class="op">$</span>cosp</a>
+<a class="sourceLine" id="cb42-3" data-line-number="3">  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)</a>
+<a class="sourceLine" id="cb42-4" data-line-number="4">  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">update</span>(cosponsor_formula, . <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>.), <span class="dt">data =</span> a2z) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()</a>
+<a class="sourceLine" id="cb42-5" data-line-number="5">  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)</a>
+<a class="sourceLine" id="cb42-6" data-line-number="6">  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb42-7" data-line-number="7">  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb42-8" data-line-number="8">  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)</a>
+<a class="sourceLine" id="cb42-9" data-line-number="9">  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span>, K)</a>
+<a class="sourceLine" id="cb42-10" data-line-number="10">})</a></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">mod_logit2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/logit2.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">functions {
   real pct_correct_pred(int[] y, vector mu) {
@@ -371,57 +371,57 @@ generated quantities {
 }</code>
 </pre>
 <p>Sample from this model:</p>
-<pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_logit2, <span class="dt">data =</span> cosponsor_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(cosponsor_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;PCP&quot;</span>, <span class="st">&quot;ePCP&quot;</span>))<span class="op">$</span>summary
-<span class="co">#&gt;           mean  se_mean      sd   2.5%    25%    50%     75%  97.5% n_eff</span>
-<span class="co">#&gt; beta[1] -0.467 5.40e-03 0.34131 -1.134 -0.700 -0.464 -0.2323 0.1901  4000</span>
-<span class="co">#&gt; beta[2]  4.205 1.15e-02 0.66477  2.938  3.751  4.192  4.6482 5.5554  3341</span>
-<span class="co">#&gt; beta[3]  0.492 7.26e-03 0.45902 -0.431  0.195  0.496  0.8074 1.3767  4000</span>
-<span class="co">#&gt; beta[4]  0.874 4.00e-03 0.25293  0.400  0.704  0.870  1.0411 1.3858  4000</span>
-<span class="co">#&gt; beta[5] -0.115 3.30e-03 0.20876 -0.532 -0.253 -0.117  0.0226 0.2971  4000</span>
-<span class="co">#&gt; beta[6] -0.321 4.26e-03 0.26969 -0.890 -0.498 -0.309 -0.1286 0.1749  4000</span>
-<span class="co">#&gt; beta[7] -0.342 3.63e-03 0.22944 -0.807 -0.493 -0.341 -0.1802 0.0977  4000</span>
-<span class="co">#&gt; alpha    1.059 4.31e-03 0.27239  0.552  0.874  1.048  1.2322 1.6194  4000</span>
-<span class="co">#&gt; PCP      0.909 9.52e-05 0.00544  0.899  0.906  0.910  0.9124 0.9194  3267</span>
-<span class="co">#&gt; ePCP     0.873 1.15e-04 0.00725  0.858  0.869  0.874  0.8786 0.8859  4000</span>
-<span class="co">#&gt;          Rhat</span>
-<span class="co">#&gt; beta[1] 1.000</span>
-<span class="co">#&gt; beta[2] 1.000</span>
-<span class="co">#&gt; beta[3] 0.999</span>
-<span class="co">#&gt; beta[4] 1.000</span>
-<span class="co">#&gt; beta[5] 0.999</span>
-<span class="co">#&gt; beta[6] 0.999</span>
-<span class="co">#&gt; beta[7] 0.999</span>
-<span class="co">#&gt; alpha   1.000</span>
-<span class="co">#&gt; PCP     1.000</span>
-<span class="co">#&gt; ePCP    1.000</span></code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">cosponsor_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_logit2, <span class="dt">data =</span> cosponsor_data)</a></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1"><span class="kw">summary</span>(cosponsor_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;PCP&quot;</span>, <span class="st">&quot;ePCP&quot;</span>))<span class="op">$</span>summary</a>
+<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="co">#&gt;           mean  se_mean      sd   2.5%    25%    50%     75%  97.5% n_eff</span></a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="co">#&gt; beta[1] -0.467 5.40e-03 0.34131 -1.134 -0.700 -0.464 -0.2323 0.1901  4000</span></a>
+<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="co">#&gt; beta[2]  4.205 1.15e-02 0.66477  2.938  3.751  4.192  4.6482 5.5554  3341</span></a>
+<a class="sourceLine" id="cb45-5" data-line-number="5"><span class="co">#&gt; beta[3]  0.492 7.26e-03 0.45902 -0.431  0.195  0.496  0.8074 1.3767  4000</span></a>
+<a class="sourceLine" id="cb45-6" data-line-number="6"><span class="co">#&gt; beta[4]  0.874 4.00e-03 0.25293  0.400  0.704  0.870  1.0411 1.3858  4000</span></a>
+<a class="sourceLine" id="cb45-7" data-line-number="7"><span class="co">#&gt; beta[5] -0.115 3.30e-03 0.20876 -0.532 -0.253 -0.117  0.0226 0.2971  4000</span></a>
+<a class="sourceLine" id="cb45-8" data-line-number="8"><span class="co">#&gt; beta[6] -0.321 4.26e-03 0.26969 -0.890 -0.498 -0.309 -0.1286 0.1749  4000</span></a>
+<a class="sourceLine" id="cb45-9" data-line-number="9"><span class="co">#&gt; beta[7] -0.342 3.63e-03 0.22944 -0.807 -0.493 -0.341 -0.1802 0.0977  4000</span></a>
+<a class="sourceLine" id="cb45-10" data-line-number="10"><span class="co">#&gt; alpha    1.059 4.31e-03 0.27239  0.552  0.874  1.048  1.2322 1.6194  4000</span></a>
+<a class="sourceLine" id="cb45-11" data-line-number="11"><span class="co">#&gt; PCP      0.909 9.52e-05 0.00544  0.899  0.906  0.910  0.9124 0.9194  3267</span></a>
+<a class="sourceLine" id="cb45-12" data-line-number="12"><span class="co">#&gt; ePCP     0.873 1.15e-04 0.00725  0.858  0.869  0.874  0.8786 0.8859  4000</span></a>
+<a class="sourceLine" id="cb45-13" data-line-number="13"><span class="co">#&gt;          Rhat</span></a>
+<a class="sourceLine" id="cb45-14" data-line-number="14"><span class="co">#&gt; beta[1] 1.000</span></a>
+<a class="sourceLine" id="cb45-15" data-line-number="15"><span class="co">#&gt; beta[2] 1.000</span></a>
+<a class="sourceLine" id="cb45-16" data-line-number="16"><span class="co">#&gt; beta[3] 0.999</span></a>
+<a class="sourceLine" id="cb45-17" data-line-number="17"><span class="co">#&gt; beta[4] 1.000</span></a>
+<a class="sourceLine" id="cb45-18" data-line-number="18"><span class="co">#&gt; beta[5] 0.999</span></a>
+<a class="sourceLine" id="cb45-19" data-line-number="19"><span class="co">#&gt; beta[6] 0.999</span></a>
+<a class="sourceLine" id="cb45-20" data-line-number="20"><span class="co">#&gt; beta[7] 0.999</span></a>
+<a class="sourceLine" id="cb45-21" data-line-number="21"><span class="co">#&gt; alpha   1.000</span></a>
+<a class="sourceLine" id="cb45-22" data-line-number="22"><span class="co">#&gt; PCP     1.000</span></a>
+<a class="sourceLine" id="cb45-23" data-line-number="23"><span class="co">#&gt; ePCP    1.000</span></a></code></pre></div>
 <p>This model can be fit using the <strong>rstanarm</strong> function <code>stan_glm</code>.
 This is a binomial model, so it uses <code>family = binomial()</code>:</p>
-<pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm</span>(cosponsor_formula, <span class="dt">data =</span> a2z, <span class="dt">family =</span> <span class="kw">binomial</span>())</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">cosponsor_fit2
-<span class="co">#&gt; stan_glm</span>
-<span class="co">#&gt;  family:       binomial [logit]</span>
-<span class="co">#&gt;  formula:      cosp ~ ada + ntu + democrat + firstelected + margin + appromember + </span>
-<span class="co">#&gt;     budgetmember</span>
-<span class="co">#&gt;  observations: 434</span>
-<span class="co">#&gt;  predictors:   8</span>
-<span class="co">#&gt; ------</span>
-<span class="co">#&gt;              Median MAD_SD</span>
-<span class="co">#&gt; (Intercept)  -14.4    3.1 </span>
-<span class="co">#&gt; ada            0.0    0.0 </span>
-<span class="co">#&gt; ntu            0.2    0.0 </span>
-<span class="co">#&gt; democrat       0.9    0.9 </span>
-<span class="co">#&gt; firstelected   0.1    0.0 </span>
-<span class="co">#&gt; margin         0.0    0.0 </span>
-<span class="co">#&gt; appromember   -0.9    0.7 </span>
-<span class="co">#&gt; budgetmember  -1.0    0.7 </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Sample avg. posterior predictive distribution of y:</span>
-<span class="co">#&gt;          Median MAD_SD</span>
-<span class="co">#&gt; mean_PPD 0.5    0.0   </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; ------</span>
-<span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1">cosponsor_fit2 &lt;-<span class="st"> </span><span class="kw">stan_glm</span>(cosponsor_formula, <span class="dt">data =</span> a2z, <span class="dt">family =</span> <span class="kw">binomial</span>())</a></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" data-line-number="1">cosponsor_fit2</a>
+<a class="sourceLine" id="cb47-2" data-line-number="2"><span class="co">#&gt; stan_glm</span></a>
+<a class="sourceLine" id="cb47-3" data-line-number="3"><span class="co">#&gt;  family:       binomial [logit]</span></a>
+<a class="sourceLine" id="cb47-4" data-line-number="4"><span class="co">#&gt;  formula:      cosp ~ ada + ntu + democrat + firstelected + margin + appromember + </span></a>
+<a class="sourceLine" id="cb47-5" data-line-number="5"><span class="co">#&gt;     budgetmember</span></a>
+<a class="sourceLine" id="cb47-6" data-line-number="6"><span class="co">#&gt;  observations: 434</span></a>
+<a class="sourceLine" id="cb47-7" data-line-number="7"><span class="co">#&gt;  predictors:   8</span></a>
+<a class="sourceLine" id="cb47-8" data-line-number="8"><span class="co">#&gt; ------</span></a>
+<a class="sourceLine" id="cb47-9" data-line-number="9"><span class="co">#&gt;              Median MAD_SD</span></a>
+<a class="sourceLine" id="cb47-10" data-line-number="10"><span class="co">#&gt; (Intercept)  -14.4    3.1 </span></a>
+<a class="sourceLine" id="cb47-11" data-line-number="11"><span class="co">#&gt; ada            0.0    0.0 </span></a>
+<a class="sourceLine" id="cb47-12" data-line-number="12"><span class="co">#&gt; ntu            0.2    0.0 </span></a>
+<a class="sourceLine" id="cb47-13" data-line-number="13"><span class="co">#&gt; democrat       0.9    0.9 </span></a>
+<a class="sourceLine" id="cb47-14" data-line-number="14"><span class="co">#&gt; firstelected   0.1    0.0 </span></a>
+<a class="sourceLine" id="cb47-15" data-line-number="15"><span class="co">#&gt; margin         0.0    0.0 </span></a>
+<a class="sourceLine" id="cb47-16" data-line-number="16"><span class="co">#&gt; appromember   -0.9    0.7 </span></a>
+<a class="sourceLine" id="cb47-17" data-line-number="17"><span class="co">#&gt; budgetmember  -1.0    0.7 </span></a>
+<a class="sourceLine" id="cb47-18" data-line-number="18"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb47-19" data-line-number="19"><span class="co">#&gt; Sample avg. posterior predictive distribution of y:</span></a>
+<a class="sourceLine" id="cb47-20" data-line-number="20"><span class="co">#&gt;          Median MAD_SD</span></a>
+<a class="sourceLine" id="cb47-21" data-line-number="21"><span class="co">#&gt; mean_PPD 0.5    0.0   </span></a>
+<a class="sourceLine" id="cb47-22" data-line-number="22"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb47-23" data-line-number="23"><span class="co">#&gt; ------</span></a>
+<a class="sourceLine" id="cb47-24" data-line-number="24"><span class="co">#&gt; For info on the priors used see help(&#39;prior_summary.stanreg&#39;).</span></a></code></pre></div>
 <ul>
 <li><p>probability of co-sponsorship for a representative member (median x values)</p>
 <pre><code>## clarify calculations
@@ -450,16 +450,16 @@ d.party.all &lt;- p.dem.all - p.rep.all</code></pre></li>
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-Krehbiel1995a">
-<p>Krehbiel, Keith. 1995. “Cosponsors and Wafflers from a to Z.” <em>American Journal of Political Science</em> 39 (4). JSTOR:906. <a href="https://doi.org/10.2307/2111662" class="uri">https://doi.org/10.2307/2111662</a>.</p>
+<p>Krehbiel, Keith. 1995. “Cosponsors and Wafflers from a to Z.” <em>American Journal of Political Science</em> 39 (4). JSTOR: 906. <a href="https://doi.org/10.2307/2111662" class="uri">https://doi.org/10.2307/2111662</a>.</p>
 </div>
 <div id="ref-Herron1999a">
-<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP):83–98. <a href="https://doi.org/10.1093/oxfordjournals.pan.a029806" class="uri">https://doi.org/10.1093/oxfordjournals.pan.a029806</a>.</p>
+<p>Herron, Michael C. 1999. “Postestimation Uncertainty in Limited Dependent Variable Models.” <em>Political Analysis</em> 8 (01). Cambridge University Press (CUP): 83–98. <a href="https://doi.org/10.1093/oxfordjournals.pan.a029806" class="uri">https://doi.org/10.1093/oxfordjournals.pan.a029806</a>.</p>
 </div>
 <div id="ref-GelmanGoegebeurTuerlinckxEtAl2000a">
-<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell:247–68. <a href="https://doi.org/10.1111/1467-9876.00190" class="uri">https://doi.org/10.1111/1467-9876.00190</a>.</p>
+<p>Gelman, A., Y. Goegebeur, F. Tuerlinckx, and I. Van Mechelen. 2000. “Diagnostic Checks for Discrete Data Regression Models Using Posterior Predictive Simulations.” <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 49 (2). Wiley-Blackwell: 247–68. <a href="https://doi.org/10.1111/1467-9876.00190" class="uri">https://doi.org/10.1111/1467-9876.00190</a>.</p>
 </div>
 <div id="ref-AlbertChib1995a">
-<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP):747–69. <a href="https://doi.org/10.1093/biomet/82.4.747" class="uri">https://doi.org/10.1093/biomet/82.4.747</a>.</p>
+<p>Albert, Jim, and Siddhartha Chib. 1995. “Bayesian Residual Analysis for Binary Response Regression Models.” <em>Biometrika</em> 82 (4). Oxford University Press (OUP): 747–69. <a href="https://doi.org/10.1093/biomet/82.4.747" class="uri">https://doi.org/10.1093/biomet/82.4.747</a>.</p>
 </div>
 </div>
 <div class="footnotes">

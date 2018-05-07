@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,10 +227,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="truncation-how-does-stan-deal-with-truncation" class="section level1">
 <h1><span class="header-section-number">18</span> Truncation: How does Stan deal with truncation?</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb146-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb146-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>Suppose we observed <span class="math inline">\(y = (1, \dots, 9)\)</span>,<a href="#fn15" class="footnote-ref" id="fnref15"><sup>15</sup></a></p>
-<pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">9</span></code></pre>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">9</span></a></code></pre></div>
 <p>These observations are drawn from a population distributed normal with unknown mean (<span class="math inline">\(\mu\)</span>) and variance (<span class="math inline">\(\sigma^2\)</span>), with the constraint that <span class="math inline">\(y &lt; 10\)</span>,
 <span class="math display">\[
 \begin{aligned}[t]
@@ -256,7 +256,7 @@ where <span class="math inline">\(\bar{y}\)</span> is the mean of <span class="m
 In Stan the <code>T</code> operator used in sampling statement,</p>
 <pre><code>y ~ distribution(...) T[upper, lower];</code></pre>
 <p>is used to adjust the log-posterior contribution for truncation.</p>
-<pre class="sourceCode r"><code class="sourceCode r">truncate_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/truncated.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb149-1" data-line-number="1">truncate_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/truncated.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -281,29 +281,29 @@ model {
 </div>
 <div id="estimation-3" class="section level2">
 <h2><span class="header-section-number">18.2</span> Estimation</h2>
-<pre class="sourceCode r"><code class="sourceCode r">truncate_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span>y
-  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
-  U &lt;-<span class="st"> </span><span class="dv">10</span>
-  mu_mean &lt;-<span class="st"> </span><span class="kw">mean</span>(y)
-  mu_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
-  sigma_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">truncate_fit1 &lt;-<span class="st"> </span><span class="kw">sampling</span>(truncate_mod, <span class="dt">data =</span> truncate_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">truncate_fit1
-<span class="co">#&gt; Inference for Stan model: truncated.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;         mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat</span>
-<span class="co">#&gt; mu      5.89    0.06 1.55   3.43   4.84   5.67   6.69   9.61   749    1</span>
-<span class="co">#&gt; sigma   3.79    0.04 1.37   2.02   2.81   3.50   4.43   7.20  1228    1</span>
-<span class="co">#&gt; lp__  -13.55    0.03 1.09 -16.48 -14.01 -13.22 -12.76 -12.44  1300    1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:24:01 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb150-1" data-line-number="1">truncate_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb150-2" data-line-number="2">  y &lt;-<span class="st"> </span>y</a>
+<a class="sourceLine" id="cb150-3" data-line-number="3">  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)</a>
+<a class="sourceLine" id="cb150-4" data-line-number="4">  U &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb150-5" data-line-number="5">  mu_mean &lt;-<span class="st"> </span><span class="kw">mean</span>(y)</a>
+<a class="sourceLine" id="cb150-6" data-line-number="6">  mu_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)</a>
+<a class="sourceLine" id="cb150-7" data-line-number="7">  sigma_scale &lt;-<span class="st"> </span><span class="kw">sd</span>(y)</a>
+<a class="sourceLine" id="cb150-8" data-line-number="8">})</a></code></pre></div>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb151-1" data-line-number="1">truncate_fit1 &lt;-<span class="st"> </span><span class="kw">sampling</span>(truncate_mod, <span class="dt">data =</span> truncate_data)</a></code></pre></div>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb152-1" data-line-number="1">truncate_fit1</a>
+<a class="sourceLine" id="cb152-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: truncated.</span></a>
+<a class="sourceLine" id="cb152-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb152-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb152-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb152-6" data-line-number="6"><span class="co">#&gt;         mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat</span></a>
+<a class="sourceLine" id="cb152-7" data-line-number="7"><span class="co">#&gt; mu      5.89    0.06 1.55   3.43   4.84   5.67   6.69   9.61   749    1</span></a>
+<a class="sourceLine" id="cb152-8" data-line-number="8"><span class="co">#&gt; sigma   3.79    0.04 1.37   2.02   2.81   3.50   4.43   7.20  1228    1</span></a>
+<a class="sourceLine" id="cb152-9" data-line-number="9"><span class="co">#&gt; lp__  -13.55    0.03 1.09 -16.48 -14.01 -13.22 -12.76 -12.44  1300    1</span></a>
+<a class="sourceLine" id="cb152-10" data-line-number="10"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb152-11" data-line-number="11"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:24:01 2018.</span></a>
+<a class="sourceLine" id="cb152-12" data-line-number="12"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb152-13" data-line-number="13"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb152-14" data-line-number="14"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 <p>We can compare these results to that of a model in which the truncation is not taken into account:
 <span class="math display">\[
 \begin{aligned}[t]
@@ -312,7 +312,7 @@ y_i &amp;\sim \mathsf{Normal}(\mu, \sigma^2), \\
 \sigma &amp;\sim \mathsf{HalfCauchy}(0, s_y) .
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">truncate_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/normal.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb153-1" data-line-number="1">truncate_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/normal.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -331,43 +331,43 @@ model {
   y ~ normal(mu, sigma);
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">truncate_fit2 &lt;-
-<span class="st">  </span><span class="kw">sampling</span>(truncate_mod2, <span class="dt">data =</span> truncate_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">truncate_fit2
-<span class="co">#&gt; Inference for Stan model: normal.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;         mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat</span>
-<span class="co">#&gt; mu      5.00    0.02 0.96   3.09   4.42   4.98   5.58   6.92  1747    1</span>
-<span class="co">#&gt; sigma   2.95    0.02 0.80   1.85   2.40   2.80   3.32   4.93  1744    1</span>
-<span class="co">#&gt; lp__  -13.81    0.03 1.14 -16.79 -14.23 -13.45 -13.02 -12.75  1091    1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:24:37 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb154-1" data-line-number="1">truncate_fit2 &lt;-</a>
+<a class="sourceLine" id="cb154-2" data-line-number="2"><span class="st">  </span><span class="kw">sampling</span>(truncate_mod2, <span class="dt">data =</span> truncate_data)</a></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb155-1" data-line-number="1">truncate_fit2</a>
+<a class="sourceLine" id="cb155-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: normal.</span></a>
+<a class="sourceLine" id="cb155-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb155-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb155-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb155-6" data-line-number="6"><span class="co">#&gt;         mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff Rhat</span></a>
+<a class="sourceLine" id="cb155-7" data-line-number="7"><span class="co">#&gt; mu      5.00    0.02 0.96   3.09   4.42   4.98   5.58   6.92  1747    1</span></a>
+<a class="sourceLine" id="cb155-8" data-line-number="8"><span class="co">#&gt; sigma   2.95    0.02 0.80   1.85   2.40   2.80   3.32   4.93  1744    1</span></a>
+<a class="sourceLine" id="cb155-9" data-line-number="9"><span class="co">#&gt; lp__  -13.81    0.03 1.14 -16.79 -14.23 -13.45 -13.02 -12.75  1091    1</span></a>
+<a class="sourceLine" id="cb155-10" data-line-number="10"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb155-11" data-line-number="11"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:24:37 2018.</span></a>
+<a class="sourceLine" id="cb155-12" data-line-number="12"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb155-13" data-line-number="13"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb155-14" data-line-number="14"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 <p>We can compare the densities for <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> in each of these models.</p>
-<pre class="sourceCode r"><code class="sourceCode r">plot_density &lt;-<span class="st"> </span><span class="cf">function</span>(par) {
-  <span class="kw">bind_rows</span>(
-    <span class="kw">tibble</span>(<span class="dt">value =</span> rstan<span class="op">::</span><span class="kw">extract</span>(truncate_fit1, <span class="dt">par =</span> par)[[<span class="dv">1</span>]],
-            <span class="dt">model =</span> <span class="st">&quot;truncated&quot;</span>),
-    <span class="kw">tibble</span>(<span class="dt">value =</span> rstan<span class="op">::</span><span class="kw">extract</span>(truncate_fit2, <span class="dt">par =</span> par)[[<span class="dv">1</span>]],
-            <span class="dt">model =</span> <span class="st">&quot;non-truncated&quot;</span>)
-  ) <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">colour =</span> model, <span class="dt">fill =</span> model)) <span class="op">+</span>
-<span class="st">    </span><span class="kw">geom_density</span>(<span class="dt">alpha =</span> <span class="fl">0.3</span>) <span class="op">+</span>
-<span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">eval</span>(<span class="kw">bquote</span>(<span class="kw">expression</span>(.(<span class="kw">as.name</span>(par)))))) <span class="op">+</span>
-<span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)
-}</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_density</span>(<span class="st">&quot;mu&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb156-1" data-line-number="1">plot_density &lt;-<span class="st"> </span><span class="cf">function</span>(par) {</a>
+<a class="sourceLine" id="cb156-2" data-line-number="2">  <span class="kw">bind_rows</span>(</a>
+<a class="sourceLine" id="cb156-3" data-line-number="3">    <span class="kw">tibble</span>(<span class="dt">value =</span> rstan<span class="op">::</span><span class="kw">extract</span>(truncate_fit1, <span class="dt">par =</span> par)[[<span class="dv">1</span>]],</a>
+<a class="sourceLine" id="cb156-4" data-line-number="4">            <span class="dt">model =</span> <span class="st">&quot;truncated&quot;</span>),</a>
+<a class="sourceLine" id="cb156-5" data-line-number="5">    <span class="kw">tibble</span>(<span class="dt">value =</span> rstan<span class="op">::</span><span class="kw">extract</span>(truncate_fit2, <span class="dt">par =</span> par)[[<span class="dv">1</span>]],</a>
+<a class="sourceLine" id="cb156-6" data-line-number="6">            <span class="dt">model =</span> <span class="st">&quot;non-truncated&quot;</span>)</a>
+<a class="sourceLine" id="cb156-7" data-line-number="7">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb156-8" data-line-number="8"><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> value, <span class="dt">colour =</span> model, <span class="dt">fill =</span> model)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb156-9" data-line-number="9"><span class="st">    </span><span class="kw">geom_density</span>(<span class="dt">alpha =</span> <span class="fl">0.3</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb156-10" data-line-number="10"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">eval</span>(<span class="kw">bquote</span>(<span class="kw">expression</span>(.(<span class="kw">as.name</span>(par)))))) <span class="op">+</span></a>
+<a class="sourceLine" id="cb156-11" data-line-number="11"><span class="st">    </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</a>
+<a class="sourceLine" id="cb156-12" data-line-number="12">}</a></code></pre></div>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb157-1" data-line-number="1"><span class="kw">plot_density</span>(<span class="st">&quot;mu&quot;</span>)</a></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="truncated_files/figure-html/truncate_plot_density_mu-1.png" alt="Posterior density of $\mu$ when estimated with and without truncation" width="70%" />
 <p class="caption">
 (#fig:truncate_plot_density_mu)Posterior density of <span class="math inline">\(\mu\)</span> when estimated with and without truncation
 </p>
 </div>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot_density</span>(<span class="st">&quot;sigma&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb158-1" data-line-number="1"><span class="kw">plot_density</span>(<span class="st">&quot;sigma&quot;</span>)</a></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="truncated_files/figure-html/truncate_plot_density_sigma-1.png" alt="Posterior density of $\sigma$ when estimated with and without truncation" width="70%" />
 <p class="caption">

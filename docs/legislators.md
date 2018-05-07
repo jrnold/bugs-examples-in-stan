@@ -112,10 +112,13 @@ For each of these: Which types of rotation does it solve?
 This example models the voting of the [109th U.S. Senate](https://en.wikipedia.org/wiki/109th_United_States_Congress).
 Votes for the 109th Senate is included in the **pscl** package:
 
+
 ```r
 data("s109", package = "pscl")
 ```
+
 The `s109` object is not a data frame, so see its documentation for information about its structure.
+
 
 ```r
 s109
@@ -249,6 +252,7 @@ $$
 mod_ideal_point_1 <- stan_model("stan/ideal_point_1.stan")
 ```
 
+
 ```r
 mod_ideal_point_1
 ```
@@ -327,6 +331,7 @@ Create a data frame with the fixed values for identification.
 Additionally, set initial values of ideal points: Republicans at `xi = 1`, Democrats at `xi = -1`, and independents at `xi = 0`.
 This may help speed up convergence.
 
+
 ```r
 xi_1 <-
   s109_legis_data %>%
@@ -338,6 +343,7 @@ xi_1 <-
 ```
 
 Define and setup all the data needed for this
+
 
 ```r
 legislators_data_1 <-
@@ -453,6 +459,7 @@ y \sim \mathsf{SkewNormal}(\mu, \sigma, \alpha)
 $$
 as $|\alpha| \to \infty$, the skew-normal approaches a half-normal distribution.
 
+
 ```r
 map_df(c(-50, 0, 50),
         function(alpha) {
@@ -470,6 +477,7 @@ map_df(c(-50, 0, 50),
 ```r
 mod_ideal_point_3 <- stan_model("stan/ideal_point_3.stan")
 ```
+
 
 ```r
 mod_ideal_point_3
@@ -537,6 +545,7 @@ generated quantities {
 Instead of fixing the ideal points, set the skewness parameter
 of the skew normal distribution so that $\xi_{\text{FRIST (R TN)}} > 0$.
 
+
 ```r
 legislators_data_2 <-
   within(list(), {
@@ -588,6 +597,7 @@ and identify the rotation of latent dimensions by fixing the sign of the discrim
 ```r
 mod_ideal_point_2 <- stan_model("stan/ideal_point_2.stan")
 ```
+
 
 ```r
 mod_ideal_point_2

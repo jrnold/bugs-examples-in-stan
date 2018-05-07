@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,28 +227,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="uk92" class="section level1">
 <h1><span class="header-section-number">12</span> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb106-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>The data for this example consist of constituency vote proportions from the 1992 United Kingdom House of Commons election.
 These data come from <span class="citation">Katz and King (<a href="#ref-KatzKing1999a">1999</a>)</span>, were re-analyzed <span class="citation">Tomz, Tucker, and Wittenberg (<a href="#ref-TomzTuckerWittenberg2002a">2002</a>)</span>.<a href="#fn10" class="footnote-ref" id="fnref10"><sup>10</sup></a>
 This data is included in the <strong>pscl</strong> package as <code>UKHouseOfCommons</code>:</p>
-<pre class="sourceCode r"><code class="sourceCode r">(<span class="kw">data</span>(<span class="st">&quot;UKHouseOfCommons&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>))
-<span class="co">#&gt; [1] &quot;UKHouseOfCommons&quot;</span>
-<span class="kw">glimpse</span>(UKHouseOfCommons)
-<span class="co">#&gt; Observations: 521</span>
-<span class="co">#&gt; Variables: 12</span>
-<span class="co">#&gt; $ constituency &lt;chr&gt; &quot;Barrow &amp; Furness&quot;, &quot;Berwick-upon-Tweed&quot;, &quot;Bishop...</span>
-<span class="co">#&gt; $ county       &lt;chr&gt; &quot;Cumbria&quot;, &quot;Northumberland&quot;, &quot;Durham&quot;, &quot;Durham&quot;, ...</span>
-<span class="co">#&gt; $ y1           &lt;dbl&gt; 1.3286, -0.3032, 0.5598, 0.0978, 1.7351, 0.4546, ...</span>
-<span class="co">#&gt; $ y2           &lt;dbl&gt; 1.473, -0.663, 1.011, 0.909, 1.851, 1.925, 0.108,...</span>
-<span class="co">#&gt; $ y1lag        &lt;dbl&gt; 1.1820, -0.5689, 0.7052, -0.4139, 1.5507, 0.0408,...</span>
-<span class="co">#&gt; $ y2lag        &lt;dbl&gt; 1.0142, -1.0906, 1.0258, 0.3037, 1.6453, 1.4702, ...</span>
-<span class="co">#&gt; $ coninc       &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0...</span>
-<span class="co">#&gt; $ labinc       &lt;int&gt; 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1...</span>
-<span class="co">#&gt; $ libinc       &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span>
-<span class="co">#&gt; $ v1           &lt;dbl&gt; 0.413, 0.328, 0.318, 0.240, 0.435, 0.167, 0.533, ...</span>
-<span class="co">#&gt; $ v2           &lt;dbl&gt; 0.477, 0.229, 0.500, 0.541, 0.488, 0.727, 0.246, ...</span>
-<span class="co">#&gt; $ v3           &lt;dbl&gt; 0.1094, 0.4437, 0.1818, 0.2181, 0.0767, 0.1061, 0...</span></code></pre>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb107-1" data-line-number="1">(<span class="kw">data</span>(<span class="st">&quot;UKHouseOfCommons&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>))</a>
+<a class="sourceLine" id="cb107-2" data-line-number="2"><span class="co">#&gt; [1] &quot;UKHouseOfCommons&quot;</span></a>
+<a class="sourceLine" id="cb107-3" data-line-number="3"><span class="kw">glimpse</span>(UKHouseOfCommons)</a>
+<a class="sourceLine" id="cb107-4" data-line-number="4"><span class="co">#&gt; Observations: 521</span></a>
+<a class="sourceLine" id="cb107-5" data-line-number="5"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb107-6" data-line-number="6"><span class="co">#&gt; $ constituency &lt;chr&gt; &quot;Barrow &amp; Furness&quot;, &quot;Berwick-upon-Tweed&quot;, &quot;Bishop...</span></a>
+<a class="sourceLine" id="cb107-7" data-line-number="7"><span class="co">#&gt; $ county       &lt;chr&gt; &quot;Cumbria&quot;, &quot;Northumberland&quot;, &quot;Durham&quot;, &quot;Durham&quot;, ...</span></a>
+<a class="sourceLine" id="cb107-8" data-line-number="8"><span class="co">#&gt; $ y1           &lt;dbl&gt; 1.3286, -0.3032, 0.5598, 0.0978, 1.7351, 0.4546, ...</span></a>
+<a class="sourceLine" id="cb107-9" data-line-number="9"><span class="co">#&gt; $ y2           &lt;dbl&gt; 1.473, -0.663, 1.011, 0.909, 1.851, 1.925, 0.108,...</span></a>
+<a class="sourceLine" id="cb107-10" data-line-number="10"><span class="co">#&gt; $ y1lag        &lt;dbl&gt; 1.1820, -0.5689, 0.7052, -0.4139, 1.5507, 0.0408,...</span></a>
+<a class="sourceLine" id="cb107-11" data-line-number="11"><span class="co">#&gt; $ y2lag        &lt;dbl&gt; 1.0142, -1.0906, 1.0258, 0.3037, 1.6453, 1.4702, ...</span></a>
+<a class="sourceLine" id="cb107-12" data-line-number="12"><span class="co">#&gt; $ coninc       &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0...</span></a>
+<a class="sourceLine" id="cb107-13" data-line-number="13"><span class="co">#&gt; $ labinc       &lt;int&gt; 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1...</span></a>
+<a class="sourceLine" id="cb107-14" data-line-number="14"><span class="co">#&gt; $ libinc       &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span></a>
+<a class="sourceLine" id="cb107-15" data-line-number="15"><span class="co">#&gt; $ v1           &lt;dbl&gt; 0.413, 0.328, 0.318, 0.240, 0.435, 0.167, 0.533, ...</span></a>
+<a class="sourceLine" id="cb107-16" data-line-number="16"><span class="co">#&gt; $ v2           &lt;dbl&gt; 0.477, 0.229, 0.500, 0.541, 0.488, 0.727, 0.246, ...</span></a>
+<a class="sourceLine" id="cb107-17" data-line-number="17"><span class="co">#&gt; $ v3           &lt;dbl&gt; 0.1094, 0.4437, 0.1818, 0.2181, 0.0767, 0.1061, 0...</span></a></code></pre></div>
 <p>The data consist of the vote proportions for 522 constituencies, for the three major UK parties: the Labor party, the Conservative Party, and the Liberal-Alliance.
 Instead of working with the vote proportions directly, we will work with log-odds ratios.
 This is common in the analysis of multinomial or “compositional” data <span class="citation">(Aitchison <a href="#ref-Aitchison1982a">1982</a>)</span>.
@@ -272,37 +272,37 @@ The degrees of freedom of the multivariate Student t distribution is a parameter
 \nu &amp;\sim \mathsf{Gamma}(2, 0.1) .
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">(<span class="kw">data</span>(<span class="st">&quot;UKHouseOfCommons&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>))
-<span class="co">#&gt; [1] &quot;UKHouseOfCommons&quot;</span>
-<span class="kw">glimpse</span>(UKHouseOfCommons)
-<span class="co">#&gt; Observations: 521</span>
-<span class="co">#&gt; Variables: 12</span>
-<span class="co">#&gt; $ constituency &lt;chr&gt; &quot;Barrow &amp; Furness&quot;, &quot;Berwick-upon-Tweed&quot;, &quot;Bishop...</span>
-<span class="co">#&gt; $ county       &lt;chr&gt; &quot;Cumbria&quot;, &quot;Northumberland&quot;, &quot;Durham&quot;, &quot;Durham&quot;, ...</span>
-<span class="co">#&gt; $ y1           &lt;dbl&gt; 1.3286, -0.3032, 0.5598, 0.0978, 1.7351, 0.4546, ...</span>
-<span class="co">#&gt; $ y2           &lt;dbl&gt; 1.473, -0.663, 1.011, 0.909, 1.851, 1.925, 0.108,...</span>
-<span class="co">#&gt; $ y1lag        &lt;dbl&gt; 1.1820, -0.5689, 0.7052, -0.4139, 1.5507, 0.0408,...</span>
-<span class="co">#&gt; $ y2lag        &lt;dbl&gt; 1.0142, -1.0906, 1.0258, 0.3037, 1.6453, 1.4702, ...</span>
-<span class="co">#&gt; $ coninc       &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0...</span>
-<span class="co">#&gt; $ labinc       &lt;int&gt; 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1...</span>
-<span class="co">#&gt; $ libinc       &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span>
-<span class="co">#&gt; $ v1           &lt;dbl&gt; 0.413, 0.328, 0.318, 0.240, 0.435, 0.167, 0.533, ...</span>
-<span class="co">#&gt; $ v2           &lt;dbl&gt; 0.477, 0.229, 0.500, 0.541, 0.488, 0.727, 0.246, ...</span>
-<span class="co">#&gt; $ v3           &lt;dbl&gt; 0.1094, 0.4437, 0.1818, 0.2181, 0.0767, 0.1061, 0...</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">uk92_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dplyr<span class="op">::</span><span class="kw">select</span>(UKHouseOfCommons, y1, y2))
-  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>y1lag <span class="op">+</span><span class="st"> </span>y2lag <span class="op">+</span><span class="st"> </span>coninc <span class="op">+</span><span class="st"> </span>labinc <span class="op">+</span><span class="st"> </span>libinc, <span class="dt">data =</span> UKHouseOfCommons) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
-  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(y)
-  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(y)
-  P &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
-  alpha_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
-  alpha_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">10</span>, K)
-  beta_loc &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, K, P)
-  beta_scale &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="fl">2.5</span>, K, P)
-  Sigma_corr_shape &lt;-<span class="st"> </span><span class="dv">2</span>
-  Sigma_scale_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">uk92_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/uk92.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb108-1" data-line-number="1">(<span class="kw">data</span>(<span class="st">&quot;UKHouseOfCommons&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>))</a>
+<a class="sourceLine" id="cb108-2" data-line-number="2"><span class="co">#&gt; [1] &quot;UKHouseOfCommons&quot;</span></a>
+<a class="sourceLine" id="cb108-3" data-line-number="3"><span class="kw">glimpse</span>(UKHouseOfCommons)</a>
+<a class="sourceLine" id="cb108-4" data-line-number="4"><span class="co">#&gt; Observations: 521</span></a>
+<a class="sourceLine" id="cb108-5" data-line-number="5"><span class="co">#&gt; Variables: 12</span></a>
+<a class="sourceLine" id="cb108-6" data-line-number="6"><span class="co">#&gt; $ constituency &lt;chr&gt; &quot;Barrow &amp; Furness&quot;, &quot;Berwick-upon-Tweed&quot;, &quot;Bishop...</span></a>
+<a class="sourceLine" id="cb108-7" data-line-number="7"><span class="co">#&gt; $ county       &lt;chr&gt; &quot;Cumbria&quot;, &quot;Northumberland&quot;, &quot;Durham&quot;, &quot;Durham&quot;, ...</span></a>
+<a class="sourceLine" id="cb108-8" data-line-number="8"><span class="co">#&gt; $ y1           &lt;dbl&gt; 1.3286, -0.3032, 0.5598, 0.0978, 1.7351, 0.4546, ...</span></a>
+<a class="sourceLine" id="cb108-9" data-line-number="9"><span class="co">#&gt; $ y2           &lt;dbl&gt; 1.473, -0.663, 1.011, 0.909, 1.851, 1.925, 0.108,...</span></a>
+<a class="sourceLine" id="cb108-10" data-line-number="10"><span class="co">#&gt; $ y1lag        &lt;dbl&gt; 1.1820, -0.5689, 0.7052, -0.4139, 1.5507, 0.0408,...</span></a>
+<a class="sourceLine" id="cb108-11" data-line-number="11"><span class="co">#&gt; $ y2lag        &lt;dbl&gt; 1.0142, -1.0906, 1.0258, 0.3037, 1.6453, 1.4702, ...</span></a>
+<a class="sourceLine" id="cb108-12" data-line-number="12"><span class="co">#&gt; $ coninc       &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0...</span></a>
+<a class="sourceLine" id="cb108-13" data-line-number="13"><span class="co">#&gt; $ labinc       &lt;int&gt; 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1...</span></a>
+<a class="sourceLine" id="cb108-14" data-line-number="14"><span class="co">#&gt; $ libinc       &lt;int&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0...</span></a>
+<a class="sourceLine" id="cb108-15" data-line-number="15"><span class="co">#&gt; $ v1           &lt;dbl&gt; 0.413, 0.328, 0.318, 0.240, 0.435, 0.167, 0.533, ...</span></a>
+<a class="sourceLine" id="cb108-16" data-line-number="16"><span class="co">#&gt; $ v2           &lt;dbl&gt; 0.477, 0.229, 0.500, 0.541, 0.488, 0.727, 0.246, ...</span></a>
+<a class="sourceLine" id="cb108-17" data-line-number="17"><span class="co">#&gt; $ v3           &lt;dbl&gt; 0.1094, 0.4437, 0.1818, 0.2181, 0.0767, 0.1061, 0...</span></a></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" data-line-number="1">uk92_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb109-2" data-line-number="2">  y &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(dplyr<span class="op">::</span><span class="kw">select</span>(UKHouseOfCommons, y1, y2))</a>
+<a class="sourceLine" id="cb109-3" data-line-number="3">  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>y1lag <span class="op">+</span><span class="st"> </span>y2lag <span class="op">+</span><span class="st"> </span>coninc <span class="op">+</span><span class="st"> </span>labinc <span class="op">+</span><span class="st"> </span>libinc, <span class="dt">data =</span> UKHouseOfCommons) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()</a>
+<a class="sourceLine" id="cb109-4" data-line-number="4">  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(y)</a>
+<a class="sourceLine" id="cb109-5" data-line-number="5">  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(y)</a>
+<a class="sourceLine" id="cb109-6" data-line-number="6">  P &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)</a>
+<a class="sourceLine" id="cb109-7" data-line-number="7">  alpha_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)</a>
+<a class="sourceLine" id="cb109-8" data-line-number="8">  alpha_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">10</span>, K)</a>
+<a class="sourceLine" id="cb109-9" data-line-number="9">  beta_loc &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">0</span>, K, P)</a>
+<a class="sourceLine" id="cb109-10" data-line-number="10">  beta_scale &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="fl">2.5</span>, K, P)</a>
+<a class="sourceLine" id="cb109-11" data-line-number="11">  Sigma_corr_shape &lt;-<span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb109-12" data-line-number="12">  Sigma_scale_scale &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb109-13" data-line-number="13">})</a></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb110-1" data-line-number="1">uk92_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/uk92.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   // multivariate outcome
@@ -354,44 +354,44 @@ model {
 }</code>
 </pre>
 <p>Fit the model in Stan.</p>
-<pre class="sourceCode r"><code class="sourceCode r">uk92_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(uk92_mod, <span class="dt">data =</span> uk92_data, <span class="dt">chains =</span> <span class="dv">1</span>)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(uk92_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;nu&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;Sigma&quot;</span>))<span class="op">$</span>summary
-<span class="co">#&gt;               mean  se_mean      sd    2.5%     25%     50%      75%</span>
-<span class="co">#&gt; nu          4.6265 2.29e-02 0.67580  3.5457  4.1313  4.5598  5.04690</span>
-<span class="co">#&gt; alpha[1]    0.9295 2.90e-04 0.00853  0.9136  0.9238  0.9292  0.93503</span>
-<span class="co">#&gt; alpha[2]    0.6090 3.85e-04 0.01138  0.5868  0.6013  0.6086  0.61684</span>
-<span class="co">#&gt; beta[1,1]   0.3612 4.86e-04 0.01340  0.3334  0.3525  0.3608  0.37011</span>
-<span class="co">#&gt; beta[1,2]   0.1641 5.64e-04 0.01378  0.1385  0.1542  0.1636  0.17386</span>
-<span class="co">#&gt; beta[1,3]   0.0466 5.65e-04 0.01414  0.0172  0.0378  0.0469  0.05629</span>
-<span class="co">#&gt; beta[1,4]  -0.0620 6.98e-04 0.01624 -0.0952 -0.0735 -0.0615 -0.05111</span>
-<span class="co">#&gt; beta[1,5]  -0.0135 5.80e-04 0.01480 -0.0433 -0.0229 -0.0128 -0.00383</span>
-<span class="co">#&gt; beta[2,1]  -0.0209 6.33e-04 0.01760 -0.0552 -0.0326 -0.0210 -0.00972</span>
-<span class="co">#&gt; beta[2,2]   1.0396 7.07e-04 0.01873  1.0047  1.0267  1.0390  1.05279</span>
-<span class="co">#&gt; beta[2,3]   0.0723 7.71e-04 0.01936  0.0323  0.0597  0.0732  0.08537</span>
-<span class="co">#&gt; beta[2,4]  -0.0539 9.70e-04 0.02162 -0.0969 -0.0691 -0.0532 -0.03851</span>
-<span class="co">#&gt; beta[2,5]  -0.0162 8.15e-04 0.02082 -0.0577 -0.0292 -0.0152 -0.00339</span>
-<span class="co">#&gt; Sigma[1,1]  0.0320 9.75e-05 0.00287  0.0268  0.0300  0.0318  0.03383</span>
-<span class="co">#&gt; Sigma[1,2]  0.0371 1.10e-04 0.00346  0.0311  0.0347  0.0369  0.03954</span>
-<span class="co">#&gt; Sigma[2,1]  0.0371 1.10e-04 0.00346  0.0311  0.0347  0.0369  0.03954</span>
-<span class="co">#&gt; Sigma[2,2]  0.0564 1.57e-04 0.00497  0.0476  0.0527  0.0563  0.05972</span>
-<span class="co">#&gt;              97.5% n_eff  Rhat</span>
-<span class="co">#&gt; nu          6.0858   868 1.001</span>
-<span class="co">#&gt; alpha[1]    0.9465   863 0.999</span>
-<span class="co">#&gt; alpha[2]    0.6312   873 0.999</span>
-<span class="co">#&gt; beta[1,1]   0.3872   760 1.002</span>
-<span class="co">#&gt; beta[1,2]   0.1920   597 1.002</span>
-<span class="co">#&gt; beta[1,3]   0.0725   627 1.000</span>
-<span class="co">#&gt; beta[1,4]  -0.0296   541 1.002</span>
-<span class="co">#&gt; beta[1,5]   0.0165   652 1.000</span>
-<span class="co">#&gt; beta[2,1]   0.0146   773 1.000</span>
-<span class="co">#&gt; beta[2,2]   1.0771   702 1.003</span>
-<span class="co">#&gt; beta[2,3]   0.1077   630 0.999</span>
-<span class="co">#&gt; beta[2,4]  -0.0124   497 1.001</span>
-<span class="co">#&gt; beta[2,5]   0.0240   652 1.000</span>
-<span class="co">#&gt; Sigma[1,1]  0.0379   865 0.999</span>
-<span class="co">#&gt; Sigma[1,2]  0.0441  1000 0.999</span>
-<span class="co">#&gt; Sigma[2,1]  0.0441  1000 0.999</span>
-<span class="co">#&gt; Sigma[2,2]  0.0667  1000 0.999</span></code></pre>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" data-line-number="1">uk92_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(uk92_mod, <span class="dt">data =</span> uk92_data, <span class="dt">chains =</span> <span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb112-1" data-line-number="1"><span class="kw">summary</span>(uk92_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;nu&quot;</span>, <span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;Sigma&quot;</span>))<span class="op">$</span>summary</a>
+<a class="sourceLine" id="cb112-2" data-line-number="2"><span class="co">#&gt;               mean  se_mean      sd    2.5%     25%     50%      75%</span></a>
+<a class="sourceLine" id="cb112-3" data-line-number="3"><span class="co">#&gt; nu          4.6265 2.29e-02 0.67580  3.5457  4.1313  4.5598  5.04690</span></a>
+<a class="sourceLine" id="cb112-4" data-line-number="4"><span class="co">#&gt; alpha[1]    0.9295 2.90e-04 0.00853  0.9136  0.9238  0.9292  0.93503</span></a>
+<a class="sourceLine" id="cb112-5" data-line-number="5"><span class="co">#&gt; alpha[2]    0.6090 3.85e-04 0.01138  0.5868  0.6013  0.6086  0.61684</span></a>
+<a class="sourceLine" id="cb112-6" data-line-number="6"><span class="co">#&gt; beta[1,1]   0.3612 4.86e-04 0.01340  0.3334  0.3525  0.3608  0.37011</span></a>
+<a class="sourceLine" id="cb112-7" data-line-number="7"><span class="co">#&gt; beta[1,2]   0.1641 5.64e-04 0.01378  0.1385  0.1542  0.1636  0.17386</span></a>
+<a class="sourceLine" id="cb112-8" data-line-number="8"><span class="co">#&gt; beta[1,3]   0.0466 5.65e-04 0.01414  0.0172  0.0378  0.0469  0.05629</span></a>
+<a class="sourceLine" id="cb112-9" data-line-number="9"><span class="co">#&gt; beta[1,4]  -0.0620 6.98e-04 0.01624 -0.0952 -0.0735 -0.0615 -0.05111</span></a>
+<a class="sourceLine" id="cb112-10" data-line-number="10"><span class="co">#&gt; beta[1,5]  -0.0135 5.80e-04 0.01480 -0.0433 -0.0229 -0.0128 -0.00383</span></a>
+<a class="sourceLine" id="cb112-11" data-line-number="11"><span class="co">#&gt; beta[2,1]  -0.0209 6.33e-04 0.01760 -0.0552 -0.0326 -0.0210 -0.00972</span></a>
+<a class="sourceLine" id="cb112-12" data-line-number="12"><span class="co">#&gt; beta[2,2]   1.0396 7.07e-04 0.01873  1.0047  1.0267  1.0390  1.05279</span></a>
+<a class="sourceLine" id="cb112-13" data-line-number="13"><span class="co">#&gt; beta[2,3]   0.0723 7.71e-04 0.01936  0.0323  0.0597  0.0732  0.08537</span></a>
+<a class="sourceLine" id="cb112-14" data-line-number="14"><span class="co">#&gt; beta[2,4]  -0.0539 9.70e-04 0.02162 -0.0969 -0.0691 -0.0532 -0.03851</span></a>
+<a class="sourceLine" id="cb112-15" data-line-number="15"><span class="co">#&gt; beta[2,5]  -0.0162 8.15e-04 0.02082 -0.0577 -0.0292 -0.0152 -0.00339</span></a>
+<a class="sourceLine" id="cb112-16" data-line-number="16"><span class="co">#&gt; Sigma[1,1]  0.0320 9.75e-05 0.00287  0.0268  0.0300  0.0318  0.03383</span></a>
+<a class="sourceLine" id="cb112-17" data-line-number="17"><span class="co">#&gt; Sigma[1,2]  0.0371 1.10e-04 0.00346  0.0311  0.0347  0.0369  0.03954</span></a>
+<a class="sourceLine" id="cb112-18" data-line-number="18"><span class="co">#&gt; Sigma[2,1]  0.0371 1.10e-04 0.00346  0.0311  0.0347  0.0369  0.03954</span></a>
+<a class="sourceLine" id="cb112-19" data-line-number="19"><span class="co">#&gt; Sigma[2,2]  0.0564 1.57e-04 0.00497  0.0476  0.0527  0.0563  0.05972</span></a>
+<a class="sourceLine" id="cb112-20" data-line-number="20"><span class="co">#&gt;              97.5% n_eff  Rhat</span></a>
+<a class="sourceLine" id="cb112-21" data-line-number="21"><span class="co">#&gt; nu          6.0858   868 1.001</span></a>
+<a class="sourceLine" id="cb112-22" data-line-number="22"><span class="co">#&gt; alpha[1]    0.9465   863 0.999</span></a>
+<a class="sourceLine" id="cb112-23" data-line-number="23"><span class="co">#&gt; alpha[2]    0.6312   873 0.999</span></a>
+<a class="sourceLine" id="cb112-24" data-line-number="24"><span class="co">#&gt; beta[1,1]   0.3872   760 1.002</span></a>
+<a class="sourceLine" id="cb112-25" data-line-number="25"><span class="co">#&gt; beta[1,2]   0.1920   597 1.002</span></a>
+<a class="sourceLine" id="cb112-26" data-line-number="26"><span class="co">#&gt; beta[1,3]   0.0725   627 1.000</span></a>
+<a class="sourceLine" id="cb112-27" data-line-number="27"><span class="co">#&gt; beta[1,4]  -0.0296   541 1.002</span></a>
+<a class="sourceLine" id="cb112-28" data-line-number="28"><span class="co">#&gt; beta[1,5]   0.0165   652 1.000</span></a>
+<a class="sourceLine" id="cb112-29" data-line-number="29"><span class="co">#&gt; beta[2,1]   0.0146   773 1.000</span></a>
+<a class="sourceLine" id="cb112-30" data-line-number="30"><span class="co">#&gt; beta[2,2]   1.0771   702 1.003</span></a>
+<a class="sourceLine" id="cb112-31" data-line-number="31"><span class="co">#&gt; beta[2,3]   0.1077   630 0.999</span></a>
+<a class="sourceLine" id="cb112-32" data-line-number="32"><span class="co">#&gt; beta[2,4]  -0.0124   497 1.001</span></a>
+<a class="sourceLine" id="cb112-33" data-line-number="33"><span class="co">#&gt; beta[2,5]   0.0240   652 1.000</span></a>
+<a class="sourceLine" id="cb112-34" data-line-number="34"><span class="co">#&gt; Sigma[1,1]  0.0379   865 0.999</span></a>
+<a class="sourceLine" id="cb112-35" data-line-number="35"><span class="co">#&gt; Sigma[1,2]  0.0441  1000 0.999</span></a>
+<a class="sourceLine" id="cb112-36" data-line-number="36"><span class="co">#&gt; Sigma[2,1]  0.0441  1000 0.999</span></a>
+<a class="sourceLine" id="cb112-37" data-line-number="37"><span class="co">#&gt; Sigma[2,2]  0.0667  1000 0.999</span></a></code></pre></div>
 <div id="questions-4" class="section level2">
 <h2><span class="header-section-number">12.1</span> Questions</h2>
 <ul>
@@ -406,16 +406,16 @@ model {
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-KatzKing1999a">
-<p>Katz, Jonathan N., and Gary King. 1999. “A Statistical Model for Multiparty Electoral Data.” <em>American Political Science Review</em> 93 (01). Cambridge University Press (CUP):15–32. <a href="https://doi.org/10.2307/2585758" class="uri">https://doi.org/10.2307/2585758</a>.</p>
+<p>Katz, Jonathan N., and Gary King. 1999. “A Statistical Model for Multiparty Electoral Data.” <em>American Political Science Review</em> 93 (01). Cambridge University Press (CUP): 15–32. <a href="https://doi.org/10.2307/2585758" class="uri">https://doi.org/10.2307/2585758</a>.</p>
 </div>
 <div id="ref-TomzTuckerWittenberg2002a">
-<p>Tomz, Michael, Joshua A. Tucker, and Jason Wittenberg. 2002. “An Easy and Accurate Regression Model for Multiparty Electoral Data.” <em>Political Analysis</em> 10 (1). [Oxford University Press, Society for Political Methodology]:66–83. <a href="http://www.jstor.org/stable/25791665" class="uri">http://www.jstor.org/stable/25791665</a>.</p>
+<p>Tomz, Michael, Joshua A. Tucker, and Jason Wittenberg. 2002. “An Easy and Accurate Regression Model for Multiparty Electoral Data.” <em>Political Analysis</em> 10 (1). [Oxford University Press, Society for Political Methodology]: 66–83. <a href="http://www.jstor.org/stable/25791665" class="uri">http://www.jstor.org/stable/25791665</a>.</p>
 </div>
 <div id="ref-Aitchison1982a">
-<p>Aitchison, J. 1982. “The Statistical Analysis of Compositional Data.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 44 (2). [Royal Statistical Society, Wiley]:139–77. <a href="http://www.jstor.org/stable/2345821" class="uri">http://www.jstor.org/stable/2345821</a>.</p>
+<p>Aitchison, J. 1982. “The Statistical Analysis of Compositional Data.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 44 (2). [Royal Statistical Society, Wiley]: 139–77. <a href="http://www.jstor.org/stable/2345821" class="uri">http://www.jstor.org/stable/2345821</a>.</p>
 </div>
 <div id="ref-JuarezSteel2010a">
-<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited:52–66. <a href="https://doi.org/10.1198/jbes.2009.07145" class="uri">https://doi.org/10.1198/jbes.2009.07145</a>.</p>
+<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited: 52–66. <a href="https://doi.org/10.1198/jbes.2009.07145" class="uri">https://doi.org/10.1198/jbes.2009.07145</a>.</p>
 </div>
 </div>
 <div class="footnotes">

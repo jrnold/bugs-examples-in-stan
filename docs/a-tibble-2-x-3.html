@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -259,15 +259,15 @@ and the log-odds ratio,
 \end{aligned}
 \]</span></p>
 <p>The difference between and log odds ratio are defined in the <code>generated quantities</code> block.</p>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_data &lt;-<span class="st"> </span><span class="kw">list</span>(
-  r &lt;-<span class="st"> </span>cancer<span class="op">$</span>smokers,
-  n &lt;-<span class="st"> </span>cancer<span class="op">$</span>n,
-  <span class="co"># beta prior on pi</span>
-  <span class="dt">p_a =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">2</span>),
-  <span class="dt">p_b =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">2</span>)
-)</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">cancer_data &lt;-<span class="st"> </span><span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">  r &lt;-<span class="st"> </span>cancer<span class="op">$</span>smokers,</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">  n &lt;-<span class="st"> </span>cancer<span class="op">$</span>n,</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">  <span class="co"># beta prior on pi</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">  <span class="dt">p_a =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">2</span>),</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">  <span class="dt">p_b =</span> <span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7">)</a></code></pre></div>
 <p>The Stan model for this is:</p>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_mod1 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/cancer1.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">cancer_mod1 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/cancer1.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int<lower = 0> r[2];
@@ -297,33 +297,33 @@ generated quantities {
 }</code>
 </pre>
 <p>Now estimate the model:</p>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_fit1 &lt;-<span class="st"> </span><span class="kw">sampling</span>(cancer_mod1, cancer_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_fit1
-<span class="co">#&gt; Inference for Stan model: cancer1.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff</span>
-<span class="co">#&gt; p[1]        0.94    0.00 0.03   0.88   0.93   0.95   0.96   0.98  3589</span>
-<span class="co">#&gt; p[2]        0.83    0.00 0.04   0.74   0.80   0.83   0.86   0.90  2325</span>
-<span class="co">#&gt; delta       0.11    0.00 0.05   0.02   0.08   0.11   0.14   0.21  2565</span>
-<span class="co">#&gt; delta_up    0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  3168</span>
-<span class="co">#&gt; lambda      1.31    0.01 0.58   0.24   0.92   1.27   1.66   2.51  2706</span>
-<span class="co">#&gt; lambda_up   0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  3168</span>
-<span class="co">#&gt; lp__      -60.44    0.03 1.12 -63.52 -60.81 -60.08 -59.66 -59.40  1521</span>
-<span class="co">#&gt;           Rhat</span>
-<span class="co">#&gt; p[1]         1</span>
-<span class="co">#&gt; p[2]         1</span>
-<span class="co">#&gt; delta        1</span>
-<span class="co">#&gt; delta_up     1</span>
-<span class="co">#&gt; lambda       1</span>
-<span class="co">#&gt; lambda_up    1</span>
-<span class="co">#&gt; lp__         1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 00:53:46 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">cancer_fit1 &lt;-<span class="st"> </span><span class="kw">sampling</span>(cancer_mod1, cancer_data)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">cancer_fit1</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: cancer1.</span></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="co">#&gt;             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff</span></a>
+<a class="sourceLine" id="cb14-7" data-line-number="7"><span class="co">#&gt; p[1]        0.94    0.00 0.03   0.88   0.93   0.95   0.96   0.98  3589</span></a>
+<a class="sourceLine" id="cb14-8" data-line-number="8"><span class="co">#&gt; p[2]        0.83    0.00 0.04   0.74   0.80   0.83   0.86   0.90  2325</span></a>
+<a class="sourceLine" id="cb14-9" data-line-number="9"><span class="co">#&gt; delta       0.11    0.00 0.05   0.02   0.08   0.11   0.14   0.21  2565</span></a>
+<a class="sourceLine" id="cb14-10" data-line-number="10"><span class="co">#&gt; delta_up    0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  3168</span></a>
+<a class="sourceLine" id="cb14-11" data-line-number="11"><span class="co">#&gt; lambda      1.31    0.01 0.58   0.24   0.92   1.27   1.66   2.51  2706</span></a>
+<a class="sourceLine" id="cb14-12" data-line-number="12"><span class="co">#&gt; lambda_up   0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  3168</span></a>
+<a class="sourceLine" id="cb14-13" data-line-number="13"><span class="co">#&gt; lp__      -60.44    0.03 1.12 -63.52 -60.81 -60.08 -59.66 -59.40  1521</span></a>
+<a class="sourceLine" id="cb14-14" data-line-number="14"><span class="co">#&gt;           Rhat</span></a>
+<a class="sourceLine" id="cb14-15" data-line-number="15"><span class="co">#&gt; p[1]         1</span></a>
+<a class="sourceLine" id="cb14-16" data-line-number="16"><span class="co">#&gt; p[2]         1</span></a>
+<a class="sourceLine" id="cb14-17" data-line-number="17"><span class="co">#&gt; delta        1</span></a>
+<a class="sourceLine" id="cb14-18" data-line-number="18"><span class="co">#&gt; delta_up     1</span></a>
+<a class="sourceLine" id="cb14-19" data-line-number="19"><span class="co">#&gt; lambda       1</span></a>
+<a class="sourceLine" id="cb14-20" data-line-number="20"><span class="co">#&gt; lambda_up    1</span></a>
+<a class="sourceLine" id="cb14-21" data-line-number="21"><span class="co">#&gt; lp__         1</span></a>
+<a class="sourceLine" id="cb14-22" data-line-number="22"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb14-23" data-line-number="23"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 00:53:46 2018.</span></a>
+<a class="sourceLine" id="cb14-24" data-line-number="24"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb14-25" data-line-number="25"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb14-26" data-line-number="26"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 </div>
 <div id="binomial-logit-model-of-the-difference" class="section level2">
 <h2><span class="header-section-number">3.2</span> Binomial Logit Model of the Difference</h2>
@@ -342,7 +342,7 @@ The parameters <span class="math inline">\(\alpha\)</span> and <span class="math
 \beta &amp;\sim N(0, 2.5)
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/cancer2.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">cancer_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/cancer2.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int<lower = 0> r[2];
@@ -381,44 +381,44 @@ generated quantities {
 }</code>
 </pre>
 <p>Re-use <code>r</code> and <code>n</code> values from <code>cancer_data</code>, but add the appropriate values for the prior distributions.</p>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_data2 &lt;-<span class="st"> </span><span class="kw">within</span>(cancer_data, {
-  p_a &lt;-<span class="st"> </span>p_b &lt;-<span class="st"> </span><span class="ot">NULL</span>
-  a_loc &lt;-<span class="st"> </span>b_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  a_scale &lt;-<span class="st"> </span><span class="dv">10</span>
-  b_scale &lt;-<span class="st"> </span><span class="fl">2.5</span>
-})</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">cancer_data2 &lt;-<span class="st"> </span><span class="kw">within</span>(cancer_data, {</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">  p_a &lt;-<span class="st"> </span>p_b &lt;-<span class="st"> </span><span class="ot">NULL</span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">  a_loc &lt;-<span class="st"> </span>b_loc &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">  a_scale &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">  b_scale &lt;-<span class="st"> </span><span class="fl">2.5</span></a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">})</a></code></pre></div>
 <p>Sample from the model:</p>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(cancer_mod2, cancer_data2)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">cancer_fit2
-<span class="co">#&gt; Inference for Stan model: cancer2.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff</span>
-<span class="co">#&gt; a           1.69    0.01 0.30   1.13   1.49   1.68   1.88   2.31  1639</span>
-<span class="co">#&gt; b           1.38    0.01 0.58   0.30   0.99   1.35   1.74   2.61  1683</span>
-<span class="co">#&gt; p[1]        0.95    0.00 0.02   0.90   0.94   0.95   0.97   0.98  2817</span>
-<span class="co">#&gt; p[2]        0.84    0.00 0.04   0.76   0.82   0.84   0.87   0.91  1720</span>
-<span class="co">#&gt; delta       0.11    0.00 0.04   0.03   0.08   0.11   0.14   0.20  1525</span>
-<span class="co">#&gt; delta_up    0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  2140</span>
-<span class="co">#&gt; lambda      1.38    0.01 0.58   0.30   0.99   1.35   1.74   2.61  1683</span>
-<span class="co">#&gt; lambda_up   0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  2140</span>
-<span class="co">#&gt; lp__      -55.55    0.02 1.01 -58.32 -55.94 -55.24 -54.82 -54.57  1625</span>
-<span class="co">#&gt;           Rhat</span>
-<span class="co">#&gt; a            1</span>
-<span class="co">#&gt; b            1</span>
-<span class="co">#&gt; p[1]         1</span>
-<span class="co">#&gt; p[2]         1</span>
-<span class="co">#&gt; delta        1</span>
-<span class="co">#&gt; delta_up     1</span>
-<span class="co">#&gt; lambda       1</span>
-<span class="co">#&gt; lambda_up    1</span>
-<span class="co">#&gt; lp__         1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 00:54:23 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">cancer_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(cancer_mod2, cancer_data2)</a></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">cancer_fit2</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: cancer2.</span></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#&gt;             mean se_mean   sd   2.5%    25%    50%    75%  97.5% n_eff</span></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co">#&gt; a           1.69    0.01 0.30   1.13   1.49   1.68   1.88   2.31  1639</span></a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co">#&gt; b           1.38    0.01 0.58   0.30   0.99   1.35   1.74   2.61  1683</span></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9"><span class="co">#&gt; p[1]        0.95    0.00 0.02   0.90   0.94   0.95   0.97   0.98  2817</span></a>
+<a class="sourceLine" id="cb18-10" data-line-number="10"><span class="co">#&gt; p[2]        0.84    0.00 0.04   0.76   0.82   0.84   0.87   0.91  1720</span></a>
+<a class="sourceLine" id="cb18-11" data-line-number="11"><span class="co">#&gt; delta       0.11    0.00 0.04   0.03   0.08   0.11   0.14   0.20  1525</span></a>
+<a class="sourceLine" id="cb18-12" data-line-number="12"><span class="co">#&gt; delta_up    0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  2140</span></a>
+<a class="sourceLine" id="cb18-13" data-line-number="13"><span class="co">#&gt; lambda      1.38    0.01 0.58   0.30   0.99   1.35   1.74   2.61  1683</span></a>
+<a class="sourceLine" id="cb18-14" data-line-number="14"><span class="co">#&gt; lambda_up   0.99    0.00 0.07   1.00   1.00   1.00   1.00   1.00  2140</span></a>
+<a class="sourceLine" id="cb18-15" data-line-number="15"><span class="co">#&gt; lp__      -55.55    0.02 1.01 -58.32 -55.94 -55.24 -54.82 -54.57  1625</span></a>
+<a class="sourceLine" id="cb18-16" data-line-number="16"><span class="co">#&gt;           Rhat</span></a>
+<a class="sourceLine" id="cb18-17" data-line-number="17"><span class="co">#&gt; a            1</span></a>
+<a class="sourceLine" id="cb18-18" data-line-number="18"><span class="co">#&gt; b            1</span></a>
+<a class="sourceLine" id="cb18-19" data-line-number="19"><span class="co">#&gt; p[1]         1</span></a>
+<a class="sourceLine" id="cb18-20" data-line-number="20"><span class="co">#&gt; p[2]         1</span></a>
+<a class="sourceLine" id="cb18-21" data-line-number="21"><span class="co">#&gt; delta        1</span></a>
+<a class="sourceLine" id="cb18-22" data-line-number="22"><span class="co">#&gt; delta_up     1</span></a>
+<a class="sourceLine" id="cb18-23" data-line-number="23"><span class="co">#&gt; lambda       1</span></a>
+<a class="sourceLine" id="cb18-24" data-line-number="24"><span class="co">#&gt; lambda_up    1</span></a>
+<a class="sourceLine" id="cb18-25" data-line-number="25"><span class="co">#&gt; lp__         1</span></a>
+<a class="sourceLine" id="cb18-26" data-line-number="26"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb18-27" data-line-number="27"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 00:54:23 2018.</span></a>
+<a class="sourceLine" id="cb18-28" data-line-number="28"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb18-29" data-line-number="29"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb18-30" data-line-number="30"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 </div>
 <div id="questions" class="section level2">
 <h2><span class="header-section-number">3.3</span> Questions</h2>

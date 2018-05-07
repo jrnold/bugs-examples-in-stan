@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,8 +227,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="resistant" class="section level1">
 <h1><span class="header-section-number">11</span> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb97-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>Outlying data points can distort estimates of location, such as means or regression coefficients.<a href="#fn9" class="footnote-ref" id="fnref9"><sup>9</sup></a>
 Location estimates obtained via maximizing a iid normal likelihood over heavy tailed data will be sensitive to data in the tails (outliers).
 A popular alternative to normal errors in regression analyses is the Student’s <span class="math inline">\(t\)</span> density, with an unknown degrees of freedom parameter.
@@ -238,15 +238,15 @@ By embedding a model with location parameters in the Student’s <span class="ma
 <div id="data-2" class="section level2">
 <h2><span class="header-section-number">11.1</span> Data</h2>
 <p>This example uses data collected by Douglas Grob on incumbency advantage in American congressional elections, 1956-1994 <span class="citation">(Jackman <a href="#ref-Jackman2000a">2000</a>)</span>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;resistant&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)
-<span class="kw">glimpse</span>(resistant)
-<span class="co">#&gt; List of 6</span>
-<span class="co">#&gt;  $ y        : num [1:5090] 46.3 54.3 58.5 57.8 58.5 ...</span>
-<span class="co">#&gt;  $ lagy     : num [1:5090] 57 46.3 54.3 58.5 70 ...</span>
-<span class="co">#&gt;  $ prvwinpty: num [1:5090] 1 -1 1 1 1 1 1 1 1 1 ...</span>
-<span class="co">#&gt;  $ deminc   : num [1:5090] 0 0 1 1 1 1 0 1 1 1 ...</span>
-<span class="co">#&gt;  $ repinc   : num [1:5090] 0 1 0 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  $ year     : num [1:5090] 1 2 3 4 6 7 8 10 11 12 ...</span></code></pre>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;resistant&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</a>
+<a class="sourceLine" id="cb98-2" data-line-number="2"><span class="kw">glimpse</span>(resistant)</a>
+<a class="sourceLine" id="cb98-3" data-line-number="3"><span class="co">#&gt; List of 6</span></a>
+<a class="sourceLine" id="cb98-4" data-line-number="4"><span class="co">#&gt;  $ y        : num [1:5090] 46.3 54.3 58.5 57.8 58.5 ...</span></a>
+<a class="sourceLine" id="cb98-5" data-line-number="5"><span class="co">#&gt;  $ lagy     : num [1:5090] 57 46.3 54.3 58.5 70 ...</span></a>
+<a class="sourceLine" id="cb98-6" data-line-number="6"><span class="co">#&gt;  $ prvwinpty: num [1:5090] 1 -1 1 1 1 1 1 1 1 1 ...</span></a>
+<a class="sourceLine" id="cb98-7" data-line-number="7"><span class="co">#&gt;  $ deminc   : num [1:5090] 0 0 1 1 1 1 0 1 1 1 ...</span></a>
+<a class="sourceLine" id="cb98-8" data-line-number="8"><span class="co">#&gt;  $ repinc   : num [1:5090] 0 1 0 0 0 0 0 0 0 0 ...</span></a>
+<a class="sourceLine" id="cb98-9" data-line-number="9"><span class="co">#&gt;  $ year     : num [1:5090] 1 2 3 4 6 7 8 10 11 12 ...</span></a></code></pre></div>
 <p>The response variable is the proportion of the two-party vote won by the Democratic candidate in district <span class="math inline">\(i\)</span> at election <span class="math inline">\(t\)</span>.
 Indicators for Democratic and Republican incumbency are the critical explanatory variables in the analysis.
 Coefficients on these indicators are regarded as estimates of incumbency advantage.
@@ -272,7 +272,7 @@ The degrees of freedom parameter in the Student’s <span class="math inline">\(
 \]</span>
 The following code operationalizes this regression model.
 The conditional density of the vote proportions is <span class="math inline">\(t\)</span>, with unknown degrees of freedom, <span class="math inline">\(\nu.\)</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">resistant_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/resistant.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb99-1" data-line-number="1">resistant_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/resistant.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -318,45 +318,45 @@ generated quantities {
   delta = beta[3] + beta[4];
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">resistant_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span>resistant<span class="op">$</span>y
-  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
-  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>lagy <span class="op">+</span><span class="st"> </span>prvwinpty <span class="op">+</span><span class="st"> </span>deminc <span class="op">+</span><span class="st"> </span>repinc, <span class="dt">data =</span> resistant) <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">scale</span>()
-  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
-  year &lt;-<span class="st"> </span>resistant<span class="op">$</span>year
-  Y &lt;-<span class="st"> </span><span class="kw">max</span>(year)
-  <span class="co"># priors</span>
-  alpha_loc &lt;-<span class="st"> </span><span class="kw">mean</span>(y)
-  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
-  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
-  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y), K)
-  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">resistant_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(resistant_mod, <span class="dt">data =</span> resistant_data)
-<span class="co">#&gt; Warning: There were 3988 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span>
-<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
-<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(resistant_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;nu&quot;</span>, <span class="st">&quot;sigma&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;tau&quot;</span>))<span class="op">$</span>summary
-<span class="co">#&gt;               mean se_mean     sd       2.5%        25%        50%</span>
-<span class="co">#&gt; nu        6.44e+00 0.03924 0.5612   5.44e+00   6.05e+00   6.40e+00</span>
-<span class="co">#&gt; sigma     5.82e+00 0.00596 0.0989   5.62e+00   5.75e+00   5.82e+00</span>
-<span class="co">#&gt; beta[1]   1.17e+01 0.02438 0.1776   1.14e+01   1.16e+01   1.17e+01</span>
-<span class="co">#&gt; beta[2]  -3.35e+00 0.03354 0.3064  -3.96e+00  -3.55e+00  -3.35e+00</span>
-<span class="co">#&gt; beta[3]   3.97e+00 0.02955 0.2527   3.44e+00   3.81e+00   3.97e+00</span>
-<span class="co">#&gt; beta[4]  -3.96e+00 0.02970 0.2104  -4.39e+00  -4.09e+00  -3.96e+00</span>
-<span class="co">#&gt; tau      8.79e+307     Inf    Inf  5.17e+306  4.28e+307  8.69e+307</span>
-<span class="co">#&gt;                75%      97.5%  n_eff Rhat</span>
-<span class="co">#&gt; nu        6.78e+00   7.63e+00  204.5 1.01</span>
-<span class="co">#&gt; sigma     5.88e+00   6.01e+00  275.4 1.01</span>
-<span class="co">#&gt; beta[1]   1.18e+01   1.20e+01   53.1 1.10</span>
-<span class="co">#&gt; beta[2]  -3.17e+00  -2.75e+00   83.4 1.02</span>
-<span class="co">#&gt; beta[3]   4.13e+00   4.49e+00   73.2 1.05</span>
-<span class="co">#&gt; beta[4]  -3.83e+00  -3.55e+00   50.2 1.06</span>
-<span class="co">#&gt; tau      1.31e+308  1.74e+308 4000.0  NaN</span></code></pre>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" data-line-number="1">resistant_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb100-2" data-line-number="2">  y &lt;-<span class="st"> </span>resistant<span class="op">$</span>y</a>
+<a class="sourceLine" id="cb100-3" data-line-number="3">  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)</a>
+<a class="sourceLine" id="cb100-4" data-line-number="4">  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>lagy <span class="op">+</span><span class="st"> </span>prvwinpty <span class="op">+</span><span class="st"> </span>deminc <span class="op">+</span><span class="st"> </span>repinc, <span class="dt">data =</span> resistant) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb100-5" data-line-number="5"><span class="st">    </span><span class="kw">scale</span>()</a>
+<a class="sourceLine" id="cb100-6" data-line-number="6">  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)</a>
+<a class="sourceLine" id="cb100-7" data-line-number="7">  year &lt;-<span class="st"> </span>resistant<span class="op">$</span>year</a>
+<a class="sourceLine" id="cb100-8" data-line-number="8">  Y &lt;-<span class="st"> </span><span class="kw">max</span>(year)</a>
+<a class="sourceLine" id="cb100-9" data-line-number="9">  <span class="co"># priors</span></a>
+<a class="sourceLine" id="cb100-10" data-line-number="10">  alpha_loc &lt;-<span class="st"> </span><span class="kw">mean</span>(y)</a>
+<a class="sourceLine" id="cb100-11" data-line-number="11">  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)</a>
+<a class="sourceLine" id="cb100-12" data-line-number="12">  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)</a>
+<a class="sourceLine" id="cb100-13" data-line-number="13">  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y), K)</a>
+<a class="sourceLine" id="cb100-14" data-line-number="14">  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)</a>
+<a class="sourceLine" id="cb100-15" data-line-number="15">})</a></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb101-1" data-line-number="1">resistant_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(resistant_mod, <span class="dt">data =</span> resistant_data)</a>
+<a class="sourceLine" id="cb101-2" data-line-number="2"><span class="co">#&gt; Warning: There were 3988 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span></a>
+<a class="sourceLine" id="cb101-3" data-line-number="3"><span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span></a>
+<a class="sourceLine" id="cb101-4" data-line-number="4"><span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></a></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" data-line-number="1"><span class="kw">summary</span>(resistant_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;nu&quot;</span>, <span class="st">&quot;sigma&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;tau&quot;</span>))<span class="op">$</span>summary</a>
+<a class="sourceLine" id="cb102-2" data-line-number="2"><span class="co">#&gt;               mean se_mean     sd       2.5%        25%        50%</span></a>
+<a class="sourceLine" id="cb102-3" data-line-number="3"><span class="co">#&gt; nu        6.44e+00 0.03924 0.5612   5.44e+00   6.05e+00   6.40e+00</span></a>
+<a class="sourceLine" id="cb102-4" data-line-number="4"><span class="co">#&gt; sigma     5.82e+00 0.00596 0.0989   5.62e+00   5.75e+00   5.82e+00</span></a>
+<a class="sourceLine" id="cb102-5" data-line-number="5"><span class="co">#&gt; beta[1]   1.17e+01 0.02438 0.1776   1.14e+01   1.16e+01   1.17e+01</span></a>
+<a class="sourceLine" id="cb102-6" data-line-number="6"><span class="co">#&gt; beta[2]  -3.35e+00 0.03354 0.3064  -3.96e+00  -3.55e+00  -3.35e+00</span></a>
+<a class="sourceLine" id="cb102-7" data-line-number="7"><span class="co">#&gt; beta[3]   3.97e+00 0.02955 0.2527   3.44e+00   3.81e+00   3.97e+00</span></a>
+<a class="sourceLine" id="cb102-8" data-line-number="8"><span class="co">#&gt; beta[4]  -3.96e+00 0.02970 0.2104  -4.39e+00  -4.09e+00  -3.96e+00</span></a>
+<a class="sourceLine" id="cb102-9" data-line-number="9"><span class="co">#&gt; tau      8.79e+307     Inf    Inf  5.17e+306  4.28e+307  8.69e+307</span></a>
+<a class="sourceLine" id="cb102-10" data-line-number="10"><span class="co">#&gt;                75%      97.5%  n_eff Rhat</span></a>
+<a class="sourceLine" id="cb102-11" data-line-number="11"><span class="co">#&gt; nu        6.78e+00   7.63e+00  204.5 1.01</span></a>
+<a class="sourceLine" id="cb102-12" data-line-number="12"><span class="co">#&gt; sigma     5.88e+00   6.01e+00  275.4 1.01</span></a>
+<a class="sourceLine" id="cb102-13" data-line-number="13"><span class="co">#&gt; beta[1]   1.18e+01   1.20e+01   53.1 1.10</span></a>
+<a class="sourceLine" id="cb102-14" data-line-number="14"><span class="co">#&gt; beta[2]  -3.17e+00  -2.75e+00   83.4 1.02</span></a>
+<a class="sourceLine" id="cb102-15" data-line-number="15"><span class="co">#&gt; beta[3]   4.13e+00   4.49e+00   73.2 1.05</span></a>
+<a class="sourceLine" id="cb102-16" data-line-number="16"><span class="co">#&gt; beta[4]  -3.83e+00  -3.55e+00   50.2 1.06</span></a>
+<a class="sourceLine" id="cb102-17" data-line-number="17"><span class="co">#&gt; tau      1.31e+308  1.74e+308 4000.0  NaN</span></a></code></pre></div>
 </div>
-<div id="reparaterization-standard-deviation-instead-of-scale" class="section level2">
-<h2><span class="header-section-number">11.2</span> Reparaterization: standard deviation instead of scale</h2>
+<div id="reparameterization-standard-deviation-instead-of-scale" class="section level2">
+<h2><span class="header-section-number">11.2</span> Reparameterization: standard deviation instead of scale</h2>
 <p>In the Student’s <span class="math inline">\(t\)</span> distribution, the standard deviation is a function of the degrees of freedom.
 For degrees of freedom <span class="math inline">\(\nu &gt; 2\)</span>, the variance is defined, and
 <span class="math display">\[
@@ -371,7 +371,7 @@ and treat <span class="math inline">\(\sigma\)</span> as a transformed parameter
 \sigma &amp;= \sigma^{*} \sqrt{\frac{\nu - 2}{\nu}} \\
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">resistant_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/resistant2.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb103-1" data-line-number="1">resistant_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/resistant2.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -420,27 +420,27 @@ generated quantities {
   delta = beta[3] + beta[4];
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">resistant_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(resistant_mod2, <span class="dt">data =</span> resistant_data)
-<span class="co">#&gt; Warning: There were 3940 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span>
-<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
-<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(resistant_fit2, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;sigma&quot;</span>, <span class="st">&quot;nu&quot;</span>, <span class="st">&quot;tau&quot;</span>))<span class="op">$</span>summary
-<span class="co">#&gt;               mean se_mean    sd       2.5%        25%        50%</span>
-<span class="co">#&gt; beta[1]   1.17e+01 0.01398 0.178   1.13e+01   1.15e+01   1.17e+01</span>
-<span class="co">#&gt; beta[2]  -3.32e+00 0.07143 0.311  -3.96e+00  -3.53e+00  -3.32e+00</span>
-<span class="co">#&gt; beta[3]   3.97e+00 0.02581 0.251   3.50e+00   3.80e+00   3.97e+00</span>
-<span class="co">#&gt; beta[4]  -3.95e+00 0.01389 0.198  -4.33e+00  -4.08e+00  -3.95e+00</span>
-<span class="co">#&gt; sigma     5.82e+00 0.00419 0.101   5.63e+00   5.75e+00   5.82e+00</span>
-<span class="co">#&gt; nu        6.48e+00 0.03241 0.590   5.41e+00   6.06e+00   6.44e+00</span>
-<span class="co">#&gt; tau      9.27e+307     Inf   Inf  5.71e+306  4.87e+307  9.41e+307</span>
-<span class="co">#&gt;                75%      97.5%  n_eff Rhat</span>
-<span class="co">#&gt; beta[1]   1.18e+01   1.20e+01  162.9 1.03</span>
-<span class="co">#&gt; beta[2]  -3.11e+00  -2.73e+00   19.0 1.08</span>
-<span class="co">#&gt; beta[3]   4.14e+00   4.51e+00   94.2 1.04</span>
-<span class="co">#&gt; beta[4]  -3.82e+00  -3.54e+00  203.3 1.02</span>
-<span class="co">#&gt; sigma     5.89e+00   6.03e+00  578.2 1.00</span>
-<span class="co">#&gt; nu        6.87e+00   7.70e+00  331.8 1.02</span>
-<span class="co">#&gt; tau      1.37e+308  1.75e+308 4000.0  NaN</span></code></pre>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" data-line-number="1">resistant_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(resistant_mod2, <span class="dt">data =</span> resistant_data)</a>
+<a class="sourceLine" id="cb104-2" data-line-number="2"><span class="co">#&gt; Warning: There were 3940 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span></a>
+<a class="sourceLine" id="cb104-3" data-line-number="3"><span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span></a>
+<a class="sourceLine" id="cb104-4" data-line-number="4"><span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></a></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb105-1" data-line-number="1"><span class="kw">summary</span>(resistant_fit2, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;beta&quot;</span>, <span class="st">&quot;sigma&quot;</span>, <span class="st">&quot;nu&quot;</span>, <span class="st">&quot;tau&quot;</span>))<span class="op">$</span>summary</a>
+<a class="sourceLine" id="cb105-2" data-line-number="2"><span class="co">#&gt;               mean se_mean    sd       2.5%        25%        50%</span></a>
+<a class="sourceLine" id="cb105-3" data-line-number="3"><span class="co">#&gt; beta[1]   1.17e+01 0.01398 0.178   1.13e+01   1.15e+01   1.17e+01</span></a>
+<a class="sourceLine" id="cb105-4" data-line-number="4"><span class="co">#&gt; beta[2]  -3.32e+00 0.07143 0.311  -3.96e+00  -3.53e+00  -3.32e+00</span></a>
+<a class="sourceLine" id="cb105-5" data-line-number="5"><span class="co">#&gt; beta[3]   3.97e+00 0.02581 0.251   3.50e+00   3.80e+00   3.97e+00</span></a>
+<a class="sourceLine" id="cb105-6" data-line-number="6"><span class="co">#&gt; beta[4]  -3.95e+00 0.01389 0.198  -4.33e+00  -4.08e+00  -3.95e+00</span></a>
+<a class="sourceLine" id="cb105-7" data-line-number="7"><span class="co">#&gt; sigma     5.82e+00 0.00419 0.101   5.63e+00   5.75e+00   5.82e+00</span></a>
+<a class="sourceLine" id="cb105-8" data-line-number="8"><span class="co">#&gt; nu        6.48e+00 0.03241 0.590   5.41e+00   6.06e+00   6.44e+00</span></a>
+<a class="sourceLine" id="cb105-9" data-line-number="9"><span class="co">#&gt; tau      9.27e+307     Inf   Inf  5.71e+306  4.87e+307  9.41e+307</span></a>
+<a class="sourceLine" id="cb105-10" data-line-number="10"><span class="co">#&gt;                75%      97.5%  n_eff Rhat</span></a>
+<a class="sourceLine" id="cb105-11" data-line-number="11"><span class="co">#&gt; beta[1]   1.18e+01   1.20e+01  162.9 1.03</span></a>
+<a class="sourceLine" id="cb105-12" data-line-number="12"><span class="co">#&gt; beta[2]  -3.11e+00  -2.73e+00   19.0 1.08</span></a>
+<a class="sourceLine" id="cb105-13" data-line-number="13"><span class="co">#&gt; beta[3]   4.14e+00   4.51e+00   94.2 1.04</span></a>
+<a class="sourceLine" id="cb105-14" data-line-number="14"><span class="co">#&gt; beta[4]  -3.82e+00  -3.54e+00  203.3 1.02</span></a>
+<a class="sourceLine" id="cb105-15" data-line-number="15"><span class="co">#&gt; sigma     5.89e+00   6.03e+00  578.2 1.00</span></a>
+<a class="sourceLine" id="cb105-16" data-line-number="16"><span class="co">#&gt; nu        6.87e+00   7.70e+00  331.8 1.02</span></a>
+<a class="sourceLine" id="cb105-17" data-line-number="17"><span class="co">#&gt; tau      1.37e+308  1.75e+308 4000.0  NaN</span></a></code></pre></div>
 </div>
 <div id="questions-3" class="section level2 unnumbered">
 <h2>Questions</h2>
@@ -454,10 +454,10 @@ generated quantities {
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-Jackman2000a">
-<p>Jackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” <em>Political Analysis</em> 8 (4). [Oxford University Press, Society for Political Methodology]:307–32. <a href="http://www.jstor.org/stable/25791616" class="uri">http://www.jstor.org/stable/25791616</a>.</p>
+<p>Jackman, Simon. 2000. “Estimation and Inference Are Missing Data Problems: Unifying Social Science Statistics via Bayesian Simulation.” <em>Political Analysis</em> 8 (4). [Oxford University Press, Society for Political Methodology]: 307–32. <a href="http://www.jstor.org/stable/25791616" class="uri">http://www.jstor.org/stable/25791616</a>.</p>
 </div>
 <div id="ref-JuarezSteel2010a">
-<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited:52–66. <a href="https://doi.org/10.1198/jbes.2009.07145" class="uri">https://doi.org/10.1198/jbes.2009.07145</a>.</p>
+<p>Juárez, Miguel A., and Mark F. J. Steel. 2010. “Model-Based Clustering of Non-Gaussian Panel Data Based on Skew-t Distributions.” <em>Journal of Business &amp; Economic Statistics</em> 28 (1). Informa UK Limited: 52–66. <a href="https://doi.org/10.1198/jbes.2009.07145" class="uri">https://doi.org/10.1198/jbes.2009.07145</a>.</p>
 </div>
 </div>
 <div class="footnotes">

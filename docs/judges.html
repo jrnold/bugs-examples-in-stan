@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,9 +227,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="judges" class="section level1">
 <h1><span class="header-section-number">10</span> Judges: estimating the ideological locations of Supreme Court justices</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;pscl&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb92-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;pscl&quot;</span>)</a>
+<a class="sourceLine" id="cb92-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb92-3" data-line-number="3"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>This program implements an ideal-point model (similar to the legislators
 example), estimating both the locations of the justices on a latent ideological
 dimension, and two parameters specific to each case (corresponding to the item
@@ -257,24 +257,24 @@ y_{i,j} &amp;\sim \mathsf{Bernoulli}(\pi_i) \\
 \theta_i &amp;\sim \mathsf{Normal}(0, 1) \\
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;sc9497&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;sc9497&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;pscl&quot;</span>)</a></code></pre></div>
 <p>To simplify the analysis, the outcomes will be aggregated to “Yes”, “No”, and missing values (which</p>
-<pre class="sourceCode r"><code class="sourceCode r">sc9497_vote_data &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">vote =</span> <span class="kw">colnames</span>(sc9497<span class="op">$</span>votes)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.vote_id =</span> <span class="kw">row_number</span>())
-
-sc9497_legis_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(sc9497<span class="op">$</span>legis.names) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="st">&quot;judge&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.judge_id =</span> <span class="kw">row_number</span>())
-
-sc9497_votes &lt;-<span class="st"> </span>sc9497<span class="op">$</span>votes <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="st">&quot;judge&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">gather</span>(vote, yea, <span class="op">-</span>judge) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(yea)) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">inner_join</span>(dplyr<span class="op">::</span><span class="kw">select</span>(sc9497_vote_data, vote, .vote_id), <span class="dt">by =</span> <span class="st">&quot;vote&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">inner_join</span>(dplyr<span class="op">::</span><span class="kw">select</span>(sc9497_legis_data, judge, .judge_id), <span class="dt">by =</span> <span class="st">&quot;judge&quot;</span>)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># mod_ideal_point &lt;- stan_model(&quot;ideal_point.stan&quot;)</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># mod_ideal_point</span></code></pre>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb94-1" data-line-number="1">sc9497_vote_data &lt;-<span class="st"> </span><span class="kw">tibble</span>(<span class="dt">vote =</span> <span class="kw">colnames</span>(sc9497<span class="op">$</span>votes)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.vote_id =</span> <span class="kw">row_number</span>())</a>
+<a class="sourceLine" id="cb94-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb94-4" data-line-number="4">sc9497_legis_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(sc9497<span class="op">$</span>legis.names) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-5" data-line-number="5"><span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="st">&quot;judge&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">.judge_id =</span> <span class="kw">row_number</span>())</a>
+<a class="sourceLine" id="cb94-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb94-8" data-line-number="8">sc9497_votes &lt;-<span class="st"> </span>sc9497<span class="op">$</span>votes <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-9" data-line-number="9"><span class="st">  </span><span class="kw">as.data.frame</span>() <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-10" data-line-number="10"><span class="st">  </span><span class="kw">rownames_to_column</span>(<span class="st">&quot;judge&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-11" data-line-number="11"><span class="st">  </span><span class="kw">gather</span>(vote, yea, <span class="op">-</span>judge) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-12" data-line-number="12"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(yea)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-13" data-line-number="13"><span class="st">  </span><span class="kw">inner_join</span>(dplyr<span class="op">::</span><span class="kw">select</span>(sc9497_vote_data, vote, .vote_id), <span class="dt">by =</span> <span class="st">&quot;vote&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb94-14" data-line-number="14"><span class="st">  </span><span class="kw">inner_join</span>(dplyr<span class="op">::</span><span class="kw">select</span>(sc9497_legis_data, judge, .judge_id), <span class="dt">by =</span> <span class="st">&quot;judge&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" data-line-number="1"><span class="co"># mod_ideal_point &lt;- stan_model(&quot;ideal_point.stan&quot;)</span></a></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb96-1" data-line-number="1"><span class="co"># mod_ideal_point</span></a></code></pre></div>
 
 </div>
 <div class="footnotes">

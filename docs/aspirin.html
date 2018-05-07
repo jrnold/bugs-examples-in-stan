@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,12 +227,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="aspirin" class="section level1">
 <h1><span class="header-section-number">14</span> Aspirin: Borrowing Strength via Hierarchical Modeling</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb122-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb122-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>The following data come from a meta-analysis of heart attack data,<a href="#fn12" class="footnote-ref" id="fnref12"><sup>12</sup></a></p>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin &lt;-
-<span class="st">  </span><span class="kw">tibble</span>(<span class="dt">y =</span> <span class="kw">c</span>(<span class="fl">2.77</span>, <span class="fl">2.50</span>, <span class="fl">1.84</span>, <span class="fl">2.56</span>, <span class="fl">2.31</span>, <span class="fl">-1.15</span>),
-         <span class="dt">sd =</span> <span class="kw">c</span>(<span class="fl">1.65</span>, <span class="fl">1.31</span>, <span class="fl">2.34</span>, <span class="fl">1.67</span>, <span class="fl">1.98</span>, <span class="fl">0.90</span>))</code></pre>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb123-1" data-line-number="1">aspirin &lt;-</a>
+<a class="sourceLine" id="cb123-2" data-line-number="2"><span class="st">  </span><span class="kw">tibble</span>(<span class="dt">y =</span> <span class="kw">c</span>(<span class="fl">2.77</span>, <span class="fl">2.50</span>, <span class="fl">1.84</span>, <span class="fl">2.56</span>, <span class="fl">2.31</span>, <span class="fl">-1.15</span>),</a>
+<a class="sourceLine" id="cb123-3" data-line-number="3">         <span class="dt">sd =</span> <span class="kw">c</span>(<span class="fl">1.65</span>, <span class="fl">1.31</span>, <span class="fl">2.34</span>, <span class="fl">1.67</span>, <span class="fl">1.98</span>, <span class="fl">0.90</span>))</a></code></pre></div>
 <p>Each observation is the results of a study of survivorship following a heart attack (myocardial infarction).
 In each study, some victims were given aspirin immediately following their heart attack, while some victims were not.
 The observed values of <span class="math inline">\(y\)</span> are the differences in mean survivorship observed in each study.
@@ -261,7 +261,7 @@ This introducing some bias, since each study’s mean mean is shrunk back toward
 However, the benefit is gaining precision (smaller variance).
 We also gain a better estimate of the overall effect of aspirin on survivorship after heart attack than we would get from naively pooling the studies or using the estimate of any one study.</p>
 <p>The Stan model for the above model is:</p>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/aspirin.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb124-1" data-line-number="1">aspirin_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/aspirin.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -296,45 +296,45 @@ generated quantities {
   }
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span>aspirin<span class="op">$</span>y
-  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(aspirin)
-  s &lt;-<span class="st"> </span>aspirin<span class="op">$</span>sd
-  mu_loc &lt;-<span class="st"> </span><span class="kw">mean</span>(y)
-  mu_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
-  tau_scale &lt;-<span class="st"> </span><span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
-  tau_df &lt;-<span class="st"> </span><span class="dv">4</span>
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(aspirin_mod, <span class="dt">data =</span> aspirin_data)
-<span class="co">#&gt; Warning: There were 25 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span>
-<span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span>
-<span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_fit
-<span class="co">#&gt; Inference for Stan model: aspirin.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;               mean se_mean   sd   2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
-<span class="co">#&gt; theta[1]      2.10    0.03 1.32  -0.35  1.20  2.03  2.97  4.77  2715    1</span>
-<span class="co">#&gt; theta[2]      2.04    0.02 1.12  -0.07  1.27  2.01  2.79  4.26  2065    1</span>
-<span class="co">#&gt; theta[3]      1.62    0.03 1.51  -1.27  0.65  1.58  2.55  4.79  2788    1</span>
-<span class="co">#&gt; theta[4]      1.98    0.03 1.30  -0.42  1.09  1.90  2.84  4.69  2601    1</span>
-<span class="co">#&gt; theta[5]      1.81    0.03 1.41  -0.75  0.84  1.73  2.72  4.82  2919    1</span>
-<span class="co">#&gt; theta[6]     -0.44    0.02 0.91  -2.27 -1.04 -0.43  0.16  1.28  2302    1</span>
-<span class="co">#&gt; mu            1.52    0.02 1.09  -0.54  0.82  1.50  2.17  3.75  2140    1</span>
-<span class="co">#&gt; tau           1.82    0.02 0.95   0.55  1.15  1.62  2.28  4.19  1495    1</span>
-<span class="co">#&gt; shrinkage[1]  0.51    0.01 0.21   0.13  0.34  0.51  0.67  0.90  1270    1</span>
-<span class="co">#&gt; shrinkage[2]  0.42    0.01 0.21   0.09  0.25  0.40  0.57  0.85  1181    1</span>
-<span class="co">#&gt; shrinkage[3]  0.65    0.01 0.20   0.24  0.51  0.68  0.81  0.95  1394    1</span>
-<span class="co">#&gt; shrinkage[4]  0.52    0.01 0.21   0.14  0.35  0.52  0.68  0.90  1275    1</span>
-<span class="co">#&gt; shrinkage[5]  0.59    0.01 0.21   0.18  0.43  0.60  0.75  0.93  1336    1</span>
-<span class="co">#&gt; shrinkage[6]  0.28    0.01 0.18   0.04  0.13  0.24  0.38  0.73  1046    1</span>
-<span class="co">#&gt; lp__         -7.66    0.08 2.59 -13.47 -9.23 -7.44 -5.87 -3.26  1033    1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:20:48 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb125-1" data-line-number="1">aspirin_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb125-2" data-line-number="2">  y &lt;-<span class="st"> </span>aspirin<span class="op">$</span>y</a>
+<a class="sourceLine" id="cb125-3" data-line-number="3">  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(aspirin)</a>
+<a class="sourceLine" id="cb125-4" data-line-number="4">  s &lt;-<span class="st"> </span>aspirin<span class="op">$</span>sd</a>
+<a class="sourceLine" id="cb125-5" data-line-number="5">  mu_loc &lt;-<span class="st"> </span><span class="kw">mean</span>(y)</a>
+<a class="sourceLine" id="cb125-6" data-line-number="6">  mu_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)</a>
+<a class="sourceLine" id="cb125-7" data-line-number="7">  tau_scale &lt;-<span class="st"> </span><span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)</a>
+<a class="sourceLine" id="cb125-8" data-line-number="8">  tau_df &lt;-<span class="st"> </span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb125-9" data-line-number="9">})</a></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb126-1" data-line-number="1">aspirin_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(aspirin_mod, <span class="dt">data =</span> aspirin_data)</a>
+<a class="sourceLine" id="cb126-2" data-line-number="2"><span class="co">#&gt; Warning: There were 25 divergent transitions after warmup. Increasing adapt_delta above 0.8 may help. See</span></a>
+<a class="sourceLine" id="cb126-3" data-line-number="3"><span class="co">#&gt; http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span></a>
+<a class="sourceLine" id="cb126-4" data-line-number="4"><span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></a></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb127-1" data-line-number="1">aspirin_fit</a>
+<a class="sourceLine" id="cb127-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: aspirin.</span></a>
+<a class="sourceLine" id="cb127-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb127-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb127-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb127-6" data-line-number="6"><span class="co">#&gt;               mean se_mean   sd   2.5%   25%   50%   75% 97.5% n_eff Rhat</span></a>
+<a class="sourceLine" id="cb127-7" data-line-number="7"><span class="co">#&gt; theta[1]      2.10    0.03 1.32  -0.35  1.20  2.03  2.97  4.77  2715    1</span></a>
+<a class="sourceLine" id="cb127-8" data-line-number="8"><span class="co">#&gt; theta[2]      2.04    0.02 1.12  -0.07  1.27  2.01  2.79  4.26  2065    1</span></a>
+<a class="sourceLine" id="cb127-9" data-line-number="9"><span class="co">#&gt; theta[3]      1.62    0.03 1.51  -1.27  0.65  1.58  2.55  4.79  2788    1</span></a>
+<a class="sourceLine" id="cb127-10" data-line-number="10"><span class="co">#&gt; theta[4]      1.98    0.03 1.30  -0.42  1.09  1.90  2.84  4.69  2601    1</span></a>
+<a class="sourceLine" id="cb127-11" data-line-number="11"><span class="co">#&gt; theta[5]      1.81    0.03 1.41  -0.75  0.84  1.73  2.72  4.82  2919    1</span></a>
+<a class="sourceLine" id="cb127-12" data-line-number="12"><span class="co">#&gt; theta[6]     -0.44    0.02 0.91  -2.27 -1.04 -0.43  0.16  1.28  2302    1</span></a>
+<a class="sourceLine" id="cb127-13" data-line-number="13"><span class="co">#&gt; mu            1.52    0.02 1.09  -0.54  0.82  1.50  2.17  3.75  2140    1</span></a>
+<a class="sourceLine" id="cb127-14" data-line-number="14"><span class="co">#&gt; tau           1.82    0.02 0.95   0.55  1.15  1.62  2.28  4.19  1495    1</span></a>
+<a class="sourceLine" id="cb127-15" data-line-number="15"><span class="co">#&gt; shrinkage[1]  0.51    0.01 0.21   0.13  0.34  0.51  0.67  0.90  1270    1</span></a>
+<a class="sourceLine" id="cb127-16" data-line-number="16"><span class="co">#&gt; shrinkage[2]  0.42    0.01 0.21   0.09  0.25  0.40  0.57  0.85  1181    1</span></a>
+<a class="sourceLine" id="cb127-17" data-line-number="17"><span class="co">#&gt; shrinkage[3]  0.65    0.01 0.20   0.24  0.51  0.68  0.81  0.95  1394    1</span></a>
+<a class="sourceLine" id="cb127-18" data-line-number="18"><span class="co">#&gt; shrinkage[4]  0.52    0.01 0.21   0.14  0.35  0.52  0.68  0.90  1275    1</span></a>
+<a class="sourceLine" id="cb127-19" data-line-number="19"><span class="co">#&gt; shrinkage[5]  0.59    0.01 0.21   0.18  0.43  0.60  0.75  0.93  1336    1</span></a>
+<a class="sourceLine" id="cb127-20" data-line-number="20"><span class="co">#&gt; shrinkage[6]  0.28    0.01 0.18   0.04  0.13  0.24  0.38  0.73  1046    1</span></a>
+<a class="sourceLine" id="cb127-21" data-line-number="21"><span class="co">#&gt; lp__         -7.66    0.08 2.59 -13.47 -9.23 -7.44 -5.87 -3.26  1033    1</span></a>
+<a class="sourceLine" id="cb127-22" data-line-number="22"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb127-23" data-line-number="23"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:20:48 2018.</span></a>
+<a class="sourceLine" id="cb127-24" data-line-number="24"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb127-25" data-line-number="25"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb127-26" data-line-number="26"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 <p>Note that this model is likely to produce divergent transitions.
 The reasons for this and an alternative parameterization is discussed in the next section.</p>
 <div id="non-centered-parameterization" class="section level2">
@@ -347,8 +347,8 @@ The reasons for this and an alternative parameterization is discussed in the nex
 \theta_i &amp;= \tau \theta^*_i + \mu .
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/aspirin2.stan&quot;</span>)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_mod2</code></pre>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb128-1" data-line-number="1">aspirin_mod2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/aspirin2.stan&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb129-1" data-line-number="1">aspirin_mod2</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -387,40 +387,40 @@ generated quantities {
   }
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(aspirin_mod2, <span class="dt">data =</span> aspirin_data,
-                        <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.99</span>))</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">aspirin_fit2
-<span class="co">#&gt; Inference for Stan model: aspirin2.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;               mean se_mean   sd   2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
-<span class="co">#&gt; theta_raw[1]  0.33    0.01 0.78  -1.21 -0.18  0.32  0.83  1.87  2757    1</span>
-<span class="co">#&gt; theta_raw[2]  0.31    0.02 0.76  -1.25 -0.18  0.31  0.79  1.83  2288    1</span>
-<span class="co">#&gt; theta_raw[3]  0.06    0.02 0.84  -1.58 -0.50  0.06  0.63  1.72  3065    1</span>
-<span class="co">#&gt; theta_raw[4]  0.26    0.02 0.79  -1.26 -0.26  0.25  0.77  1.83  2484    1</span>
-<span class="co">#&gt; theta_raw[5]  0.15    0.02 0.81  -1.47 -0.39  0.17  0.70  1.74  2776    1</span>
-<span class="co">#&gt; theta_raw[6] -1.14    0.02 0.76  -2.63 -1.64 -1.11 -0.65  0.35  2097    1</span>
-<span class="co">#&gt; mu            1.50    0.03 1.04  -0.40  0.84  1.45  2.12  3.71  1381    1</span>
-<span class="co">#&gt; tau           1.73    0.03 1.02   0.20  1.06  1.59  2.23  4.33  1141    1</span>
-<span class="co">#&gt; theta[1]      2.04    0.02 1.29  -0.27  1.13  1.97  2.89  4.69  4000    1</span>
-<span class="co">#&gt; theta[2]      2.00    0.02 1.10   0.02  1.24  1.92  2.73  4.23  4000    1</span>
-<span class="co">#&gt; theta[3]      1.59    0.03 1.50  -1.41  0.67  1.54  2.50  4.68  3299    1</span>
-<span class="co">#&gt; theta[4]      1.94    0.02 1.29  -0.37  1.02  1.85  2.77  4.69  4000    1</span>
-<span class="co">#&gt; theta[5]      1.77    0.02 1.36  -0.76  0.85  1.69  2.61  4.73  4000    1</span>
-<span class="co">#&gt; theta[6]     -0.37    0.01 0.95  -2.22 -1.02 -0.37  0.30  1.42  4000    1</span>
-<span class="co">#&gt; shrinkage[1]  0.54    0.01 0.23   0.13  0.35  0.52  0.71  0.99  1245    1</span>
-<span class="co">#&gt; shrinkage[2]  0.45    0.01 0.24   0.08  0.26  0.40  0.60  0.98  1205    1</span>
-<span class="co">#&gt; shrinkage[3]  0.67    0.01 0.21   0.23  0.52  0.68  0.83  0.99  1282    1</span>
-<span class="co">#&gt; shrinkage[4]  0.54    0.01 0.23   0.13  0.36  0.52  0.71  0.99  1246    1</span>
-<span class="co">#&gt; shrinkage[5]  0.61    0.01 0.22   0.17  0.44  0.61  0.78  0.99  1268    1</span>
-<span class="co">#&gt; shrinkage[6]  0.32    0.01 0.24   0.04  0.14  0.24  0.42  0.95  1117    1</span>
-<span class="co">#&gt; lp__         -5.13    0.08 2.62 -11.07 -6.64 -4.71 -3.21 -1.18   968    1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:21:26 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb130-1" data-line-number="1">aspirin_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(aspirin_mod2, <span class="dt">data =</span> aspirin_data,</a>
+<a class="sourceLine" id="cb130-2" data-line-number="2">                        <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">adapt_delta =</span> <span class="fl">0.99</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb131-1" data-line-number="1">aspirin_fit2</a>
+<a class="sourceLine" id="cb131-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: aspirin2.</span></a>
+<a class="sourceLine" id="cb131-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb131-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb131-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb131-6" data-line-number="6"><span class="co">#&gt;               mean se_mean   sd   2.5%   25%   50%   75% 97.5% n_eff Rhat</span></a>
+<a class="sourceLine" id="cb131-7" data-line-number="7"><span class="co">#&gt; theta_raw[1]  0.33    0.01 0.78  -1.21 -0.18  0.32  0.83  1.87  2757    1</span></a>
+<a class="sourceLine" id="cb131-8" data-line-number="8"><span class="co">#&gt; theta_raw[2]  0.31    0.02 0.76  -1.25 -0.18  0.31  0.79  1.83  2288    1</span></a>
+<a class="sourceLine" id="cb131-9" data-line-number="9"><span class="co">#&gt; theta_raw[3]  0.06    0.02 0.84  -1.58 -0.50  0.06  0.63  1.72  3065    1</span></a>
+<a class="sourceLine" id="cb131-10" data-line-number="10"><span class="co">#&gt; theta_raw[4]  0.26    0.02 0.79  -1.26 -0.26  0.25  0.77  1.83  2484    1</span></a>
+<a class="sourceLine" id="cb131-11" data-line-number="11"><span class="co">#&gt; theta_raw[5]  0.15    0.02 0.81  -1.47 -0.39  0.17  0.70  1.74  2776    1</span></a>
+<a class="sourceLine" id="cb131-12" data-line-number="12"><span class="co">#&gt; theta_raw[6] -1.14    0.02 0.76  -2.63 -1.64 -1.11 -0.65  0.35  2097    1</span></a>
+<a class="sourceLine" id="cb131-13" data-line-number="13"><span class="co">#&gt; mu            1.50    0.03 1.04  -0.40  0.84  1.45  2.12  3.71  1381    1</span></a>
+<a class="sourceLine" id="cb131-14" data-line-number="14"><span class="co">#&gt; tau           1.73    0.03 1.02   0.20  1.06  1.59  2.23  4.33  1141    1</span></a>
+<a class="sourceLine" id="cb131-15" data-line-number="15"><span class="co">#&gt; theta[1]      2.04    0.02 1.29  -0.27  1.13  1.97  2.89  4.69  4000    1</span></a>
+<a class="sourceLine" id="cb131-16" data-line-number="16"><span class="co">#&gt; theta[2]      2.00    0.02 1.10   0.02  1.24  1.92  2.73  4.23  4000    1</span></a>
+<a class="sourceLine" id="cb131-17" data-line-number="17"><span class="co">#&gt; theta[3]      1.59    0.03 1.50  -1.41  0.67  1.54  2.50  4.68  3299    1</span></a>
+<a class="sourceLine" id="cb131-18" data-line-number="18"><span class="co">#&gt; theta[4]      1.94    0.02 1.29  -0.37  1.02  1.85  2.77  4.69  4000    1</span></a>
+<a class="sourceLine" id="cb131-19" data-line-number="19"><span class="co">#&gt; theta[5]      1.77    0.02 1.36  -0.76  0.85  1.69  2.61  4.73  4000    1</span></a>
+<a class="sourceLine" id="cb131-20" data-line-number="20"><span class="co">#&gt; theta[6]     -0.37    0.01 0.95  -2.22 -1.02 -0.37  0.30  1.42  4000    1</span></a>
+<a class="sourceLine" id="cb131-21" data-line-number="21"><span class="co">#&gt; shrinkage[1]  0.54    0.01 0.23   0.13  0.35  0.52  0.71  0.99  1245    1</span></a>
+<a class="sourceLine" id="cb131-22" data-line-number="22"><span class="co">#&gt; shrinkage[2]  0.45    0.01 0.24   0.08  0.26  0.40  0.60  0.98  1205    1</span></a>
+<a class="sourceLine" id="cb131-23" data-line-number="23"><span class="co">#&gt; shrinkage[3]  0.67    0.01 0.21   0.23  0.52  0.68  0.83  0.99  1282    1</span></a>
+<a class="sourceLine" id="cb131-24" data-line-number="24"><span class="co">#&gt; shrinkage[4]  0.54    0.01 0.23   0.13  0.36  0.52  0.71  0.99  1246    1</span></a>
+<a class="sourceLine" id="cb131-25" data-line-number="25"><span class="co">#&gt; shrinkage[5]  0.61    0.01 0.22   0.17  0.44  0.61  0.78  0.99  1268    1</span></a>
+<a class="sourceLine" id="cb131-26" data-line-number="26"><span class="co">#&gt; shrinkage[6]  0.32    0.01 0.24   0.04  0.14  0.24  0.42  0.95  1117    1</span></a>
+<a class="sourceLine" id="cb131-27" data-line-number="27"><span class="co">#&gt; lp__         -5.13    0.08 2.62 -11.07 -6.64 -4.71 -3.21 -1.18   968    1</span></a>
+<a class="sourceLine" id="cb131-28" data-line-number="28"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb131-29" data-line-number="29"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:21:26 2018.</span></a>
+<a class="sourceLine" id="cb131-30" data-line-number="30"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb131-31" data-line-number="31"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb131-32" data-line-number="32"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 </div>
 <div id="references-1" class="section level2 unnumbered">
 <h2>References</h2>

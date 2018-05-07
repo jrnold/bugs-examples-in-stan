@@ -12,5 +12,7 @@ stan/*.rds
 _bookdown_files/*
 /*_files
 /*.rds
+
+/render*
 /bookdown*
 node_modules

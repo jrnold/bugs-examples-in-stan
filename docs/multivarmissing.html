@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -230,24 +230,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><span class="math display">\[
 \DeclareMathOperator{diag}{diag}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb172-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>This example shows how to impute missing data. See <span class="citation">Stan Development Team (<a href="#ref-Stan2016a">2016</a>)</span>, Chapter 10 “Missing Data &amp; Partially Known Parameters” for more discussion.<a href="#fn17" class="footnote-ref" id="fnref17"><sup>17</sup></a></p>
 <p>Consider a data set of 10 observations on 3 variables
 Only one of the variables, <span class="math inline">\(z\)</span>, is completely observed.
 The other two variables, x$ and <span class="math inline">\(y\)</span>, have a non-overlapping pattern of missing data.</p>
-<pre class="sourceCode r"><code class="sourceCode r">multivarmissing &lt;-<span class="st"> </span><span class="kw">tribble</span>(
-  <span class="op">~</span>x, <span class="op">~</span>y, <span class="op">~</span>z,
-<span class="dv">1</span>,  <span class="ot">NA</span>, <span class="ot">NA</span>,
-<span class="dv">2</span>,  <span class="ot">NA</span>, <span class="dv">4</span>,
-<span class="dv">3</span>,  <span class="ot">NA</span>, <span class="dv">3</span>,
-<span class="dv">4</span>,  <span class="ot">NA</span>, <span class="dv">5</span>,
-<span class="dv">5</span>,  <span class="ot">NA</span>, <span class="dv">7</span>,
-<span class="ot">NA</span>, <span class="dv">7</span>,  <span class="dv">9</span>,
-<span class="ot">NA</span>, <span class="dv">8</span>,  <span class="dv">8</span>,
-<span class="ot">NA</span>, <span class="dv">9</span>,  <span class="dv">11</span>,
-<span class="ot">NA</span>, <span class="dv">8</span>,  <span class="dv">10</span>,
-<span class="ot">NA</span>, <span class="dv">9</span>,  <span class="dv">8</span>)</code></pre>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb173-1" data-line-number="1">multivarmissing &lt;-<span class="st"> </span><span class="kw">tribble</span>(</a>
+<a class="sourceLine" id="cb173-2" data-line-number="2">  <span class="op">~</span>x, <span class="op">~</span>y, <span class="op">~</span>z,</a>
+<a class="sourceLine" id="cb173-3" data-line-number="3"><span class="dv">1</span>,  <span class="ot">NA</span>, <span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb173-4" data-line-number="4"><span class="dv">2</span>,  <span class="ot">NA</span>, <span class="dv">4</span>,</a>
+<a class="sourceLine" id="cb173-5" data-line-number="5"><span class="dv">3</span>,  <span class="ot">NA</span>, <span class="dv">3</span>,</a>
+<a class="sourceLine" id="cb173-6" data-line-number="6"><span class="dv">4</span>,  <span class="ot">NA</span>, <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb173-7" data-line-number="7"><span class="dv">5</span>,  <span class="ot">NA</span>, <span class="dv">7</span>,</a>
+<a class="sourceLine" id="cb173-8" data-line-number="8"><span class="ot">NA</span>, <span class="dv">7</span>,  <span class="dv">9</span>,</a>
+<a class="sourceLine" id="cb173-9" data-line-number="9"><span class="ot">NA</span>, <span class="dv">8</span>,  <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb173-10" data-line-number="10"><span class="ot">NA</span>, <span class="dv">9</span>,  <span class="dv">11</span>,</a>
+<a class="sourceLine" id="cb173-11" data-line-number="11"><span class="ot">NA</span>, <span class="dv">8</span>,  <span class="dv">10</span>,</a>
+<a class="sourceLine" id="cb173-12" data-line-number="12"><span class="ot">NA</span>, <span class="dv">9</span>,  <span class="dv">8</span>)</a></code></pre></div>
 <p>The missing elements of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are parameters, and the observed elements of <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>, and <span class="math inline">\(z\)</span> are data.
 These are combined in the <code>transformed parameters</code> block, and modeled.</p>
 <div id="separate-regressions" class="section level2">
@@ -272,38 +272,38 @@ z_i &amp;\sim \mathsf{Normal}(\mu_z, \sigma_z)
 \end{aligned}
 \]</span>
 Note that this assumes that <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>, and <span class="math inline">\(z\)</span> are standardized to have zero mean and unit variance.</p>
-<pre class="sourceCode r"><code class="sourceCode r">data_multivarmissing &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(multivarmissing)
-  x_obs &lt;-<span class="st"> </span>multivarmissing<span class="op">$</span>x[<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>x)] <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()
-  x_obs_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>x)))
-  N_x_obs &lt;-<span class="st"> </span><span class="kw">length</span>(x_obs_idx)  
-  x_miss_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="kw">is.na</span>(multivarmissing<span class="op">$</span>x)))
-  N_x_miss &lt;-<span class="st"> </span><span class="kw">length</span>(x_miss_idx)
-  y_obs &lt;-<span class="st"> </span>multivarmissing<span class="op">$</span>y[<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>y)] <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()    
-  y_obs_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>y)))
-  N_y_obs &lt;-<span class="st"> </span><span class="kw">length</span>(y_obs_idx)  
-  y_miss_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="kw">is.na</span>(multivarmissing<span class="op">$</span>y)))
-  N_y_miss &lt;-<span class="st"> </span><span class="kw">length</span>(y_miss_idx)
-  z_obs &lt;-<span class="st"> </span>multivarmissing<span class="op">$</span>z[<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>z)] <span class="op">%&gt;%</span>
-<span class="st">    </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()
-  z_obs_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>z)))
-  N_z_obs &lt;-<span class="st"> </span><span class="kw">length</span>(z_obs_idx)
-  z_miss_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="kw">is.na</span>(multivarmissing<span class="op">$</span>z)))
-  N_z_miss &lt;-<span class="st"> </span><span class="kw">length</span>(z_miss_idx)
-  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
-  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">3</span>)
-  beta_scale &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="fl">2.5</span>, <span class="fl">2.5</span>)
-  gamma_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">2</span>)
-  gamma_scale &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="fl">2.5</span>)
-  sigma_x_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-  sigma_y_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-  sigma_z_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_multivarmissing &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/multivarmissing2.stan&quot;</span>)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_multivarmissing</code></pre>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb174-1" data-line-number="1">data_multivarmissing &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb174-2" data-line-number="2">  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(multivarmissing)</a>
+<a class="sourceLine" id="cb174-3" data-line-number="3">  x_obs &lt;-<span class="st"> </span>multivarmissing<span class="op">$</span>x[<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>x)] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb174-4" data-line-number="4"><span class="st">    </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()</a>
+<a class="sourceLine" id="cb174-5" data-line-number="5">  x_obs_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>x)))</a>
+<a class="sourceLine" id="cb174-6" data-line-number="6">  N_x_obs &lt;-<span class="st"> </span><span class="kw">length</span>(x_obs_idx)  </a>
+<a class="sourceLine" id="cb174-7" data-line-number="7">  x_miss_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="kw">is.na</span>(multivarmissing<span class="op">$</span>x)))</a>
+<a class="sourceLine" id="cb174-8" data-line-number="8">  N_x_miss &lt;-<span class="st"> </span><span class="kw">length</span>(x_miss_idx)</a>
+<a class="sourceLine" id="cb174-9" data-line-number="9">  y_obs &lt;-<span class="st"> </span>multivarmissing<span class="op">$</span>y[<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>y)] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb174-10" data-line-number="10"><span class="st">    </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()    </a>
+<a class="sourceLine" id="cb174-11" data-line-number="11">  y_obs_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>y)))</a>
+<a class="sourceLine" id="cb174-12" data-line-number="12">  N_y_obs &lt;-<span class="st"> </span><span class="kw">length</span>(y_obs_idx)  </a>
+<a class="sourceLine" id="cb174-13" data-line-number="13">  y_miss_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="kw">is.na</span>(multivarmissing<span class="op">$</span>y)))</a>
+<a class="sourceLine" id="cb174-14" data-line-number="14">  N_y_miss &lt;-<span class="st"> </span><span class="kw">length</span>(y_miss_idx)</a>
+<a class="sourceLine" id="cb174-15" data-line-number="15">  z_obs &lt;-<span class="st"> </span>multivarmissing<span class="op">$</span>z[<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>z)] <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb174-16" data-line-number="16"><span class="st">    </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()</a>
+<a class="sourceLine" id="cb174-17" data-line-number="17">  z_obs_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="op">!</span><span class="kw">is.na</span>(multivarmissing<span class="op">$</span>z)))</a>
+<a class="sourceLine" id="cb174-18" data-line-number="18">  N_z_obs &lt;-<span class="st"> </span><span class="kw">length</span>(z_obs_idx)</a>
+<a class="sourceLine" id="cb174-19" data-line-number="19">  z_miss_idx &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">which</span>(<span class="kw">is.na</span>(multivarmissing<span class="op">$</span>z)))</a>
+<a class="sourceLine" id="cb174-20" data-line-number="20">  N_z_miss &lt;-<span class="st"> </span><span class="kw">length</span>(z_miss_idx)</a>
+<a class="sourceLine" id="cb174-21" data-line-number="21">  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb174-22" data-line-number="22">  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb174-23" data-line-number="23">  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb174-24" data-line-number="24">  beta_scale &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="fl">2.5</span>, <span class="fl">2.5</span>)</a>
+<a class="sourceLine" id="cb174-25" data-line-number="25">  gamma_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb174-26" data-line-number="26">  gamma_scale &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="fl">2.5</span>)</a>
+<a class="sourceLine" id="cb174-27" data-line-number="27">  sigma_x_scale &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb174-28" data-line-number="28">  sigma_y_scale &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb174-29" data-line-number="29">  sigma_z_scale &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb174-30" data-line-number="30">})</a></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb175-1" data-line-number="1">mod_multivarmissing &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/multivarmissing2.stan&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" data-line-number="1">mod_multivarmissing</a></code></pre></div>
 <pre>
   <code class="stan">data {
   // number of obs
@@ -347,46 +347,46 @@ model {
   }
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">fit_multivarmissing &lt;-
-<span class="st">  </span><span class="kw">sampling</span>(mod_multivarmissing, <span class="dt">data =</span> data_multivarmissing)
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name K is not numeric and not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_obs is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_row is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_col is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_miss is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_row is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_col is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name Sigma_scale_scale is not</span>
-<span class="co">#&gt; numeric and not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name Sigma_corr_L_eta is not numeric</span>
-<span class="co">#&gt; and not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name mu_loc is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name mu_scale is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; failed to create the sampler; sampling not done</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">fit_multivarmissing
-<span class="co">#&gt; Stan model &#39;multivarmissing2&#39; does not contain samples.</span></code></pre>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb177-1" data-line-number="1">fit_multivarmissing &lt;-</a>
+<a class="sourceLine" id="cb177-2" data-line-number="2"><span class="st">  </span><span class="kw">sampling</span>(mod_multivarmissing, <span class="dt">data =</span> data_multivarmissing)</a>
+<a class="sourceLine" id="cb177-3" data-line-number="3"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-4" data-line-number="4"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name K is not numeric and not used</span></a>
+<a class="sourceLine" id="cb177-5" data-line-number="5"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-6" data-line-number="6"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_obs is not numeric and not</span></a>
+<a class="sourceLine" id="cb177-7" data-line-number="7"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb177-8" data-line-number="8"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-9" data-line-number="9"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs is not numeric and not</span></a>
+<a class="sourceLine" id="cb177-10" data-line-number="10"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb177-11" data-line-number="11"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-12" data-line-number="12"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_row is not numeric and</span></a>
+<a class="sourceLine" id="cb177-13" data-line-number="13"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb177-14" data-line-number="14"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-15" data-line-number="15"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_col is not numeric and</span></a>
+<a class="sourceLine" id="cb177-16" data-line-number="16"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb177-17" data-line-number="17"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-18" data-line-number="18"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_miss is not numeric and not</span></a>
+<a class="sourceLine" id="cb177-19" data-line-number="19"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb177-20" data-line-number="20"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-21" data-line-number="21"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_row is not numeric and</span></a>
+<a class="sourceLine" id="cb177-22" data-line-number="22"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb177-23" data-line-number="23"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-24" data-line-number="24"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_col is not numeric and</span></a>
+<a class="sourceLine" id="cb177-25" data-line-number="25"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb177-26" data-line-number="26"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-27" data-line-number="27"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name Sigma_scale_scale is not</span></a>
+<a class="sourceLine" id="cb177-28" data-line-number="28"><span class="co">#&gt; numeric and not used</span></a>
+<a class="sourceLine" id="cb177-29" data-line-number="29"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-30" data-line-number="30"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name Sigma_corr_L_eta is not numeric</span></a>
+<a class="sourceLine" id="cb177-31" data-line-number="31"><span class="co">#&gt; and not used</span></a>
+<a class="sourceLine" id="cb177-32" data-line-number="32"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-33" data-line-number="33"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name mu_loc is not numeric and not</span></a>
+<a class="sourceLine" id="cb177-34" data-line-number="34"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb177-35" data-line-number="35"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb177-36" data-line-number="36"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name mu_scale is not numeric and not</span></a>
+<a class="sourceLine" id="cb177-37" data-line-number="37"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb177-38" data-line-number="38"><span class="co">#&gt; failed to create the sampler; sampling not done</span></a></code></pre></div>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb178-1" data-line-number="1">fit_multivarmissing</a>
+<a class="sourceLine" id="cb178-2" data-line-number="2"><span class="co">#&gt; Stan model &#39;multivarmissing2&#39; does not contain samples.</span></a></code></pre></div>
 </div>
 <div id="multivariate-normal" class="section level2">
 <h2><span class="header-section-number">21.2</span> Multivariate Normal</h2>
@@ -408,16 +408,16 @@ where <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\
 R &amp;\sim \mathsf{LkjCorr}(2) .
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">data_multivarmissing2 &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(multivarmissing)
-  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(multivarmissing)
-  mu_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">3</span>)
-  mu_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">10</span>)
-  Sigma_scale_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-  Sigma_corr_L_eta &lt;-<span class="st"> </span><span class="dv">2</span>
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_multivarmissing2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/multivarmissing2.stan&quot;</span>)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_multivarmissing2</code></pre>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb179-1" data-line-number="1">data_multivarmissing2 &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb179-2" data-line-number="2">  N &lt;-<span class="st"> </span><span class="kw">nrow</span>(multivarmissing)</a>
+<a class="sourceLine" id="cb179-3" data-line-number="3">  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(multivarmissing)</a>
+<a class="sourceLine" id="cb179-4" data-line-number="4">  mu_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb179-5" data-line-number="5">  mu_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb179-6" data-line-number="6">  Sigma_scale_scale &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb179-7" data-line-number="7">  Sigma_corr_L_eta &lt;-<span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb179-8" data-line-number="8">})</a></code></pre></div>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb180-1" data-line-number="1">mod_multivarmissing2 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/multivarmissing2.stan&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb181-1" data-line-number="1">mod_multivarmissing2</a></code></pre></div>
 <pre>
   <code class="stan">data {
   // number of obs
@@ -461,32 +461,32 @@ model {
   }
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">fit_multivarmissing &lt;-
-<span class="st">  </span><span class="kw">sampling</span>(mod_multivarmissing2, <span class="dt">data =</span> data_multivarmissing2)
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_obs is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_row is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_col is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_miss is not numeric and not</span>
-<span class="co">#&gt; used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_row is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span>
-<span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_col is not numeric and</span>
-<span class="co">#&gt; not used</span>
-<span class="co">#&gt; failed to create the sampler; sampling not done</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">fit_multivarmissing
-<span class="co">#&gt; Stan model &#39;multivarmissing2&#39; does not contain samples.</span></code></pre>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb182-1" data-line-number="1">fit_multivarmissing &lt;-</a>
+<a class="sourceLine" id="cb182-2" data-line-number="2"><span class="st">  </span><span class="kw">sampling</span>(mod_multivarmissing2, <span class="dt">data =</span> data_multivarmissing2)</a>
+<a class="sourceLine" id="cb182-3" data-line-number="3"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb182-4" data-line-number="4"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_obs is not numeric and not</span></a>
+<a class="sourceLine" id="cb182-5" data-line-number="5"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb182-6" data-line-number="6"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb182-7" data-line-number="7"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs is not numeric and not</span></a>
+<a class="sourceLine" id="cb182-8" data-line-number="8"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb182-9" data-line-number="9"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb182-10" data-line-number="10"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_row is not numeric and</span></a>
+<a class="sourceLine" id="cb182-11" data-line-number="11"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb182-12" data-line-number="12"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb182-13" data-line-number="13"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_obs_col is not numeric and</span></a>
+<a class="sourceLine" id="cb182-14" data-line-number="14"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb182-15" data-line-number="15"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb182-16" data-line-number="16"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name N_miss is not numeric and not</span></a>
+<a class="sourceLine" id="cb182-17" data-line-number="17"><span class="co">#&gt; used</span></a>
+<a class="sourceLine" id="cb182-18" data-line-number="18"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb182-19" data-line-number="19"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_row is not numeric and</span></a>
+<a class="sourceLine" id="cb182-20" data-line-number="20"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb182-21" data-line-number="21"><span class="co">#&gt; Warning in is.na(x): is.na() applied to non-(list or vector) of type &#39;NULL&#39;</span></a>
+<a class="sourceLine" id="cb182-22" data-line-number="22"><span class="co">#&gt; Warning in FUN(X[[i]], ...): data with name X_miss_col is not numeric and</span></a>
+<a class="sourceLine" id="cb182-23" data-line-number="23"><span class="co">#&gt; not used</span></a>
+<a class="sourceLine" id="cb182-24" data-line-number="24"><span class="co">#&gt; failed to create the sampler; sampling not done</span></a></code></pre></div>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb183-1" data-line-number="1">fit_multivarmissing</a>
+<a class="sourceLine" id="cb183-2" data-line-number="2"><span class="co">#&gt; Stan model &#39;multivarmissing2&#39; does not contain samples.</span></a></code></pre></div>
 
 </div>
 </div>

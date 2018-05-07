@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,8 +227,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="genbeetles" class="section level1">
 <h1><span class="header-section-number">19</span> Generalized Beetles: Generalizing Link Functions for Binomial GLMs</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb159-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a>
+<a class="sourceLine" id="cb159-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a></code></pre></div>
 <p>GLMs rely on link functions, linking the linear predictors and the response probability, <span class="math inline">\(\pi\)</span>.<a href="#fn16" class="footnote-ref" id="fnref16"><sup>16</sup></a>
 Logit and probit are perhaps the most familiar link functions, mapping from the unit probability interval to the real line using the inverse CDFs of the logistic and standard Normal distributions, respectively.
 The logit and probit link functions have the interesting property that they are symmetric
@@ -272,7 +272,7 @@ The regression coefficients are given weakly informative priors,
 \beta &amp;\sim N(0, 2.5) .
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">genbeetles_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/genbeetles.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb160-1" data-line-number="1">genbeetles_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/genbeetles.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   int N;
@@ -310,72 +310,72 @@ beetles data of <span class="citation">Bliss (<a href="#ref-Bliss1935a">1935</a>
 statisticians in studies generalized link functions <span class="citation">(Prentice <a href="#ref-Prentice1976a">1976</a>; Stukel <a href="#ref-Stukel1988a">1988</a>)</span>, and are used by <span class="citation">Spiegelhalter, Best, and Gilks (<a href="#ref-SpiegelhalterBestGilks1996a">1996</a>)</span> to demonstrate how
 BUGS handles GLMs for binomial data. <span class="citation">Carlin and Louis (<a href="#ref-CarlinLouis2000a">2000</a>)</span> use these data in an
 MCMC implementation of the one-parameter generalization used here.</p>
-<p>These data are included with the **VGAM“** package as <code>flourbeetle</code>:</p>
-<pre class="sourceCode r"><code class="sourceCode r">(<span class="kw">data</span>(<span class="st">&quot;flourbeetle&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;VGAM&quot;</span>))
-<span class="co">#&gt; [1] &quot;flourbeetle&quot;</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">genbeetles_data &lt;-
-<span class="st">  </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-    r &lt;-<span class="st"> </span>flourbeetle<span class="op">$</span>killed
-    N &lt;-<span class="st"> </span><span class="kw">length</span>(r)
-    n &lt;-<span class="st"> </span>flourbeetle<span class="op">$</span>exposed
-    x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(flourbeetle<span class="op">$</span>logdose) <span class="op">%&gt;%</span>
-<span class="st">      </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()
-  })</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">genbeetles_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(genbeetles_mod, <span class="dt">data =</span> genbeetles_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">genbeetles_fit
-<span class="co">#&gt; Inference for Stan model: genbeetles.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;          mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff</span>
-<span class="co">#&gt; alpha   -1.37    0.04 0.93   -3.50   -1.90   -1.28   -0.74    0.26   688</span>
-<span class="co">#&gt; beta     4.08    0.03 0.92    2.58    3.44    3.98    4.62    6.20   693</span>
-<span class="co">#&gt; nu       0.34    0.01 0.14    0.16    0.25    0.31    0.40    0.68   626</span>
-<span class="co">#&gt; mu[1]    0.10    0.00 0.03    0.06    0.08    0.10    0.12    0.16  1461</span>
-<span class="co">#&gt; mu[2]    0.19    0.00 0.03    0.13    0.17    0.19    0.21    0.25  2701</span>
-<span class="co">#&gt; mu[3]    0.33    0.00 0.03    0.27    0.31    0.33    0.35    0.39  4000</span>
-<span class="co">#&gt; mu[4]    0.54    0.00 0.04    0.47    0.51    0.54    0.57    0.62  1485</span>
-<span class="co">#&gt; mu[5]    0.77    0.00 0.03    0.70    0.75    0.77    0.80    0.84  1697</span>
-<span class="co">#&gt; mu[6]    0.92    0.00 0.02    0.88    0.91    0.92    0.94    0.96  2481</span>
-<span class="co">#&gt; mu[7]    0.98    0.00 0.01    0.95    0.97    0.98    0.99    0.99  1151</span>
-<span class="co">#&gt; mu[8]    0.99    0.00 0.01    0.98    0.99    0.99    1.00    1.00   903</span>
-<span class="co">#&gt; pdot     0.84    0.00 0.04    0.76    0.81    0.84    0.87    0.91   661</span>
-<span class="co">#&gt; lp__  -185.46    0.05 1.29 -188.70 -186.09 -185.12 -184.51 -183.99   739</span>
-<span class="co">#&gt;       Rhat</span>
-<span class="co">#&gt; alpha    1</span>
-<span class="co">#&gt; beta     1</span>
-<span class="co">#&gt; nu       1</span>
-<span class="co">#&gt; mu[1]    1</span>
-<span class="co">#&gt; mu[2]    1</span>
-<span class="co">#&gt; mu[3]    1</span>
-<span class="co">#&gt; mu[4]    1</span>
-<span class="co">#&gt; mu[5]    1</span>
-<span class="co">#&gt; mu[6]    1</span>
-<span class="co">#&gt; mu[7]    1</span>
-<span class="co">#&gt; mu[8]    1</span>
-<span class="co">#&gt; pdot     1</span>
-<span class="co">#&gt; lp__     1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:25:19 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<p>These data are included with the <strong>VGAM&quot;</strong> package as <code>flourbeetle</code>:</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb161-1" data-line-number="1">(<span class="kw">data</span>(<span class="st">&quot;flourbeetle&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;VGAM&quot;</span>))</a>
+<a class="sourceLine" id="cb161-2" data-line-number="2"><span class="co">#&gt; [1] &quot;flourbeetle&quot;</span></a></code></pre></div>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" data-line-number="1">genbeetles_data &lt;-</a>
+<a class="sourceLine" id="cb162-2" data-line-number="2"><span class="st">  </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb162-3" data-line-number="3">    r &lt;-<span class="st"> </span>flourbeetle<span class="op">$</span>killed</a>
+<a class="sourceLine" id="cb162-4" data-line-number="4">    N &lt;-<span class="st"> </span><span class="kw">length</span>(r)</a>
+<a class="sourceLine" id="cb162-5" data-line-number="5">    n &lt;-<span class="st"> </span>flourbeetle<span class="op">$</span>exposed</a>
+<a class="sourceLine" id="cb162-6" data-line-number="6">    x &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(flourbeetle<span class="op">$</span>logdose) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb162-7" data-line-number="7"><span class="st">      </span><span class="kw">scale</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.numeric</span>()</a>
+<a class="sourceLine" id="cb162-8" data-line-number="8">  })</a></code></pre></div>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb163-1" data-line-number="1">genbeetles_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(genbeetles_mod, <span class="dt">data =</span> genbeetles_data)</a></code></pre></div>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" data-line-number="1">genbeetles_fit</a>
+<a class="sourceLine" id="cb164-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: genbeetles.</span></a>
+<a class="sourceLine" id="cb164-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb164-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb164-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb164-6" data-line-number="6"><span class="co">#&gt;          mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff</span></a>
+<a class="sourceLine" id="cb164-7" data-line-number="7"><span class="co">#&gt; alpha   -1.37    0.04 0.93   -3.50   -1.90   -1.28   -0.74    0.26   688</span></a>
+<a class="sourceLine" id="cb164-8" data-line-number="8"><span class="co">#&gt; beta     4.08    0.03 0.92    2.58    3.44    3.98    4.62    6.20   693</span></a>
+<a class="sourceLine" id="cb164-9" data-line-number="9"><span class="co">#&gt; nu       0.34    0.01 0.14    0.16    0.25    0.31    0.40    0.68   626</span></a>
+<a class="sourceLine" id="cb164-10" data-line-number="10"><span class="co">#&gt; mu[1]    0.10    0.00 0.03    0.06    0.08    0.10    0.12    0.16  1461</span></a>
+<a class="sourceLine" id="cb164-11" data-line-number="11"><span class="co">#&gt; mu[2]    0.19    0.00 0.03    0.13    0.17    0.19    0.21    0.25  2701</span></a>
+<a class="sourceLine" id="cb164-12" data-line-number="12"><span class="co">#&gt; mu[3]    0.33    0.00 0.03    0.27    0.31    0.33    0.35    0.39  4000</span></a>
+<a class="sourceLine" id="cb164-13" data-line-number="13"><span class="co">#&gt; mu[4]    0.54    0.00 0.04    0.47    0.51    0.54    0.57    0.62  1485</span></a>
+<a class="sourceLine" id="cb164-14" data-line-number="14"><span class="co">#&gt; mu[5]    0.77    0.00 0.03    0.70    0.75    0.77    0.80    0.84  1697</span></a>
+<a class="sourceLine" id="cb164-15" data-line-number="15"><span class="co">#&gt; mu[6]    0.92    0.00 0.02    0.88    0.91    0.92    0.94    0.96  2481</span></a>
+<a class="sourceLine" id="cb164-16" data-line-number="16"><span class="co">#&gt; mu[7]    0.98    0.00 0.01    0.95    0.97    0.98    0.99    0.99  1151</span></a>
+<a class="sourceLine" id="cb164-17" data-line-number="17"><span class="co">#&gt; mu[8]    0.99    0.00 0.01    0.98    0.99    0.99    1.00    1.00   903</span></a>
+<a class="sourceLine" id="cb164-18" data-line-number="18"><span class="co">#&gt; pdot     0.84    0.00 0.04    0.76    0.81    0.84    0.87    0.91   661</span></a>
+<a class="sourceLine" id="cb164-19" data-line-number="19"><span class="co">#&gt; lp__  -185.46    0.05 1.29 -188.70 -186.09 -185.12 -184.51 -183.99   739</span></a>
+<a class="sourceLine" id="cb164-20" data-line-number="20"><span class="co">#&gt;       Rhat</span></a>
+<a class="sourceLine" id="cb164-21" data-line-number="21"><span class="co">#&gt; alpha    1</span></a>
+<a class="sourceLine" id="cb164-22" data-line-number="22"><span class="co">#&gt; beta     1</span></a>
+<a class="sourceLine" id="cb164-23" data-line-number="23"><span class="co">#&gt; nu       1</span></a>
+<a class="sourceLine" id="cb164-24" data-line-number="24"><span class="co">#&gt; mu[1]    1</span></a>
+<a class="sourceLine" id="cb164-25" data-line-number="25"><span class="co">#&gt; mu[2]    1</span></a>
+<a class="sourceLine" id="cb164-26" data-line-number="26"><span class="co">#&gt; mu[3]    1</span></a>
+<a class="sourceLine" id="cb164-27" data-line-number="27"><span class="co">#&gt; mu[4]    1</span></a>
+<a class="sourceLine" id="cb164-28" data-line-number="28"><span class="co">#&gt; mu[5]    1</span></a>
+<a class="sourceLine" id="cb164-29" data-line-number="29"><span class="co">#&gt; mu[6]    1</span></a>
+<a class="sourceLine" id="cb164-30" data-line-number="30"><span class="co">#&gt; mu[7]    1</span></a>
+<a class="sourceLine" id="cb164-31" data-line-number="31"><span class="co">#&gt; mu[8]    1</span></a>
+<a class="sourceLine" id="cb164-32" data-line-number="32"><span class="co">#&gt; pdot     1</span></a>
+<a class="sourceLine" id="cb164-33" data-line-number="33"><span class="co">#&gt; lp__     1</span></a>
+<a class="sourceLine" id="cb164-34" data-line-number="34"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb164-35" data-line-number="35"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 01:25:19 2018.</span></a>
+<a class="sourceLine" id="cb164-36" data-line-number="36"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb164-37" data-line-number="37"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb164-38" data-line-number="38"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 
 </div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-Nagler1994a">
-<p>Nagler, Jonathan. 1994. “Scobit: An Alternative Estimator to Logit and Probit.” <em>American Journal of Political Science</em> 38 (1). [Midwest Political Science Association, Wiley]:230–55. <a href="http://www.jstor.org/stable/2111343" class="uri">http://www.jstor.org/stable/2111343</a>.</p>
+<p>Nagler, Jonathan. 1994. “Scobit: An Alternative Estimator to Logit and Probit.” <em>American Journal of Political Science</em> 38 (1). [Midwest Political Science Association, Wiley]: 230–55. <a href="http://www.jstor.org/stable/2111343" class="uri">http://www.jstor.org/stable/2111343</a>.</p>
 </div>
 <div id="ref-Prentice1976a">
-<p>Prentice, Ross L. 1976. “A Generalization of the Probit and Logit Methods for Dose Response Curves.” <em>Biometrics</em> 32 (4). [Wiley, International Biometric Society]:761–68. <a href="http://www.jstor.org/stable/2529262" class="uri">http://www.jstor.org/stable/2529262</a>.</p>
+<p>Prentice, Ross L. 1976. “A Generalization of the Probit and Logit Methods for Dose Response Curves.” <em>Biometrics</em> 32 (4). [Wiley, International Biometric Society]: 761–68. <a href="http://www.jstor.org/stable/2529262" class="uri">http://www.jstor.org/stable/2529262</a>.</p>
 </div>
 <div id="ref-Bliss1935a">
-<p>Bliss, C. I. 1935. “The Calculation of the Dosage-Mortality Curve.” <em>Annals of Applied Biology</em> 22 (1). Wiley-Blackwell:134–67. <a href="https://doi.org/10.1111/j.1744-7348.1935.tb07713.x" class="uri">https://doi.org/10.1111/j.1744-7348.1935.tb07713.x</a>.</p>
+<p>Bliss, C. I. 1935. “The Calculation of the Dosage-Mortality Curve.” <em>Annals of Applied Biology</em> 22 (1). Wiley-Blackwell: 134–67. <a href="https://doi.org/10.1111/j.1744-7348.1935.tb07713.x" class="uri">https://doi.org/10.1111/j.1744-7348.1935.tb07713.x</a>.</p>
 </div>
 <div id="ref-Stukel1988a">
-<p>Stukel, Therese A. 1988. “Generalized Logistic Models.” <em>Journal of the American Statistical Association</em> 83 (402). [American Statistical Association, Taylor &amp; Francis, Ltd.]:426–31. <a href="http://www.jstor.org/stable/2288858" class="uri">http://www.jstor.org/stable/2288858</a>.</p>
+<p>Stukel, Therese A. 1988. “Generalized Logistic Models.” <em>Journal of the American Statistical Association</em> 83 (402). [American Statistical Association, Taylor &amp; Francis, Ltd.]: 426–31. <a href="http://www.jstor.org/stable/2288858" class="uri">http://www.jstor.org/stable/2288858</a>.</p>
 </div>
 <div id="ref-SpiegelhalterBestGilks1996a">
 <p>Spiegelhalter, D. J., A. Thomas N. Best, and W. R. Gilks. 1996. “BUGS: Bayesian Inference Using Gibbs Sampling, Version 0.5.”</p>

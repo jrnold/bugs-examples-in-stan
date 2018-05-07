@@ -155,9 +155,9 @@ summary(resistant_fit, par = c("nu", "sigma", "beta", "tau"))$summary
 #> tau      1.31e+308  1.74e+308 4000.0  NaN
 ```
 
-## Reparaterization: standard deviation instead of scale
+## Reparameterization: standard deviation instead of scale
 
-In the Student's $t$ distribution, the standard deviation is a function of the degrees of freedom. 
+In the Student's $t$ distribution, the standard deviation is a function of the degrees of freedom.
 For degrees of freedom $\nu > 2$, the variance is defined, and
 $$
 \sigma^{*} = sd(y) = \sigma \sqrt{ \frac{\nu}{\nu - 2}}

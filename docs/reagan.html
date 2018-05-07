@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,8 +227,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="reagan" class="section level1">
 <h1><span class="header-section-number">7</span> Reagan: linear regression with AR(1) disturbances</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb51-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>Ninety-six monthly observations on presidential job approval ratings for Ronald Reagan are modeled via linear regression, with a correction for first-order serial correlation among the disturbances.<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a>
 Note the marginal model for the first observation, and the conditioning on the lagged observation for months 2 through 96.
 A uniform prior over the stationary (-1,1) interval is employed for the residual AR(1) parameter.</p>
@@ -250,275 +250,275 @@ Weakly informative priors for each parameter are used,
 \theta^{*} &amp;\sim \mathsf{Beta}(1, 1)  .
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;ReaganApproval&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)
-ReaganApproval
-<span class="co">#&gt; # A tibble: 96 x 3</span>
-<span class="co">#&gt;     app  infl unemp</span>
-<span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt; 1   51. 11.8   7.50</span>
-<span class="co">#&gt; 2   55. 11.4   7.40</span>
-<span class="co">#&gt; 3   60. 10.6   7.40</span>
-<span class="co">#&gt; 4   67. 10.1   7.20</span>
-<span class="co">#&gt; 5   68.  9.79  7.50</span>
-<span class="co">#&gt; 6   59.  9.70  7.50</span>
-<span class="co">#&gt; # ... with 90 more rows</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">reagan_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y &lt;-<span class="st"> </span>ReaganApproval<span class="op">$</span>app
-  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)
-  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>infl <span class="op">+</span><span class="st"> </span>unemp, <span class="dt">data =</span> ReaganApproval) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()
-  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)
-  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span>
-  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)
-  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y), K)
-  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)
-  theta_a &lt;-<span class="st"> </span><span class="dv">1</span>
-  theta_b &lt;-<span class="st"> </span><span class="dv">1</span>
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_regar1 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/regar1.stan&quot;</span>)
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/config.hpp:13:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/config.hpp:39:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/config/compiler/clang.hpp:200:11: warning: &#39;BOOST_NO_CXX11_RVALUE_REFERENCES&#39; macro redefined [-Wmacro-redefined]</span>
-<span class="co">#&gt; #  define BOOST_NO_CXX11_RVALUE_REFERENCES</span>
-<span class="co">#&gt;           ^</span>
-<span class="co">#&gt; &lt;command line&gt;:6:9: note: previous definition is here</span>
-<span class="co">#&gt; #define BOOST_NO_CXX11_RVALUE_REFERENCES 1</span>
-<span class="co">#&gt;         ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:1:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Core:531:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:2:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/LU:47:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Jacobi:29:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:43:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/QR:17:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Householder:27:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:5:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SVD:48:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Geometry:58:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:7:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Eigenvalues:58:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:36:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/operator_unary_plus.hpp:7:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/scal/fun/constants.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/constants/constants.hpp:13:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/convert_from_string.hpp:15:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast.hpp:32:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/try_lexical_convert.hpp:42:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/detail/converter_lexical.hpp:52:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/container_fwd.hpp:61:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/detail/std_fwd.hpp:27:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span>
-<span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span>
-<span class="co">#&gt; ^</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span>
-<span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span>
-<span class="co">#&gt;                                  ^</span>
-<span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span>
-<span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span>
-<span class="co">#&gt;                                                    ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:26:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCore:66:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:27:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/OrderingMethods:71:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:29:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCholesky:43:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:32:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseQR:35:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:33:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/IterativeLinearSolvers:46:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:686:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/rstaninc.hpp:3:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/stan_fit.hpp:36:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/services/optimize/bfgs.hpp:11:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/bfgs.hpp:9:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/lbfgs_update.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer.hpp:54:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer/details.hpp:20:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/move.hpp:30:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/iterator.hpp:27:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/iterator_traits.hpp:29:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span>
-<span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span>
-<span class="co">#&gt; ^</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span>
-<span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span>
-<span class="co">#&gt;                                  ^</span>
-<span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span>
-<span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span>
-<span class="co">#&gt;                                                    ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:44:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function &#39;set_zero_all_adjoints&#39; [-Wunused-function]</span>
-<span class="co">#&gt;     static void set_zero_all_adjoints() {</span>
-<span class="co">#&gt;                 ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:45:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: &#39;static&#39; function &#39;set_zero_all_adjoints_nested&#39; declared in header file should be declared &#39;static inline&#39; [-Wunneeded-internal-declaration]</span>
-<span class="co">#&gt;     static void set_zero_all_adjoints_nested() {</span>
-<span class="co">#&gt;                 ^</span>
-<span class="co">#&gt; In file included from filed1046087152.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:58:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/autocorrelation.hpp:17:14: warning: function &#39;fft_next_good_size&#39; is not needed and will not be emitted [-Wunneeded-internal-declaration]</span>
-<span class="co">#&gt;       size_t fft_next_good_size(size_t N) {</span>
-<span class="co">#&gt;              ^</span>
-<span class="co">#&gt; 19 warnings generated.</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_regar1</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;ReaganApproval&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</a>
+<a class="sourceLine" id="cb52-2" data-line-number="2">ReaganApproval</a>
+<a class="sourceLine" id="cb52-3" data-line-number="3"><span class="co">#&gt; # A tibble: 96 x 3</span></a>
+<a class="sourceLine" id="cb52-4" data-line-number="4"><span class="co">#&gt;     app  infl unemp</span></a>
+<a class="sourceLine" id="cb52-5" data-line-number="5"><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb52-6" data-line-number="6"><span class="co">#&gt; 1   51. 11.8   7.50</span></a>
+<a class="sourceLine" id="cb52-7" data-line-number="7"><span class="co">#&gt; 2   55. 11.4   7.40</span></a>
+<a class="sourceLine" id="cb52-8" data-line-number="8"><span class="co">#&gt; 3   60. 10.6   7.40</span></a>
+<a class="sourceLine" id="cb52-9" data-line-number="9"><span class="co">#&gt; 4   67. 10.1   7.20</span></a>
+<a class="sourceLine" id="cb52-10" data-line-number="10"><span class="co">#&gt; 5   68.  9.79  7.50</span></a>
+<a class="sourceLine" id="cb52-11" data-line-number="11"><span class="co">#&gt; 6   59.  9.70  7.50</span></a>
+<a class="sourceLine" id="cb52-12" data-line-number="12"><span class="co">#&gt; # ... with 90 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1">reagan_data &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb53-2" data-line-number="2">  y &lt;-<span class="st"> </span>ReaganApproval<span class="op">$</span>app</a>
+<a class="sourceLine" id="cb53-3" data-line-number="3">  N &lt;-<span class="st"> </span><span class="kw">length</span>(y)</a>
+<a class="sourceLine" id="cb53-4" data-line-number="4">  X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>infl <span class="op">+</span><span class="st"> </span>unemp, <span class="dt">data =</span> ReaganApproval) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">scale</span>()</a>
+<a class="sourceLine" id="cb53-5" data-line-number="5">  K &lt;-<span class="st"> </span><span class="kw">ncol</span>(X)</a>
+<a class="sourceLine" id="cb53-6" data-line-number="6">  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb53-7" data-line-number="7">  alpha_scale &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb53-8" data-line-number="8">  beta_loc &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>, K)</a>
+<a class="sourceLine" id="cb53-9" data-line-number="9">  beta_scale &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y), K)</a>
+<a class="sourceLine" id="cb53-10" data-line-number="10">  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span><span class="kw">sd</span>(y)</a>
+<a class="sourceLine" id="cb53-11" data-line-number="11">  theta_a &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb53-12" data-line-number="12">  theta_b &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb53-13" data-line-number="13">})</a></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">mod_regar1 &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/regar1.stan&quot;</span>)</a>
+<a class="sourceLine" id="cb54-2" data-line-number="2"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-3" data-line-number="3"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-4" data-line-number="4"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-5" data-line-number="5"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-6" data-line-number="6"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:12:</span></a>
+<a class="sourceLine" id="cb54-7" data-line-number="7"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:</span></a>
+<a class="sourceLine" id="cb54-8" data-line-number="8"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:</span></a>
+<a class="sourceLine" id="cb54-9" data-line-number="9"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/config.hpp:13:</span></a>
+<a class="sourceLine" id="cb54-10" data-line-number="10"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/config.hpp:39:</span></a>
+<a class="sourceLine" id="cb54-11" data-line-number="11"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/config/compiler/clang.hpp:200:11: warning: &#39;BOOST_NO_CXX11_RVALUE_REFERENCES&#39; macro redefined [-Wmacro-redefined]</span></a>
+<a class="sourceLine" id="cb54-12" data-line-number="12"><span class="co">#&gt; #  define BOOST_NO_CXX11_RVALUE_REFERENCES</span></a>
+<a class="sourceLine" id="cb54-13" data-line-number="13"><span class="co">#&gt;           ^</span></a>
+<a class="sourceLine" id="cb54-14" data-line-number="14"><span class="co">#&gt; &lt;command line&gt;:6:9: note: previous definition is here</span></a>
+<a class="sourceLine" id="cb54-15" data-line-number="15"><span class="co">#&gt; #define BOOST_NO_CXX11_RVALUE_REFERENCES 1</span></a>
+<a class="sourceLine" id="cb54-16" data-line-number="16"><span class="co">#&gt;         ^</span></a>
+<a class="sourceLine" id="cb54-17" data-line-number="17"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-18" data-line-number="18"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-19" data-line-number="19"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-20" data-line-number="20"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-21" data-line-number="21"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-22" data-line-number="22"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-23" data-line-number="23"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-24" data-line-number="24"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-25" data-line-number="25"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:1:</span></a>
+<a class="sourceLine" id="cb54-26" data-line-number="26"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Core:531:</span></a>
+<a class="sourceLine" id="cb54-27" data-line-number="27"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-28" data-line-number="28"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-29" data-line-number="29"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-30" data-line-number="30"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-31" data-line-number="31"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-32" data-line-number="32"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-33" data-line-number="33"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-34" data-line-number="34"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-35" data-line-number="35"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-36" data-line-number="36"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-37" data-line-number="37"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-38" data-line-number="38"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:2:</span></a>
+<a class="sourceLine" id="cb54-39" data-line-number="39"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/LU:47:</span></a>
+<a class="sourceLine" id="cb54-40" data-line-number="40"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-41" data-line-number="41"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-42" data-line-number="42"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-43" data-line-number="43"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-44" data-line-number="44"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-45" data-line-number="45"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-46" data-line-number="46"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-47" data-line-number="47"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-48" data-line-number="48"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-49" data-line-number="49"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-50" data-line-number="50"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-51" data-line-number="51"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span></a>
+<a class="sourceLine" id="cb54-52" data-line-number="52"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:12:</span></a>
+<a class="sourceLine" id="cb54-53" data-line-number="53"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Jacobi:29:</span></a>
+<a class="sourceLine" id="cb54-54" data-line-number="54"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-55" data-line-number="55"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-56" data-line-number="56"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-57" data-line-number="57"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-58" data-line-number="58"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-59" data-line-number="59"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-60" data-line-number="60"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-61" data-line-number="61"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-62" data-line-number="62"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-63" data-line-number="63"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-64" data-line-number="64"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-65" data-line-number="65"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span></a>
+<a class="sourceLine" id="cb54-66" data-line-number="66"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:43:</span></a>
+<a class="sourceLine" id="cb54-67" data-line-number="67"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-68" data-line-number="68"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-69" data-line-number="69"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-70" data-line-number="70"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-71" data-line-number="71"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-72" data-line-number="72"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-73" data-line-number="73"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-74" data-line-number="74"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-75" data-line-number="75"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-76" data-line-number="76"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-77" data-line-number="77"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-78" data-line-number="78"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:4:</span></a>
+<a class="sourceLine" id="cb54-79" data-line-number="79"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/QR:17:</span></a>
+<a class="sourceLine" id="cb54-80" data-line-number="80"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Householder:27:</span></a>
+<a class="sourceLine" id="cb54-81" data-line-number="81"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-82" data-line-number="82"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-83" data-line-number="83"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-84" data-line-number="84"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-85" data-line-number="85"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-86" data-line-number="86"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-87" data-line-number="87"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-88" data-line-number="88"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-89" data-line-number="89"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-90" data-line-number="90"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-91" data-line-number="91"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-92" data-line-number="92"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:5:</span></a>
+<a class="sourceLine" id="cb54-93" data-line-number="93"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SVD:48:</span></a>
+<a class="sourceLine" id="cb54-94" data-line-number="94"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-95" data-line-number="95"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-96" data-line-number="96"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-97" data-line-number="97"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-98" data-line-number="98"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-99" data-line-number="99"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-100" data-line-number="100"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-101" data-line-number="101"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-102" data-line-number="102"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-103" data-line-number="103"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-104" data-line-number="104"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-105" data-line-number="105"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:6:</span></a>
+<a class="sourceLine" id="cb54-106" data-line-number="106"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Geometry:58:</span></a>
+<a class="sourceLine" id="cb54-107" data-line-number="107"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-108" data-line-number="108"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-109" data-line-number="109"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-110" data-line-number="110"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-111" data-line-number="111"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-112" data-line-number="112"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-113" data-line-number="113"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-114" data-line-number="114"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb54-115" data-line-number="115"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-116" data-line-number="116"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-117" data-line-number="117"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-118" data-line-number="118"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:7:</span></a>
+<a class="sourceLine" id="cb54-119" data-line-number="119"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Eigenvalues:58:</span></a>
+<a class="sourceLine" id="cb54-120" data-line-number="120"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-121" data-line-number="121"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-122" data-line-number="122"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-123" data-line-number="123"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-124" data-line-number="124"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-125" data-line-number="125"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-126" data-line-number="126"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-127" data-line-number="127"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:36:</span></a>
+<a class="sourceLine" id="cb54-128" data-line-number="128"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/operator_unary_plus.hpp:7:</span></a>
+<a class="sourceLine" id="cb54-129" data-line-number="129"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/scal/fun/constants.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-130" data-line-number="130"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/constants/constants.hpp:13:</span></a>
+<a class="sourceLine" id="cb54-131" data-line-number="131"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/convert_from_string.hpp:15:</span></a>
+<a class="sourceLine" id="cb54-132" data-line-number="132"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast.hpp:32:</span></a>
+<a class="sourceLine" id="cb54-133" data-line-number="133"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/try_lexical_convert.hpp:42:</span></a>
+<a class="sourceLine" id="cb54-134" data-line-number="134"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/detail/converter_lexical.hpp:52:</span></a>
+<a class="sourceLine" id="cb54-135" data-line-number="135"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/container_fwd.hpp:61:</span></a>
+<a class="sourceLine" id="cb54-136" data-line-number="136"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/detail/std_fwd.hpp:27:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span></a>
+<a class="sourceLine" id="cb54-137" data-line-number="137"><span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span></a>
+<a class="sourceLine" id="cb54-138" data-line-number="138"><span class="co">#&gt; ^</span></a>
+<a class="sourceLine" id="cb54-139" data-line-number="139"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span></a>
+<a class="sourceLine" id="cb54-140" data-line-number="140"><span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span></a>
+<a class="sourceLine" id="cb54-141" data-line-number="141"><span class="co">#&gt;                                  ^</span></a>
+<a class="sourceLine" id="cb54-142" data-line-number="142"><span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span></a>
+<a class="sourceLine" id="cb54-143" data-line-number="143"><span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span></a>
+<a class="sourceLine" id="cb54-144" data-line-number="144"><span class="co">#&gt;                                                    ^</span></a>
+<a class="sourceLine" id="cb54-145" data-line-number="145"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-146" data-line-number="146"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-147" data-line-number="147"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-148" data-line-number="148"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb54-149" data-line-number="149"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb54-150" data-line-number="150"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb54-151" data-line-number="151"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:26:</span></a>
+<a class="sourceLine" id="cb54-152" data-line-number="152"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCore:66:</span></a>
+<a class="sourceLine" id="cb54-153" data-line-number="153"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-154" data-line-number="154"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-155" data-line-number="155"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-156" data-line-number="156"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-157" data-line-number="157"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-158" data-line-number="158"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-159" data-line-number="159"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb54-160" data-line-number="160"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb54-161" data-line-number="161"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb54-162" data-line-number="162"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:27:</span></a>
+<a class="sourceLine" id="cb54-163" data-line-number="163"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/OrderingMethods:71:</span></a>
+<a class="sourceLine" id="cb54-164" data-line-number="164"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-165" data-line-number="165"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-166" data-line-number="166"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-167" data-line-number="167"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-168" data-line-number="168"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-169" data-line-number="169"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-170" data-line-number="170"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb54-171" data-line-number="171"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb54-172" data-line-number="172"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb54-173" data-line-number="173"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:29:</span></a>
+<a class="sourceLine" id="cb54-174" data-line-number="174"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCholesky:43:</span></a>
+<a class="sourceLine" id="cb54-175" data-line-number="175"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-176" data-line-number="176"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-177" data-line-number="177"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-178" data-line-number="178"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-179" data-line-number="179"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-180" data-line-number="180"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-181" data-line-number="181"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb54-182" data-line-number="182"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb54-183" data-line-number="183"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb54-184" data-line-number="184"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:32:</span></a>
+<a class="sourceLine" id="cb54-185" data-line-number="185"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseQR:35:</span></a>
+<a class="sourceLine" id="cb54-186" data-line-number="186"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-187" data-line-number="187"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-188" data-line-number="188"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-189" data-line-number="189"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-190" data-line-number="190"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-191" data-line-number="191"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-192" data-line-number="192"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb54-193" data-line-number="193"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb54-194" data-line-number="194"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb54-195" data-line-number="195"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:33:</span></a>
+<a class="sourceLine" id="cb54-196" data-line-number="196"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/IterativeLinearSolvers:46:</span></a>
+<a class="sourceLine" id="cb54-197" data-line-number="197"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb54-198" data-line-number="198"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb54-199" data-line-number="199"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb54-200" data-line-number="200"><span class="co">#&gt; In file included from filed1046087152.cpp:686:</span></a>
+<a class="sourceLine" id="cb54-201" data-line-number="201"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/rstaninc.hpp:3:</span></a>
+<a class="sourceLine" id="cb54-202" data-line-number="202"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/stan_fit.hpp:36:</span></a>
+<a class="sourceLine" id="cb54-203" data-line-number="203"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/services/optimize/bfgs.hpp:11:</span></a>
+<a class="sourceLine" id="cb54-204" data-line-number="204"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/bfgs.hpp:9:</span></a>
+<a class="sourceLine" id="cb54-205" data-line-number="205"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/lbfgs_update.hpp:6:</span></a>
+<a class="sourceLine" id="cb54-206" data-line-number="206"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer.hpp:54:</span></a>
+<a class="sourceLine" id="cb54-207" data-line-number="207"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer/details.hpp:20:</span></a>
+<a class="sourceLine" id="cb54-208" data-line-number="208"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/move.hpp:30:</span></a>
+<a class="sourceLine" id="cb54-209" data-line-number="209"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/iterator.hpp:27:</span></a>
+<a class="sourceLine" id="cb54-210" data-line-number="210"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/iterator_traits.hpp:29:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span></a>
+<a class="sourceLine" id="cb54-211" data-line-number="211"><span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span></a>
+<a class="sourceLine" id="cb54-212" data-line-number="212"><span class="co">#&gt; ^</span></a>
+<a class="sourceLine" id="cb54-213" data-line-number="213"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span></a>
+<a class="sourceLine" id="cb54-214" data-line-number="214"><span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span></a>
+<a class="sourceLine" id="cb54-215" data-line-number="215"><span class="co">#&gt;                                  ^</span></a>
+<a class="sourceLine" id="cb54-216" data-line-number="216"><span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span></a>
+<a class="sourceLine" id="cb54-217" data-line-number="217"><span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span></a>
+<a class="sourceLine" id="cb54-218" data-line-number="218"><span class="co">#&gt;                                                    ^</span></a>
+<a class="sourceLine" id="cb54-219" data-line-number="219"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-220" data-line-number="220"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-221" data-line-number="221"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-222" data-line-number="222"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-223" data-line-number="223"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:44:</span></a>
+<a class="sourceLine" id="cb54-224" data-line-number="224"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function &#39;set_zero_all_adjoints&#39; [-Wunused-function]</span></a>
+<a class="sourceLine" id="cb54-225" data-line-number="225"><span class="co">#&gt;     static void set_zero_all_adjoints() {</span></a>
+<a class="sourceLine" id="cb54-226" data-line-number="226"><span class="co">#&gt;                 ^</span></a>
+<a class="sourceLine" id="cb54-227" data-line-number="227"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-228" data-line-number="228"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-229" data-line-number="229"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-230" data-line-number="230"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-231" data-line-number="231"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:45:</span></a>
+<a class="sourceLine" id="cb54-232" data-line-number="232"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: &#39;static&#39; function &#39;set_zero_all_adjoints_nested&#39; declared in header file should be declared &#39;static inline&#39; [-Wunneeded-internal-declaration]</span></a>
+<a class="sourceLine" id="cb54-233" data-line-number="233"><span class="co">#&gt;     static void set_zero_all_adjoints_nested() {</span></a>
+<a class="sourceLine" id="cb54-234" data-line-number="234"><span class="co">#&gt;                 ^</span></a>
+<a class="sourceLine" id="cb54-235" data-line-number="235"><span class="co">#&gt; In file included from filed1046087152.cpp:8:</span></a>
+<a class="sourceLine" id="cb54-236" data-line-number="236"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-237" data-line-number="237"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb54-238" data-line-number="238"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb54-239" data-line-number="239"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:58:</span></a>
+<a class="sourceLine" id="cb54-240" data-line-number="240"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/autocorrelation.hpp:17:14: warning: function &#39;fft_next_good_size&#39; is not needed and will not be emitted [-Wunneeded-internal-declaration]</span></a>
+<a class="sourceLine" id="cb54-241" data-line-number="241"><span class="co">#&gt;       size_t fft_next_good_size(size_t N) {</span></a>
+<a class="sourceLine" id="cb54-242" data-line-number="242"><span class="co">#&gt;              ^</span></a>
+<a class="sourceLine" id="cb54-243" data-line-number="243"><span class="co">#&gt; 19 warnings generated.</span></a></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" data-line-number="1">mod_regar1</a></code></pre></div>
 <pre>
   <code class="stan">data {
   // number of observations
@@ -574,20 +574,20 @@ model {
   }
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">reagan_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_regar1, <span class="dt">data =</span> reagan_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(reagan_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;theta&quot;</span>, <span class="st">&quot;sigma&quot;</span>))<span class="op">$</span>summary
-<span class="co">#&gt;           mean  se_mean     sd   2.5%      25%    50%    75%  97.5% n_eff</span>
-<span class="co">#&gt; alpha   53.195 0.013180 0.8336 51.576 52.62510 53.199 53.758 54.784  4000</span>
-<span class="co">#&gt; beta[1]  0.613 0.014395 0.9104 -1.162  0.00317  0.612  1.240  2.396  4000</span>
-<span class="co">#&gt; beta[2] -3.690 0.013022 0.8236 -5.328 -4.23172 -3.695 -3.130 -2.069  4000</span>
-<span class="co">#&gt; theta    0.675 0.000881 0.0557  0.555  0.64104  0.678  0.713  0.775  4000</span>
-<span class="co">#&gt; sigma    4.906 0.006004 0.3797  4.230  4.63457  4.879  5.153  5.700  4000</span>
-<span class="co">#&gt;          Rhat</span>
-<span class="co">#&gt; alpha   0.999</span>
-<span class="co">#&gt; beta[1] 1.000</span>
-<span class="co">#&gt; beta[2] 1.001</span>
-<span class="co">#&gt; theta   1.000</span>
-<span class="co">#&gt; sigma   1.000</span></code></pre>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">reagan_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_regar1, <span class="dt">data =</span> reagan_data)</a></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" data-line-number="1"><span class="kw">summary</span>(reagan_fit, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;theta&quot;</span>, <span class="st">&quot;sigma&quot;</span>))<span class="op">$</span>summary</a>
+<a class="sourceLine" id="cb57-2" data-line-number="2"><span class="co">#&gt;           mean  se_mean     sd   2.5%      25%    50%    75%  97.5% n_eff</span></a>
+<a class="sourceLine" id="cb57-3" data-line-number="3"><span class="co">#&gt; alpha   53.195 0.013180 0.8336 51.576 52.62510 53.199 53.758 54.784  4000</span></a>
+<a class="sourceLine" id="cb57-4" data-line-number="4"><span class="co">#&gt; beta[1]  0.613 0.014395 0.9104 -1.162  0.00317  0.612  1.240  2.396  4000</span></a>
+<a class="sourceLine" id="cb57-5" data-line-number="5"><span class="co">#&gt; beta[2] -3.690 0.013022 0.8236 -5.328 -4.23172 -3.695 -3.130 -2.069  4000</span></a>
+<a class="sourceLine" id="cb57-6" data-line-number="6"><span class="co">#&gt; theta    0.675 0.000881 0.0557  0.555  0.64104  0.678  0.713  0.775  4000</span></a>
+<a class="sourceLine" id="cb57-7" data-line-number="7"><span class="co">#&gt; sigma    4.906 0.006004 0.3797  4.230  4.63457  4.879  5.153  5.700  4000</span></a>
+<a class="sourceLine" id="cb57-8" data-line-number="8"><span class="co">#&gt;          Rhat</span></a>
+<a class="sourceLine" id="cb57-9" data-line-number="9"><span class="co">#&gt; alpha   0.999</span></a>
+<a class="sourceLine" id="cb57-10" data-line-number="10"><span class="co">#&gt; beta[1] 1.000</span></a>
+<a class="sourceLine" id="cb57-11" data-line-number="11"><span class="co">#&gt; beta[2] 1.001</span></a>
+<a class="sourceLine" id="cb57-12" data-line-number="12"><span class="co">#&gt; theta   1.000</span></a>
+<a class="sourceLine" id="cb57-13" data-line-number="13"><span class="co">#&gt; sigma   1.000</span></a></code></pre></div>
 <div id="cochrane-orcuttprais-winsten" class="section level2">
 <h2><span class="header-section-number">7.1</span> Cochrane-Orcutt/Prais-Winsten</h2>
 <p>An AR(1) error model can also be estimated <a href="https://en.wikipedia.org/wiki/Prais%E2%80%93Winsten_estimation">Prais-Winsten</a> estimation:
@@ -597,250 +597,250 @@ y_1 &amp;\sim \mathsf{Normal}\left(\alpha + x_1&#39; \beta, \frac{\sigma ^ 2}{1 
 y_i &amp;\sim \mathsf{Normal}\left(\theta y_{i - 1} + \alpha (1 - \theta) + \beta (X_i - \theta X_{i - 1}), \sigma ^ 2 \right) &amp; i = 2, \dots, N
 \end{aligned}
 \]</span></p>
-<pre class="sourceCode r"><code class="sourceCode r">mod_pw &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/pw.stan&quot;</span>)
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/config.hpp:13:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/config.hpp:39:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/config/compiler/clang.hpp:200:11: warning: &#39;BOOST_NO_CXX11_RVALUE_REFERENCES&#39; macro redefined [-Wmacro-redefined]</span>
-<span class="co">#&gt; #  define BOOST_NO_CXX11_RVALUE_REFERENCES</span>
-<span class="co">#&gt;           ^</span>
-<span class="co">#&gt; &lt;command line&gt;:6:9: note: previous definition is here</span>
-<span class="co">#&gt; #define BOOST_NO_CXX11_RVALUE_REFERENCES 1</span>
-<span class="co">#&gt;         ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:1:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Core:531:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:2:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/LU:47:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Jacobi:29:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:43:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/QR:17:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Householder:27:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:5:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SVD:48:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Geometry:58:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:7:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Eigenvalues:58:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:36:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/operator_unary_plus.hpp:7:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/scal/fun/constants.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/constants/constants.hpp:13:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/convert_from_string.hpp:15:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast.hpp:32:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/try_lexical_convert.hpp:42:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/detail/converter_lexical.hpp:52:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/container_fwd.hpp:61:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/detail/std_fwd.hpp:27:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span>
-<span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span>
-<span class="co">#&gt; ^</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span>
-<span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span>
-<span class="co">#&gt;                                  ^</span>
-<span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span>
-<span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span>
-<span class="co">#&gt;                                                    ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:26:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCore:66:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:27:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/OrderingMethods:71:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:29:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCholesky:43:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:32:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseQR:35:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:33:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/IterativeLinearSolvers:46:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span>
-<span class="co">#&gt;     #pragma clang diagnostic pop</span>
-<span class="co">#&gt;                              ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:638:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/rstaninc.hpp:3:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/stan_fit.hpp:36:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/services/optimize/bfgs.hpp:11:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/bfgs.hpp:9:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/lbfgs_update.hpp:6:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer.hpp:54:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer/details.hpp:20:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/move.hpp:30:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/iterator.hpp:27:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/iterator_traits.hpp:29:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span>
-<span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span>
-<span class="co">#&gt; ^</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span>
-<span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span>
-<span class="co">#&gt;                                  ^</span>
-<span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span>
-<span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span>
-<span class="co">#&gt;                                                    ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:44:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function &#39;set_zero_all_adjoints&#39; [-Wunused-function]</span>
-<span class="co">#&gt;     static void set_zero_all_adjoints() {</span>
-<span class="co">#&gt;                 ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:45:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: &#39;static&#39; function &#39;set_zero_all_adjoints_nested&#39; declared in header file should be declared &#39;static inline&#39; [-Wunneeded-internal-declaration]</span>
-<span class="co">#&gt;     static void set_zero_all_adjoints_nested() {</span>
-<span class="co">#&gt;                 ^</span>
-<span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span>
-<span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:58:</span>
-<span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/autocorrelation.hpp:17:14: warning: function &#39;fft_next_good_size&#39; is not needed and will not be emitted [-Wunneeded-internal-declaration]</span>
-<span class="co">#&gt;       size_t fft_next_good_size(size_t N) {</span>
-<span class="co">#&gt;              ^</span>
-<span class="co">#&gt; 19 warnings generated.</span></code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">mod_pw</code></pre>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1">mod_pw &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/pw.stan&quot;</span>)</a>
+<a class="sourceLine" id="cb58-2" data-line-number="2"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-3" data-line-number="3"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-4" data-line-number="4"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-5" data-line-number="5"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-6" data-line-number="6"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:12:</span></a>
+<a class="sourceLine" id="cb58-7" data-line-number="7"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/gevv_vvv_vari.hpp:5:</span></a>
+<a class="sourceLine" id="cb58-8" data-line-number="8"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/var.hpp:7:</span></a>
+<a class="sourceLine" id="cb58-9" data-line-number="9"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/config.hpp:13:</span></a>
+<a class="sourceLine" id="cb58-10" data-line-number="10"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/config.hpp:39:</span></a>
+<a class="sourceLine" id="cb58-11" data-line-number="11"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/config/compiler/clang.hpp:200:11: warning: &#39;BOOST_NO_CXX11_RVALUE_REFERENCES&#39; macro redefined [-Wmacro-redefined]</span></a>
+<a class="sourceLine" id="cb58-12" data-line-number="12"><span class="co">#&gt; #  define BOOST_NO_CXX11_RVALUE_REFERENCES</span></a>
+<a class="sourceLine" id="cb58-13" data-line-number="13"><span class="co">#&gt;           ^</span></a>
+<a class="sourceLine" id="cb58-14" data-line-number="14"><span class="co">#&gt; &lt;command line&gt;:6:9: note: previous definition is here</span></a>
+<a class="sourceLine" id="cb58-15" data-line-number="15"><span class="co">#&gt; #define BOOST_NO_CXX11_RVALUE_REFERENCES 1</span></a>
+<a class="sourceLine" id="cb58-16" data-line-number="16"><span class="co">#&gt;         ^</span></a>
+<a class="sourceLine" id="cb58-17" data-line-number="17"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-18" data-line-number="18"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-19" data-line-number="19"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-20" data-line-number="20"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-21" data-line-number="21"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-22" data-line-number="22"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-23" data-line-number="23"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-24" data-line-number="24"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-25" data-line-number="25"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:1:</span></a>
+<a class="sourceLine" id="cb58-26" data-line-number="26"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Core:531:</span></a>
+<a class="sourceLine" id="cb58-27" data-line-number="27"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-28" data-line-number="28"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-29" data-line-number="29"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-30" data-line-number="30"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-31" data-line-number="31"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-32" data-line-number="32"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-33" data-line-number="33"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-34" data-line-number="34"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-35" data-line-number="35"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-36" data-line-number="36"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-37" data-line-number="37"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-38" data-line-number="38"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:2:</span></a>
+<a class="sourceLine" id="cb58-39" data-line-number="39"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/LU:47:</span></a>
+<a class="sourceLine" id="cb58-40" data-line-number="40"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-41" data-line-number="41"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-42" data-line-number="42"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-43" data-line-number="43"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-44" data-line-number="44"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-45" data-line-number="45"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-46" data-line-number="46"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-47" data-line-number="47"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-48" data-line-number="48"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-49" data-line-number="49"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-50" data-line-number="50"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-51" data-line-number="51"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span></a>
+<a class="sourceLine" id="cb58-52" data-line-number="52"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:12:</span></a>
+<a class="sourceLine" id="cb58-53" data-line-number="53"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Jacobi:29:</span></a>
+<a class="sourceLine" id="cb58-54" data-line-number="54"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-55" data-line-number="55"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-56" data-line-number="56"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-57" data-line-number="57"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-58" data-line-number="58"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-59" data-line-number="59"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-60" data-line-number="60"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-61" data-line-number="61"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-62" data-line-number="62"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-63" data-line-number="63"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-64" data-line-number="64"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-65" data-line-number="65"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:3:</span></a>
+<a class="sourceLine" id="cb58-66" data-line-number="66"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Cholesky:43:</span></a>
+<a class="sourceLine" id="cb58-67" data-line-number="67"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-68" data-line-number="68"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-69" data-line-number="69"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-70" data-line-number="70"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-71" data-line-number="71"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-72" data-line-number="72"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-73" data-line-number="73"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-74" data-line-number="74"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-75" data-line-number="75"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-76" data-line-number="76"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-77" data-line-number="77"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-78" data-line-number="78"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:4:</span></a>
+<a class="sourceLine" id="cb58-79" data-line-number="79"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/QR:17:</span></a>
+<a class="sourceLine" id="cb58-80" data-line-number="80"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Householder:27:</span></a>
+<a class="sourceLine" id="cb58-81" data-line-number="81"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-82" data-line-number="82"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-83" data-line-number="83"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-84" data-line-number="84"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-85" data-line-number="85"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-86" data-line-number="86"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-87" data-line-number="87"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-88" data-line-number="88"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-89" data-line-number="89"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-90" data-line-number="90"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-91" data-line-number="91"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-92" data-line-number="92"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:5:</span></a>
+<a class="sourceLine" id="cb58-93" data-line-number="93"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SVD:48:</span></a>
+<a class="sourceLine" id="cb58-94" data-line-number="94"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-95" data-line-number="95"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-96" data-line-number="96"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-97" data-line-number="97"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-98" data-line-number="98"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-99" data-line-number="99"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-100" data-line-number="100"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-101" data-line-number="101"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-102" data-line-number="102"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-103" data-line-number="103"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-104" data-line-number="104"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-105" data-line-number="105"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:6:</span></a>
+<a class="sourceLine" id="cb58-106" data-line-number="106"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Geometry:58:</span></a>
+<a class="sourceLine" id="cb58-107" data-line-number="107"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-108" data-line-number="108"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-109" data-line-number="109"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-110" data-line-number="110"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-111" data-line-number="111"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-112" data-line-number="112"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-113" data-line-number="113"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-114" data-line-number="114"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:14:</span></a>
+<a class="sourceLine" id="cb58-115" data-line-number="115"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/matrix_vari.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-116" data-line-number="116"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat/fun/Eigen_NumTraits.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-117" data-line-number="117"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/Eigen.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-118" data-line-number="118"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Dense:7:</span></a>
+<a class="sourceLine" id="cb58-119" data-line-number="119"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Eigenvalues:58:</span></a>
+<a class="sourceLine" id="cb58-120" data-line-number="120"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-121" data-line-number="121"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-122" data-line-number="122"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-123" data-line-number="123"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-124" data-line-number="124"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-125" data-line-number="125"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-126" data-line-number="126"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-127" data-line-number="127"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:36:</span></a>
+<a class="sourceLine" id="cb58-128" data-line-number="128"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/operator_unary_plus.hpp:7:</span></a>
+<a class="sourceLine" id="cb58-129" data-line-number="129"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/scal/fun/constants.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-130" data-line-number="130"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/constants/constants.hpp:13:</span></a>
+<a class="sourceLine" id="cb58-131" data-line-number="131"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/math/tools/convert_from_string.hpp:15:</span></a>
+<a class="sourceLine" id="cb58-132" data-line-number="132"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast.hpp:32:</span></a>
+<a class="sourceLine" id="cb58-133" data-line-number="133"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/try_lexical_convert.hpp:42:</span></a>
+<a class="sourceLine" id="cb58-134" data-line-number="134"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/lexical_cast/detail/converter_lexical.hpp:52:</span></a>
+<a class="sourceLine" id="cb58-135" data-line-number="135"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/container_fwd.hpp:61:</span></a>
+<a class="sourceLine" id="cb58-136" data-line-number="136"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/container/detail/std_fwd.hpp:27:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span></a>
+<a class="sourceLine" id="cb58-137" data-line-number="137"><span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span></a>
+<a class="sourceLine" id="cb58-138" data-line-number="138"><span class="co">#&gt; ^</span></a>
+<a class="sourceLine" id="cb58-139" data-line-number="139"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span></a>
+<a class="sourceLine" id="cb58-140" data-line-number="140"><span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span></a>
+<a class="sourceLine" id="cb58-141" data-line-number="141"><span class="co">#&gt;                                  ^</span></a>
+<a class="sourceLine" id="cb58-142" data-line-number="142"><span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span></a>
+<a class="sourceLine" id="cb58-143" data-line-number="143"><span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span></a>
+<a class="sourceLine" id="cb58-144" data-line-number="144"><span class="co">#&gt;                                                    ^</span></a>
+<a class="sourceLine" id="cb58-145" data-line-number="145"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-146" data-line-number="146"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-147" data-line-number="147"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-148" data-line-number="148"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb58-149" data-line-number="149"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb58-150" data-line-number="150"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb58-151" data-line-number="151"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:26:</span></a>
+<a class="sourceLine" id="cb58-152" data-line-number="152"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCore:66:</span></a>
+<a class="sourceLine" id="cb58-153" data-line-number="153"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-154" data-line-number="154"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-155" data-line-number="155"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-156" data-line-number="156"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-157" data-line-number="157"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-158" data-line-number="158"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-159" data-line-number="159"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb58-160" data-line-number="160"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb58-161" data-line-number="161"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb58-162" data-line-number="162"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:27:</span></a>
+<a class="sourceLine" id="cb58-163" data-line-number="163"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/OrderingMethods:71:</span></a>
+<a class="sourceLine" id="cb58-164" data-line-number="164"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-165" data-line-number="165"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-166" data-line-number="166"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-167" data-line-number="167"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-168" data-line-number="168"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-169" data-line-number="169"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-170" data-line-number="170"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb58-171" data-line-number="171"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb58-172" data-line-number="172"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb58-173" data-line-number="173"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:29:</span></a>
+<a class="sourceLine" id="cb58-174" data-line-number="174"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseCholesky:43:</span></a>
+<a class="sourceLine" id="cb58-175" data-line-number="175"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-176" data-line-number="176"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-177" data-line-number="177"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-178" data-line-number="178"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-179" data-line-number="179"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-180" data-line-number="180"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-181" data-line-number="181"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb58-182" data-line-number="182"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb58-183" data-line-number="183"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb58-184" data-line-number="184"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:32:</span></a>
+<a class="sourceLine" id="cb58-185" data-line-number="185"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/SparseQR:35:</span></a>
+<a class="sourceLine" id="cb58-186" data-line-number="186"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-187" data-line-number="187"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-188" data-line-number="188"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-189" data-line-number="189"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-190" data-line-number="190"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-191" data-line-number="191"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-192" data-line-number="192"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb58-193" data-line-number="193"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:83:</span></a>
+<a class="sourceLine" id="cb58-194" data-line-number="194"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/csr_extract_u.hpp:6:</span></a>
+<a class="sourceLine" id="cb58-195" data-line-number="195"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/Sparse:33:</span></a>
+<a class="sourceLine" id="cb58-196" data-line-number="196"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/IterativeLinearSolvers:46:</span></a>
+<a class="sourceLine" id="cb58-197" data-line-number="197"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/RcppEigen/include/Eigen/src/Core/util/ReenableStupidWarnings.h:10:30: warning: pragma diagnostic pop could not pop, no matching push [-Wunknown-pragmas]</span></a>
+<a class="sourceLine" id="cb58-198" data-line-number="198"><span class="co">#&gt;     #pragma clang diagnostic pop</span></a>
+<a class="sourceLine" id="cb58-199" data-line-number="199"><span class="co">#&gt;                              ^</span></a>
+<a class="sourceLine" id="cb58-200" data-line-number="200"><span class="co">#&gt; In file included from filed1062414e11.cpp:638:</span></a>
+<a class="sourceLine" id="cb58-201" data-line-number="201"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/rstaninc.hpp:3:</span></a>
+<a class="sourceLine" id="cb58-202" data-line-number="202"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/rstan/include/rstan/stan_fit.hpp:36:</span></a>
+<a class="sourceLine" id="cb58-203" data-line-number="203"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/services/optimize/bfgs.hpp:11:</span></a>
+<a class="sourceLine" id="cb58-204" data-line-number="204"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/bfgs.hpp:9:</span></a>
+<a class="sourceLine" id="cb58-205" data-line-number="205"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/optimization/lbfgs_update.hpp:6:</span></a>
+<a class="sourceLine" id="cb58-206" data-line-number="206"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer.hpp:54:</span></a>
+<a class="sourceLine" id="cb58-207" data-line-number="207"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/circular_buffer/details.hpp:20:</span></a>
+<a class="sourceLine" id="cb58-208" data-line-number="208"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/move.hpp:30:</span></a>
+<a class="sourceLine" id="cb58-209" data-line-number="209"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/iterator.hpp:27:</span></a>
+<a class="sourceLine" id="cb58-210" data-line-number="210"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/iterator_traits.hpp:29:1: warning: inline namespaces are a C++11 feature [-Wc++11-inline-namespace]</span></a>
+<a class="sourceLine" id="cb58-211" data-line-number="211"><span class="co">#&gt; BOOST_MOVE_STD_NS_BEG</span></a>
+<a class="sourceLine" id="cb58-212" data-line-number="212"><span class="co">#&gt; ^</span></a>
+<a class="sourceLine" id="cb58-213" data-line-number="213"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/BH/include/boost/move/detail/std_ns_begin.hpp:18:34: note: expanded from macro &#39;BOOST_MOVE_STD_NS_BEG&#39;</span></a>
+<a class="sourceLine" id="cb58-214" data-line-number="214"><span class="co">#&gt;    #define BOOST_MOVE_STD_NS_BEG _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD</span></a>
+<a class="sourceLine" id="cb58-215" data-line-number="215"><span class="co">#&gt;                                  ^</span></a>
+<a class="sourceLine" id="cb58-216" data-line-number="216"><span class="co">#&gt; /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__config:439:52: note: expanded from macro &#39;_LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD&#39;</span></a>
+<a class="sourceLine" id="cb58-217" data-line-number="217"><span class="co">#&gt; #define _LIBCPP_</span><span class="re">BEGIN</span><span class="co">_NAMESPACE_STD namespace std {inline namespace _LIBCPP_NAMESPACE {</span></a>
+<a class="sourceLine" id="cb58-218" data-line-number="218"><span class="co">#&gt;                                                    ^</span></a>
+<a class="sourceLine" id="cb58-219" data-line-number="219"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-220" data-line-number="220"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-221" data-line-number="221"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-222" data-line-number="222"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-223" data-line-number="223"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:44:</span></a>
+<a class="sourceLine" id="cb58-224" data-line-number="224"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14:17: warning: unused function &#39;set_zero_all_adjoints&#39; [-Wunused-function]</span></a>
+<a class="sourceLine" id="cb58-225" data-line-number="225"><span class="co">#&gt;     static void set_zero_all_adjoints() {</span></a>
+<a class="sourceLine" id="cb58-226" data-line-number="226"><span class="co">#&gt;                 ^</span></a>
+<a class="sourceLine" id="cb58-227" data-line-number="227"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-228" data-line-number="228"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-229" data-line-number="229"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-230" data-line-number="230"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-231" data-line-number="231"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core.hpp:45:</span></a>
+<a class="sourceLine" id="cb58-232" data-line-number="232"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints_nested.hpp:17:17: warning: &#39;static&#39; function &#39;set_zero_all_adjoints_nested&#39; declared in header file should be declared &#39;static inline&#39; [-Wunneeded-internal-declaration]</span></a>
+<a class="sourceLine" id="cb58-233" data-line-number="233"><span class="co">#&gt;     static void set_zero_all_adjoints_nested() {</span></a>
+<a class="sourceLine" id="cb58-234" data-line-number="234"><span class="co">#&gt;                 ^</span></a>
+<a class="sourceLine" id="cb58-235" data-line-number="235"><span class="co">#&gt; In file included from filed1062414e11.cpp:8:</span></a>
+<a class="sourceLine" id="cb58-236" data-line-number="236"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/src/stan/model/model_header.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-237" data-line-number="237"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math.hpp:4:</span></a>
+<a class="sourceLine" id="cb58-238" data-line-number="238"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/rev/mat.hpp:12:</span></a>
+<a class="sourceLine" id="cb58-239" data-line-number="239"><span class="co">#&gt; In file included from /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat.hpp:58:</span></a>
+<a class="sourceLine" id="cb58-240" data-line-number="240"><span class="co">#&gt; /Users/jrnold/Library/R/3.4/library/StanHeaders/include/stan/math/prim/mat/fun/autocorrelation.hpp:17:14: warning: function &#39;fft_next_good_size&#39; is not needed and will not be emitted [-Wunneeded-internal-declaration]</span></a>
+<a class="sourceLine" id="cb58-241" data-line-number="241"><span class="co">#&gt;       size_t fft_next_good_size(size_t N) {</span></a>
+<a class="sourceLine" id="cb58-242" data-line-number="242"><span class="co">#&gt;              ^</span></a>
+<a class="sourceLine" id="cb58-243" data-line-number="243"><span class="co">#&gt; 19 warnings generated.</span></a></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1">mod_pw</a></code></pre></div>
 <pre>
   <code class="stan">data {
   // number of observations
@@ -889,20 +889,20 @@ model {
   y[2:N] ~ normal(mu[2:N], sigma);
 }</code>
 </pre>
-<pre class="sourceCode r"><code class="sourceCode r">reagan_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_pw, <span class="dt">data =</span> reagan_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(reagan_fit2, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;theta&quot;</span>, <span class="st">&quot;sigma&quot;</span>))<span class="op">$</span>summary
-<span class="co">#&gt;           mean se_mean    sd   2.5%    25%    50%     75%  97.5% n_eff</span>
-<span class="co">#&gt; alpha   48.366 0.16737 6.476 36.705 43.689 48.130 52.6559 61.579  1497</span>
-<span class="co">#&gt; beta[1]  0.561 0.01305 0.682 -0.806  0.139  0.566  1.0225  1.848  2733</span>
-<span class="co">#&gt; beta[2] -3.473 0.01755 0.780 -5.133 -3.970 -3.433 -2.9177 -2.066  1978</span>
-<span class="co">#&gt; theta   -0.119 0.00407 0.152 -0.450 -0.218 -0.103 -0.0102  0.136  1394</span>
-<span class="co">#&gt; sigma    6.938 0.01048 0.514  6.016  6.582  6.915  7.2597  8.043  2402</span>
-<span class="co">#&gt;         Rhat</span>
-<span class="co">#&gt; alpha      1</span>
-<span class="co">#&gt; beta[1]    1</span>
-<span class="co">#&gt; beta[2]    1</span>
-<span class="co">#&gt; theta      1</span>
-<span class="co">#&gt; sigma      1</span></code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">reagan_fit2 &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_pw, <span class="dt">data =</span> reagan_data)</a></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1"><span class="kw">summary</span>(reagan_fit2, <span class="dt">par =</span> <span class="kw">c</span>(<span class="st">&quot;alpha&quot;</span>, <span class="st">&quot;beta&quot;</span>, <span class="st">&quot;theta&quot;</span>, <span class="st">&quot;sigma&quot;</span>))<span class="op">$</span>summary</a>
+<a class="sourceLine" id="cb61-2" data-line-number="2"><span class="co">#&gt;           mean se_mean    sd   2.5%    25%    50%     75%  97.5% n_eff</span></a>
+<a class="sourceLine" id="cb61-3" data-line-number="3"><span class="co">#&gt; alpha   48.366 0.16737 6.476 36.705 43.689 48.130 52.6559 61.579  1497</span></a>
+<a class="sourceLine" id="cb61-4" data-line-number="4"><span class="co">#&gt; beta[1]  0.561 0.01305 0.682 -0.806  0.139  0.566  1.0225  1.848  2733</span></a>
+<a class="sourceLine" id="cb61-5" data-line-number="5"><span class="co">#&gt; beta[2] -3.473 0.01755 0.780 -5.133 -3.970 -3.433 -2.9177 -2.066  1978</span></a>
+<a class="sourceLine" id="cb61-6" data-line-number="6"><span class="co">#&gt; theta   -0.119 0.00407 0.152 -0.450 -0.218 -0.103 -0.0102  0.136  1394</span></a>
+<a class="sourceLine" id="cb61-7" data-line-number="7"><span class="co">#&gt; sigma    6.938 0.01048 0.514  6.016  6.582  6.915  7.2597  8.043  2402</span></a>
+<a class="sourceLine" id="cb61-8" data-line-number="8"><span class="co">#&gt;         Rhat</span></a>
+<a class="sourceLine" id="cb61-9" data-line-number="9"><span class="co">#&gt; alpha      1</span></a>
+<a class="sourceLine" id="cb61-10" data-line-number="10"><span class="co">#&gt; beta[1]    1</span></a>
+<a class="sourceLine" id="cb61-11" data-line-number="11"><span class="co">#&gt; beta[2]    1</span></a>
+<a class="sourceLine" id="cb61-12" data-line-number="12"><span class="co">#&gt; theta      1</span></a>
+<a class="sourceLine" id="cb61-13" data-line-number="13"><span class="co">#&gt; sigma      1</span></a></code></pre></div>
 
 </div>
 </div>

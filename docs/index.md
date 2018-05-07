@@ -2,7 +2,7 @@
 ---
 title: "Bayesian Model Examples"
 author: "Jeffrey B. Arnold and Simon Jackman"
-date: "2018-04-21"
+date: "2018-05-07"
 site: "bookdown::bookdown_site"
 output:
   bookdown::gitbook: default

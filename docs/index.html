@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,8 +227,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">Bayesian Model Examples</h1>
-<p class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></p>
-<p class="date"><em>2018-04-21</em></p>
+<h4 class="author"><em>Jeffrey B. Arnold and Simon Jackman</em></h4>
+<h4 class="date"><em>2018-05-07</em></h4>
 </div>
 <div id="preface" class="section level1 unnumbered">
 <h1>Preface</h1>
@@ -261,38 +261,38 @@ I have translated these examples into Stan and revised or edited them as appropr
 <div id="dependencies" class="section level2 unnumbered">
 <h2>Dependencies</h2>
 <p>The R packages, Stan models, and datasets needed to run the code examples can be installed with</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages(&quot;devtools&quot;)</span>
-devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;jrnold/jackman-bayes&quot;</span>, <span class="dt">subdir =</span> <span class="st">&quot;bayesjackman&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages(&quot;devtools&quot;)</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;jrnold/jackman-bayes&quot;</span>, <span class="dt">subdir =</span> <span class="st">&quot;bayesjackman&quot;</span>)</a></code></pre></div>
 </div>
 <div id="colonophon" class="section level2 unnumbered">
 <h2>Colonophon</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()
-<span class="co">#&gt; R version 3.4.4 (2018-03-15)</span>
-<span class="co">#&gt; Platform: x86_64-apple-darwin15.6.0 (64-bit)</span>
-<span class="co">#&gt; Running under: macOS High Sierra 10.13.3</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Matrix products: default</span>
-<span class="co">#&gt; BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib</span>
-<span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; locale:</span>
-<span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; attached base packages:</span>
-<span class="co">#&gt; [1] methods   stats     graphics  grDevices utils     datasets  base     </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_0.12.16       knitr_1.20         magrittr_1.5      </span>
-<span class="co">#&gt;  [4] munsell_0.4.3      colorspace_1.3-2   rlang_0.2.0       </span>
-<span class="co">#&gt;  [7] stringr_1.3.0      plyr_1.8.4         tools_3.4.4       </span>
-<span class="co">#&gt; [10] parallel_3.4.4     grid_3.4.4         gtable_0.2.0      </span>
-<span class="co">#&gt; [13] xfun_0.1           htmltools_0.3.6    StanHeaders_2.17.2</span>
-<span class="co">#&gt; [16] lazyeval_0.2.1     rprojroot_1.3-2    digest_0.6.15     </span>
-<span class="co">#&gt; [19] tibble_1.4.2       rstan_2.17.3       bookdown_0.7.7    </span>
-<span class="co">#&gt; [22] gridExtra_2.3      ggplot2_2.2.1      inline_0.3.14     </span>
-<span class="co">#&gt; [25] evaluate_0.10.1    rmarkdown_1.9      stringi_1.1.7     </span>
-<span class="co">#&gt; [28] pillar_1.2.1       compiler_3.4.4     scales_0.5.0      </span>
-<span class="co">#&gt; [31] backports_1.1.2    stats4_3.4.4</span></code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">sessionInfo</span>()</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; R version 3.4.4 (2018-03-15)</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt; Platform: x86_64-apple-darwin15.6.0 (64-bit)</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt; Running under: macOS High Sierra 10.13.3</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt; Matrix products: default</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt; locale:</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt; attached base packages:</span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; [1] methods   stats     graphics  grDevices utils     datasets  base     </span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; loaded via a namespace (and not attached):</span></a>
+<a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co">#&gt;  [1] Rcpp_0.12.16       knitr_1.20         magrittr_1.5      </span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18"><span class="co">#&gt;  [4] munsell_0.4.3      colorspace_1.3-2   rlang_0.2.0       </span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">#&gt;  [7] stringr_1.3.0      plyr_1.8.4         tools_3.4.4       </span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">#&gt; [10] parallel_3.4.4     grid_3.4.4         gtable_0.2.0      </span></a>
+<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt; [13] xfun_0.1           htmltools_0.3.6    StanHeaders_2.17.2</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">#&gt; [16] lazyeval_0.2.1     rprojroot_1.3-2    digest_0.6.15     </span></a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; [19] tibble_1.4.2       rstan_2.17.3       bookdown_0.7.7    </span></a>
+<a class="sourceLine" id="cb2-24" data-line-number="24"><span class="co">#&gt; [22] gridExtra_2.3      ggplot2_2.2.1      inline_0.3.14     </span></a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="co">#&gt; [25] evaluate_0.10.1    rmarkdown_1.9      stringi_1.1.7     </span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; [28] pillar_1.2.1       compiler_3.4.4     scales_0.5.0      </span></a>
+<a class="sourceLine" id="cb2-27" data-line-number="27"><span class="co">#&gt; [31] backports_1.1.2    stats4_3.4.4</span></a></code></pre></div>
 
 </div>
 </div>

@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,11 +227,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="florida" class="section level1">
 <h1><span class="header-section-number">4</span> Florida: Learning About an Unknown Proportion from Survey Data</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <p>In this example, beliefs about an unknown proportion are updated from new survey data.
 The particular example is using survey update beliefs about support for Bush in Florida in the 2000 presidential election campaign <span class="citation">(Jackman <a href="#ref-Jackman2004a">2004</a>)</span>.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
-<pre class="sourceCode r"><code class="sourceCode r">florida_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/florida.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">florida_mod &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/florida.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   real<lower = 0., upper = 100.> y;
@@ -249,33 +249,33 @@ model {
 </pre>
 <p>The prior polls had a mean of 49.1% in support for Bush, with a standard deviation of 2.2%.
 The new poll shows 55% support for Bush, with a standard deviation of 2.2%.</p>
-<pre class="sourceCode r"><code class="sourceCode r">florida_data &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">mu_mean =</span> <span class="fl">49.1</span>,
-  <span class="dt">mu_sd =</span> <span class="fl">2.2</span>,
-  <span class="dt">y_sd =</span> <span class="fl">2.2</span>,
-  <span class="dt">y =</span> <span class="dv">55</span>  
-)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">florida_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(florida_mod, <span class="dt">data =</span> florida_data)</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">florida_fit
-<span class="co">#&gt; Inference for Stan model: florida.</span>
-<span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span>
-<span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;      mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
-<span class="co">#&gt; mu   52.0    0.04 1.57 48.88 50.98 52.06 53.08  55.1  1449    1</span>
-<span class="co">#&gt; lp__ -2.3    0.02 0.72 -4.41 -2.46 -2.02 -1.85  -1.8  2047    1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 00:55:02 2018.</span>
-<span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span>
-<span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span>
-<span class="co">#&gt; convergence, Rhat=1).</span></code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">florida_data &lt;-<span class="st"> </span><span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">  <span class="dt">mu_mean =</span> <span class="fl">49.1</span>,</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">  <span class="dt">mu_sd =</span> <span class="fl">2.2</span>,</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">  <span class="dt">y_sd =</span> <span class="fl">2.2</span>,</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">  <span class="dt">y =</span> <span class="dv">55</span>  </a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">)</a></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">florida_fit &lt;-<span class="st"> </span><span class="kw">sampling</span>(florida_mod, <span class="dt">data =</span> florida_data)</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">florida_fit</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2"><span class="co">#&gt; Inference for Stan model: florida.</span></a>
+<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="co">#&gt; 4 chains, each with iter=2000; warmup=1000; thin=1; </span></a>
+<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="co">#&gt; post-warmup draws per chain=1000, total post-warmup draws=4000.</span></a>
+<a class="sourceLine" id="cb23-5" data-line-number="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="co">#&gt;      mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat</span></a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="co">#&gt; mu   52.0    0.04 1.57 48.88 50.98 52.06 53.08  55.1  1449    1</span></a>
+<a class="sourceLine" id="cb23-8" data-line-number="8"><span class="co">#&gt; lp__ -2.3    0.02 0.72 -4.41 -2.46 -2.02 -1.85  -1.8  2047    1</span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb23-10" data-line-number="10"><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Fri Apr 20 00:55:02 2018.</span></a>
+<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></a>
+<a class="sourceLine" id="cb23-12" data-line-number="12"><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></a>
+<a class="sourceLine" id="cb23-13" data-line-number="13"><span class="co">#&gt; convergence, Rhat=1).</span></a></code></pre></div>
 <p>After observing the new poll, the mean for the posterior is 52, with a 95% credible interval of 48.9–55.1.</p>
 
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-Jackman2004a">
-<p>Jackman, Simon. 2004. “Bayesian Analysis for Political Research.” <em>Annual Review of Political Science</em> 7 (1). Annual Reviews:483–505. <a href="https://doi.org/10.1146/annurev.polisci.7.012003.104706" class="uri">https://doi.org/10.1146/annurev.polisci.7.012003.104706</a>.</p>
+<p>Jackman, Simon. 2004. “Bayesian Analysis for Political Research.” <em>Annual Review of Political Science</em> 7 (1). Annual Reviews: 483–505. <a href="https://doi.org/10.1146/annurev.polisci.7.012003.104706" class="uri">https://doi.org/10.1146/annurev.polisci.7.012003.104706</a>.</p>
 </div>
 </div>
 <div class="footnotes">

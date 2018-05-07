@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Bayesian Model Examples</title>
   <meta name="description" content="Bayesian Model Examples">
-  <meta name="generator" content="bookdown 0.7.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
   <meta property="og:title" content="Bayesian Model Examples" />
   <meta property="og:type" content="book" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Jeffrey B. Arnold and Simon Jackman">
 
 
-<meta name="date" content="2018-04-21">
+<meta name="date" content="2018-05-07">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,7 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="10" data-path="judges.html"><a href="judges.html"><i class="fa fa-check"></i><b>10</b> Judges: estimating the ideological locations of Supreme Court justices</a></li>
 <li class="chapter" data-level="11" data-path="resistant.html"><a href="resistant.html"><i class="fa fa-check"></i><b>11</b> Resistant: Outlier-resistant regression via the Student’s <span class="math inline">\(t\)</span> distribution</a><ul>
 <li class="chapter" data-level="11.1" data-path="resistant.html"><a href="resistant.html#data-2"><i class="fa fa-check"></i><b>11.1</b> Data</a></li>
-<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparaterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparaterization: standard deviation instead of scale</a></li>
+<li class="chapter" data-level="11.2" data-path="resistant.html"><a href="resistant.html#reparameterization-standard-deviation-instead-of-scale"><i class="fa fa-check"></i><b>11.2</b> Reparameterization: standard deviation instead of scale</a></li>
 <li class="chapter" data-level="" data-path="resistant.html"><a href="resistant.html#questions-3"><i class="fa fa-check"></i>Questions</a></li>
 </ul></li>
 <li class="chapter" data-level="12" data-path="uk92.html"><a href="uk92.html"><i class="fa fa-check"></i><b>12</b> House of Commons elections: modeling with the multivariate Student-<span class="math inline">\(t\)</span> density</a><ul>
@@ -227,11 +227,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="sophistication" class="section level1">
 <h1><span class="header-section-number">8</span> Political Sophistication: item-response modeling with mixed data types</h1>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)
-<span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</a>
+<a class="sourceLine" id="cb62-2" data-line-number="2"><span class="kw">library</span>(<span class="st">&quot;rstan&quot;</span>)</a></code></pre></div>
 <div id="data-1" class="section level2">
 <h2><span class="header-section-number">8.1</span> Data</h2>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;PoliticalSophistication&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;PoliticalSophistication&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;bayesjackman&quot;</span>)</a></code></pre></div>
 <p>As part of a survey of French public opinion, 2,148 respondents were
 administered a series of 19 items assessing their knowledge of political
 leaders, political institutions, constitutional provisions, and the policies of
@@ -294,7 +294,7 @@ The remaining parameters are assigned weakly informative priors.
 where <span class="math inline">\(s_{y_{20}}\)</span> is the scale for <span class="math inline">\(y_20\)</span>.
 We could use the empirical standard deviation of <span class="math inline">\(y_20\)</span>, or an a-priori measure.
 A value of <span class="math inline">\(s_{y_{20}} = 21 / 4\)</span>, would place 95% of the mass of a normal distribution between 0 and 20.</p>
-<pre class="sourceCode r"><code class="sourceCode r">mod_sophistication &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/sophistication.stan&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" data-line-number="1">mod_sophistication &lt;-<span class="st"> </span><span class="kw">stan_model</span>(<span class="st">&quot;stan/sophistication.stan&quot;</span>)</a></code></pre></div>
 <pre>
   <code class="stan">data {
   // number of respondents
@@ -370,54 +370,54 @@ model {
 </div>
 <div id="estimation" class="section level2">
 <h2><span class="header-section-number">8.3</span> Estimation</h2>
-<pre class="sourceCode r"><code class="sourceCode r">y_scale &lt;-<span class="st"> </span><span class="dv">21</span> <span class="op">/</span><span class="st"> </span><span class="dv">4</span>
-
-data_sophistication &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {
-  y_bern &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">as.matrix</span>(<span class="kw">select</span>(PoliticalSophistication, Q1<span class="op">:</span>Q19)))
-  N &lt;-<span class="st"> </span><span class="kw">ncol</span>(y_bern)
-  K &lt;-<span class="st"> </span><span class="kw">nrow</span>(y_bern)
-  y_norm &lt;-<span class="st"> </span>PoliticalSophistication<span class="op">$</span>Q20
-  interviewer &lt;-<span class="st"> </span>PoliticalSophistication<span class="op">$</span>interviewer
-  J &lt;-<span class="st"> </span><span class="kw">max</span>(interviewer)
-  <span class="co"># priors</span>
-  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span>y_scale
-  xi_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  xi_scale &lt;-<span class="st"> </span><span class="dv">1</span>
-  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  alpha_scale &lt;-<span class="st"> </span><span class="dv">5</span>
-  beta_loc &lt;-<span class="st"> </span><span class="dv">0</span>
-  beta_scale &lt;-<span class="st"> </span><span class="fl">2.5</span>
-  gamma_scale &lt;-<span class="st"> </span><span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span>y_scale
-  <span class="co"># priors for interviewer effects</span>
-  tau_scale &lt;-<span class="st"> </span>y_scale
-  delta_loc &lt;-<span class="st"> </span><span class="dv">10</span>
-  delta_scale &lt;-<span class="st"> </span>y_scale
-})</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">fit_sophistication &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_sophistication, <span class="dt">data =</span> data_sophistication, <span class="dt">init =</span> <span class="dv">0</span>, <span class="dt">chains =</span> <span class="dv">1</span>)
-<span class="co">#&gt; </span>
-<span class="co">#&gt; SAMPLING FOR MODEL &#39;sophistication&#39; NOW (CHAIN 1).</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Gradient evaluation took 0.003267 seconds</span>
-<span class="co">#&gt; 1000 transitions using 10 leapfrog steps per transition would take 32.67 seconds.</span>
-<span class="co">#&gt; Adjust your expectations accordingly!</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Iteration:    1 / 2000 [  0%]  (Warmup)</span>
-<span class="co">#&gt; Iteration:  200 / 2000 [ 10%]  (Warmup)</span>
-<span class="co">#&gt; Iteration:  400 / 2000 [ 20%]  (Warmup)</span>
-<span class="co">#&gt; Iteration:  600 / 2000 [ 30%]  (Warmup)</span>
-<span class="co">#&gt; Iteration:  800 / 2000 [ 40%]  (Warmup)</span>
-<span class="co">#&gt; Iteration: 1000 / 2000 [ 50%]  (Warmup)</span>
-<span class="co">#&gt; Iteration: 1001 / 2000 [ 50%]  (Sampling)</span>
-<span class="co">#&gt; Iteration: 1200 / 2000 [ 60%]  (Sampling)</span>
-<span class="co">#&gt; Iteration: 1400 / 2000 [ 70%]  (Sampling)</span>
-<span class="co">#&gt; Iteration: 1600 / 2000 [ 80%]  (Sampling)</span>
-<span class="co">#&gt; Iteration: 1800 / 2000 [ 90%]  (Sampling)</span>
-<span class="co">#&gt; Iteration: 2000 / 2000 [100%]  (Sampling)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;  Elapsed Time: 238.869 seconds (Warm-up)</span>
-<span class="co">#&gt;                97.5362 seconds (Sampling)</span>
-<span class="co">#&gt;                336.405 seconds (Total)</span></code></pre>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" data-line-number="1">y_scale &lt;-<span class="st"> </span><span class="dv">21</span> <span class="op">/</span><span class="st"> </span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb65-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb65-3" data-line-number="3">data_sophistication &lt;-<span class="st"> </span><span class="kw">within</span>(<span class="kw">list</span>(), {</a>
+<a class="sourceLine" id="cb65-4" data-line-number="4">  y_bern &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">as.matrix</span>(<span class="kw">select</span>(PoliticalSophistication, Q1<span class="op">:</span>Q19)))</a>
+<a class="sourceLine" id="cb65-5" data-line-number="5">  N &lt;-<span class="st"> </span><span class="kw">ncol</span>(y_bern)</a>
+<a class="sourceLine" id="cb65-6" data-line-number="6">  K &lt;-<span class="st"> </span><span class="kw">nrow</span>(y_bern)</a>
+<a class="sourceLine" id="cb65-7" data-line-number="7">  y_norm &lt;-<span class="st"> </span>PoliticalSophistication<span class="op">$</span>Q20</a>
+<a class="sourceLine" id="cb65-8" data-line-number="8">  interviewer &lt;-<span class="st"> </span>PoliticalSophistication<span class="op">$</span>interviewer</a>
+<a class="sourceLine" id="cb65-9" data-line-number="9">  J &lt;-<span class="st"> </span><span class="kw">max</span>(interviewer)</a>
+<a class="sourceLine" id="cb65-10" data-line-number="10">  <span class="co"># priors</span></a>
+<a class="sourceLine" id="cb65-11" data-line-number="11">  sigma_scale &lt;-<span class="st"> </span><span class="dv">5</span> <span class="op">*</span><span class="st"> </span>y_scale</a>
+<a class="sourceLine" id="cb65-12" data-line-number="12">  xi_loc &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb65-13" data-line-number="13">  xi_scale &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb65-14" data-line-number="14">  alpha_loc &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb65-15" data-line-number="15">  alpha_scale &lt;-<span class="st"> </span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb65-16" data-line-number="16">  beta_loc &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb65-17" data-line-number="17">  beta_scale &lt;-<span class="st"> </span><span class="fl">2.5</span></a>
+<a class="sourceLine" id="cb65-18" data-line-number="18">  gamma_scale &lt;-<span class="st"> </span><span class="fl">2.5</span> <span class="op">*</span><span class="st"> </span>y_scale</a>
+<a class="sourceLine" id="cb65-19" data-line-number="19">  <span class="co"># priors for interviewer effects</span></a>
+<a class="sourceLine" id="cb65-20" data-line-number="20">  tau_scale &lt;-<span class="st"> </span>y_scale</a>
+<a class="sourceLine" id="cb65-21" data-line-number="21">  delta_loc &lt;-<span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb65-22" data-line-number="22">  delta_scale &lt;-<span class="st"> </span>y_scale</a>
+<a class="sourceLine" id="cb65-23" data-line-number="23">})</a></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" data-line-number="1">fit_sophistication &lt;-<span class="st"> </span><span class="kw">sampling</span>(mod_sophistication, <span class="dt">data =</span> data_sophistication, <span class="dt">init =</span> <span class="dv">0</span>, <span class="dt">chains =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb66-2" data-line-number="2"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb66-3" data-line-number="3"><span class="co">#&gt; SAMPLING FOR MODEL &#39;sophistication&#39; NOW (CHAIN 1).</span></a>
+<a class="sourceLine" id="cb66-4" data-line-number="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb66-5" data-line-number="5"><span class="co">#&gt; Gradient evaluation took 0.003267 seconds</span></a>
+<a class="sourceLine" id="cb66-6" data-line-number="6"><span class="co">#&gt; 1000 transitions using 10 leapfrog steps per transition would take 32.67 seconds.</span></a>
+<a class="sourceLine" id="cb66-7" data-line-number="7"><span class="co">#&gt; Adjust your expectations accordingly!</span></a>
+<a class="sourceLine" id="cb66-8" data-line-number="8"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb66-9" data-line-number="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb66-10" data-line-number="10"><span class="co">#&gt; Iteration:    1 / 2000 [  0%]  (Warmup)</span></a>
+<a class="sourceLine" id="cb66-11" data-line-number="11"><span class="co">#&gt; Iteration:  200 / 2000 [ 10%]  (Warmup)</span></a>
+<a class="sourceLine" id="cb66-12" data-line-number="12"><span class="co">#&gt; Iteration:  400 / 2000 [ 20%]  (Warmup)</span></a>
+<a class="sourceLine" id="cb66-13" data-line-number="13"><span class="co">#&gt; Iteration:  600 / 2000 [ 30%]  (Warmup)</span></a>
+<a class="sourceLine" id="cb66-14" data-line-number="14"><span class="co">#&gt; Iteration:  800 / 2000 [ 40%]  (Warmup)</span></a>
+<a class="sourceLine" id="cb66-15" data-line-number="15"><span class="co">#&gt; Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></a>
+<a class="sourceLine" id="cb66-16" data-line-number="16"><span class="co">#&gt; Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></a>
+<a class="sourceLine" id="cb66-17" data-line-number="17"><span class="co">#&gt; Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></a>
+<a class="sourceLine" id="cb66-18" data-line-number="18"><span class="co">#&gt; Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></a>
+<a class="sourceLine" id="cb66-19" data-line-number="19"><span class="co">#&gt; Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></a>
+<a class="sourceLine" id="cb66-20" data-line-number="20"><span class="co">#&gt; Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></a>
+<a class="sourceLine" id="cb66-21" data-line-number="21"><span class="co">#&gt; Iteration: 2000 / 2000 [100%]  (Sampling)</span></a>
+<a class="sourceLine" id="cb66-22" data-line-number="22"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb66-23" data-line-number="23"><span class="co">#&gt;  Elapsed Time: 238.869 seconds (Warm-up)</span></a>
+<a class="sourceLine" id="cb66-24" data-line-number="24"><span class="co">#&gt;                97.5362 seconds (Sampling)</span></a>
+<a class="sourceLine" id="cb66-25" data-line-number="25"><span class="co">#&gt;                336.405 seconds (Total)</span></a></code></pre></div>
 </div>
 <div id="questions-extensions" class="section level2">
 <h2><span class="header-section-number">8.4</span> Questions / Extensions</h2>
