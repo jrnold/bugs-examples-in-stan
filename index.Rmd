@@ -1,6 +1,6 @@
 ---
-title: "Bayesian Model Examples"
-author: "Jeffrey B. Arnold and Simon Jackman"
+title: "Simon Jackman's Bayesian Model Examples in Stan"
+author: "Jeffrey B. Arnold"
 date: "`r Sys.Date()`"
 site: "bookdown::bookdown_site"
 output:

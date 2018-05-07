@@ -1,7 +1,7 @@
 
 ---
-title: "Bayesian Model Examples"
-author: "Jeffrey B. Arnold and Simon Jackman"
+title: "Simon Jackman's Bayesian Model Examples in Stan"
+author: "Jeffrey B. Arnold"
 date: "2018-05-07"
 site: "bookdown::bookdown_site"
 output:
